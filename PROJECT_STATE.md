@@ -24,3 +24,11 @@
 ## 当前 HEAD
 
 本文件与 Stage 1.1 foundation 提交一起版本化。**当前 HEAD 的权威值为 `git rev-parse HEAD`**；不在同一提交内硬编码其自身 SHA（Git 提交哈希包含本文件，无法自引用）。最终交付报告给出完整 SHA。当前交付分支：`main`。
+
+## Git 收尾记录
+
+- 已验证的前端代码 checkpoint：`3d77fa8631b4d66ea95400ab90df543c2c8bdc7c`。
+- 首次提交缺少作者身份，已按中断保护停止功能修改、重新构建并保存 checkpoint。
+- 仅本仓库使用已认证 GitHub 账户 `shipeilin91-png` 及其 noreply 地址；未更改全局 Git 配置。
+- Stage 1.1 本地验收已完成：build、lint、6 项 tests、六个 dev routes、桌面交互均通过。本阶段无剩余功能开发。
+- 最终 foundation 提交封存此交付记录；后续请从 `git rev-parse HEAD` 读取实际 HEAD，并先评审下一阶段契约。

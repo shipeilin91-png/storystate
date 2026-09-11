@@ -40,3 +40,5 @@ Browser navigation and development-server logs confirmed HTTP 200 and rendered c
 No backend, file parsing, AI calls, real context compilation, remote state commit or rollback was tested or implemented. Cross-device and concurrent editing are not provided. Mobile received CSS fallbacks only, not a full acceptance pass. Source story tests live in browser-local mock storage, not the repository.
 
 Initial build/test attempts required sandbox permission for local process/port/IPC operations; reruns with approved permissions passed. Next.js appends its framework instructions to AGENTS.md during development; that generated block is retained so starting development does not dirty the working tree.
+
+Git recovery: the first commit attempt found no configured author. Configured the authenticated GitHub account's public noreply identity in this repository only, repeated the production build successfully, then saved the required checkpoint. No code changes followed that interruption; the final foundation commit records completion. GIT_BLOCKED is resolved.
