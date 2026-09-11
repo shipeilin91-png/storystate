@@ -12,9 +12,7 @@ const items: { path: string; label: string; en: string; icon: IconName }[] = [
     icon: "workspace",
   },
   { path: "state", label: "故事状态", en: "State", icon: "state" },
-  { path: "review", label: "变更审核", en: "Delta review", icon: "review" },
   { path: "history", label: "版本历史", en: "History", icon: "history" },
-  { path: "setup", label: "设定与导入", en: "Setup", icon: "setup" },
 ];
 export function WorkspaceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -87,6 +85,15 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+        {selected.ready && (
+          <Link
+            className="story-settings-link"
+            href={`/stories/${selected.id}/setup`}
+          >
+            <Icon name="setup" size={15} />
+            Sources & settings
+          </Link>
+        )}
         <div className="sidebar-bottom">
           <div className="connection-dot" />
           <strong>Frontend preview</strong>
