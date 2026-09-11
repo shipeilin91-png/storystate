@@ -1,0 +1,110 @@
+{
+  "project": "StoryState",
+  "stage": "Frontend Foundation",
+  "features": [
+    {
+      "id": "library",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/",
+      "verification": "列表、搜索、筛选、新建空故事并跳转 setup"
+    },
+    {
+      "id": "setup",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/stories/[storyId]/setup",
+      "verification": "保存基础信息、三项示例载入、初始化前置条件和进度"
+    },
+    {
+      "id": "state",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/stories/[storyId]/state",
+      "verification": "六类实体切换、搜索、字段与章节证据"
+    },
+    {
+      "id": "workspace",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/stories/[storyId]/workspace",
+      "verification": "编辑任务、固定 Writer 示例、六类 Context 及选择理由"
+    },
+    {
+      "id": "review",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/stories/[storyId]/review",
+      "verification": "Accept/Edit/Reject、冲突阻止直接接受、模拟提交同步状态"
+    },
+    {
+      "id": "history",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": "/stories/[storyId]/history",
+      "verification": "版本快照、State Delta、模拟恢复确认并保留历史"
+    },
+    {
+      "id": "shared-state",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": null,
+      "verification": "跨路由一致、按故事隔离、刷新保留 Mock 编辑"
+    },
+    {
+      "id": "shell",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "route": null,
+      "verification": "StoryState 品牌、任务导航、桌面布局"
+    },
+    {
+      "id": "real-import",
+      "status": "planned",
+      "description": "文件上传与真实解析",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "state-extraction",
+      "status": "planned",
+      "description": "从正文抽取状态变化",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "context-compiler",
+      "status": "planned",
+      "description": "真实相关性选择及知识边界编译",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "writer-integration",
+      "status": "planned",
+      "description": "增强已有 Writer 的上下文接口",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "real-commit-rollback",
+      "status": "planned",
+      "description": "持久化事务、真实版本与恢复",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "backend-storage",
+      "status": "planned",
+      "description": "真实数据库与服务端存储",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "auth-collaboration",
+      "status": "planned",
+      "description": "身份与协作",
+      "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "production-deployment",
+      "status": "planned",
+      "description": "独立生产环境部署",
+      "verification": "需下一阶段单独确认验收标准"
+    }
+  ]
+}
