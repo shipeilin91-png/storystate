@@ -85,9 +85,15 @@ function Setup({ story, update }: { story: Story; update: Update }) {
   return (
     <>
       <PageIntro
-        eyebrow="STORY SETUP"
-        title="为故事建立共同的起点"
-        description="把已有章节、人物与世界观组织在一起。故事的记忆，从这里开始。"
+        eyebrow={story.ready ? "STORY SETTINGS" : "STORY SETUP"}
+        title={
+          story.ready ? "Sources & Story Settings" : "为故事建立共同的起点"
+        }
+        description={
+          story.ready
+            ? "维护故事信息与来源。当前 Canonical State 不会因修改来源自动变化。"
+            : "把已有章节、人物与世界观组织在一起。故事的记忆，从这里开始。"
+        }
       />
       <div className="setup-grid">
         <div>
@@ -238,9 +244,9 @@ function Setup({ story, update }: { story: Story; update: Update }) {
           {story.ready ? (
             <Link
               className="button primary"
-              href={`/stories/${story.id}/state`}
+              href={`/stories/${story.id}/workspace`}
             >
-              探索当前状态
+              返回 Workspace
               <Icon name="arrow" size={15} />
             </Link>
           ) : (
@@ -274,19 +280,50 @@ function StateExplorer({ story }: { story: Story }) {
     <>
       <PageIntro
         eyebrow="STATE EXPLORER"
-        title="故事现在，是什么状态？"
-        description="查看已确认的事实、人物知识与未完线索。每一项状态都有来源。"
-        action={
-          <Link
-            className="button secondary"
-            href={`/stories/${story.id}/review`}
-          >
-            查看待审核变更
-            <Icon name="arrow" size={15} />
-          </Link>
-        }
+        title="Current Truth"
+        description="StoryState 当前认为故事世界是什么状态。这里只展示已经 Commit 的 Canonical State。"
       />
       <StoryMeta story={story} />
+      <div className="truth-legend">
+        <div>
+          <StatusPill tone="good">HARD STATE</StatusPill>
+          <span>Canonical Current Truth · 已确认事实</span>
+        </div>
+        <div>
+          <StatusPill tone="warn">INTERPRETATION</StatusPill>
+          <span>Not canonical unless confirmed</span>
+        </div>
+      </div>
+      {category === "Knowledge" && (
+        <section className="knowledge-boundary">
+          <header>
+            <span className="eyebrow">KNOWLEDGE BOUNDARY</span>
+            <h2>World Truth ≠ Character Knowledge</h2>
+          </header>
+          <div className="world-truth">
+            <small>WORLD TRUTH</small>
+            <strong>陈默真实身份：卧底</strong>
+            <span>Canonical</span>
+          </div>
+          <div className="knowledge-people">
+            <div>
+              <strong>林夏</strong>
+              <StatusPill tone="warn">Suspects</StatusPill>
+              <small>只有怀疑，没有确认</small>
+            </div>
+            <div>
+              <strong>陈默</strong>
+              <StatusPill tone="good">Knows</StatusPill>
+              <small>本人知情</small>
+            </div>
+            <div>
+              <strong>顾言</strong>
+              <StatusPill>Unaware</StatusPill>
+              <small>尚无知情证据</small>
+            </div>
+          </div>
+        </section>
+      )}
       <div className="category-tabs" aria-label="状态类别">
         {categories.map((c) => (
           <button
@@ -405,6 +442,15 @@ function StateExplorer({ story }: { story: Story }) {
           )}
         </aside>
       </div>
+      <section className="soft-state">
+        <div>
+          <span className="eyebrow">SOFT INTERPRETATION</span>
+          <h2>可能成立，但还不是事实</h2>
+        </div>
+        <p>“林夏似乎开始信任陈默。”</p>
+        <p>“顾言可能有所隐瞒。”</p>
+        <StatusPill tone="warn">Not canonical unless confirmed</StatusPill>
+      </section>
     </>
   );
 }
@@ -419,7 +465,6 @@ function WritingWorkspace({ story, update }: { story: Story; update: Update }) {
     "Evidence",
     "Constraints",
   ];
-  const knowledge = story.entities.find((e) => e.id === "identity");
   const stateRows = story.entities.filter((e) =>
     ["lin", "usb", "relation"].includes(e.id),
   );
@@ -427,15 +472,15 @@ function WritingWorkspace({ story, update }: { story: Story; update: Update }) {
     <>
       <PageIntro
         eyebrow="WRITING WORKSPACE"
-        title="下一章，从准确的上下文开始。"
-        description="准备创作任务，检查已有 Writer 将获得的上下文。"
-        action={
-          <Link className="button primary" href={`/stories/${story.id}/review`}>
-            审核 State Delta
-            <Icon name="arrow" size={15} />
-          </Link>
-        }
+        title={story.title}
+        description={`Chapter ${story.chapter + 1} · Current State v${story.chapter} · 从准确的上下文继续写作。`}
       />
+      {story.chapter > 12 && (
+        <p className="notice state-updated" role="status">
+          <Icon name="check" size={16} />
+          State updated · v12 → v{story.chapter}
+        </p>
+      )}
       <StoryMeta story={story} />
       <div className="writing-grid">
         <section className="writing-main">
@@ -482,9 +527,24 @@ function WritingWorkspace({ story, update }: { story: Story; update: Update }) {
                 </div>
                 <div className="document-end">◇</div>
                 <p className="writer-note">
-                  这段固定示例用于审核演示，不随 Prompt 生成。StoryState 为已有
-                  Writer 管理状态与上下文。
+                  这段固定示例用于审核演示，不随 Prompt 生成。Writer Output
+                  尚未更新 Current State。
                 </p>
+                <div className="proposed-change-bar">
+                  <div>
+                    <strong>
+                      StoryState detected {story.deltas.length} proposed changes
+                    </strong>
+                    <p>Review 与 Commit 后才会写入 Canonical State。</p>
+                  </div>
+                  <Link
+                    className="button primary"
+                    href={`/stories/${story.id}/review`}
+                  >
+                    Review {story.deltas.length} changes{" "}
+                    <Icon name="arrow" size={15} />
+                  </Link>
+                </div>
               </>
             ) : (
               <Empty title="示例输出已收起">点击“查看示例输出”重新展开。</Empty>
@@ -539,11 +599,27 @@ function WritingWorkspace({ story, update }: { story: Story; update: Update }) {
                   <Icon name="warning" size={17} />
                   <p>保持林夏的有限视角</p>
                 </div>
-                <div className="context-entry">
-                  <strong>陈默是卧底</strong>
-                  <p>世界事实已确认；林夏：{knowledge?.fields["林夏"]}。</p>
+                <div className="context-entry knowledge-context">
+                  <div className="world-truth">
+                    <small>WORLD TRUTH</small>
+                    <strong>陈默真实身份：卧底</strong>
+                  </div>
+                  <div className="knowledge-people compact">
+                    <div>
+                      <strong>林夏</strong>
+                      <StatusPill tone="warn">Suspects</StatusPill>
+                    </div>
+                    <div>
+                      <strong>陈默</strong>
+                      <StatusPill tone="good">Knows</StatusPill>
+                    </div>
+                    <div>
+                      <strong>顾言</strong>
+                      <StatusPill>Unaware</StatusPill>
+                    </div>
+                  </div>
                   <small>
-                    为什么选入：避免把叙述者知识泄漏到角色对白与行动中。
+                    为什么选入：该事实限制林夏当前可以知道的信息，避免知识泄漏。
                   </small>
                 </div>
                 <p className="description">
@@ -641,8 +717,8 @@ function DeltaReview({ story, update }: { story: Story; update: Update }) {
     <>
       <PageIntro
         eyebrow="DELTA REVIEW"
-        title="故事有了变化，由你确认。"
-        description="新内容提出的状态变化不会自动成为事实。先检查证据，再决定写入什么。"
+        title="Proposed State Changes"
+        description="Writer Output ≠ Current State。逐项检查 Evidence、Reason 与 Risk，再决定是否写入 Canonical State。"
       />
       <StoryMeta story={story} />
       {message && (
@@ -652,13 +728,21 @@ function DeltaReview({ story, update }: { story: Story; update: Update }) {
       )}
       {!story.deltas.length ? (
         <Empty title="没有待审核的变更">
-          <p>本轮示例已处理；可查看当前状态与版本记录。</p>
-          <Link
-            className="button primary"
-            href={`/stories/${story.id}/history`}
-          >
-            查看版本历史
-          </Link>
+          <p>新 State Version 已生成。返回 Workspace 继续下一轮写作。</p>
+          <div className="actions">
+            <Link
+              className="button primary"
+              href={`/stories/${story.id}/workspace`}
+            >
+              Back to Workspace
+            </Link>
+            <Link
+              className="button secondary"
+              href={`/stories/${story.id}/history`}
+            >
+              查看 Version History
+            </Link>
+          </div>
         </Empty>
       ) : (
         <>
@@ -906,7 +990,7 @@ function DeltaReview({ story, update }: { story: Story; update: Update }) {
                 );
               }}
             >
-              提交已接受变更（模拟）
+              Commit accepted changes
               <Icon name="arrow" size={15} />
             </button>
           </div>
@@ -930,7 +1014,7 @@ function History({ story, update }: { story: Story; update: Update }) {
     <>
       <PageIntro
         eyebrow="VERSION HISTORY"
-        title="每一次推进，都有来路。"
+        title="State Version History"
         description="沿着版本回看故事如何变化，检查每一次已确认的 State Delta。"
         action={
           <StatusPill tone="good">
@@ -962,7 +1046,7 @@ function History({ story, update }: { story: Story; update: Update }) {
               >
                 <span className="timeline-dot" />
                 <div className="version-meta">
-                  <strong>Version {story.versions.length - i}</strong>
+                  <strong>State v{v.chapter}</strong>
                   <span>{v.date.replace("T", " ").slice(0, 16)}</span>
                 </div>
                 <h2>
@@ -1033,7 +1117,7 @@ function History({ story, update }: { story: Story; update: Update }) {
                     className="button secondary"
                     onClick={() => setRollback(selected)}
                   >
-                    Rollback（模拟）
+                    Restore this version
                   </button>
                 ) : (
                   <StatusPill>这是当前版本</StatusPill>

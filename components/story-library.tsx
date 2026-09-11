@@ -24,8 +24,8 @@ export function StoryLibrary() {
     <div className="page library">
       <PageIntro
         eyebrow="STORY LIBRARY"
-        title="让故事继续，让状态有据可循。"
-        description="人物知道什么、线索走到哪里、每次变化因何发生。都在这里。"
+        title="Stories"
+        description="打开一个故事，继续基于当前 State 写作。"
         action={
           <button
             className="button primary"
@@ -37,61 +37,6 @@ export function StoryLibrary() {
           </button>
         }
       />
-      <section className="library-feature">
-        <div>
-          <span className="eyebrow">A HOME FOR YOUR STORY’S MEMORY</span>
-          <h2>
-            故事向前，
-            <br />
-            上下文始终在场。
-          </h2>
-          <p>
-            将散落的设定与章节，组织成可查看、
-            <br />
-            可审核、可追溯的故事状态。
-          </p>
-          <Link
-            href={`/stories/${stories[0].id}/${stories[0].ready ? "workspace" : "setup"}`}
-            className="text-button"
-          >
-            {stories[0].ready
-              ? "继续《" + stories[0].title + "》"
-              : "建立第一个故事状态"}
-            <Icon name="arrow" size={16} />
-          </Link>
-        </div>
-        <div
-          className="state-map"
-          aria-label="故事从章节证据进入当前状态，再经过变更审核形成新版本"
-        >
-          <div className="map-grid" />
-          <span className="map-label">STORY MEMORY / 001</span>
-          <div className="map-node n1">
-            <Icon name="stories" />
-            <span>
-              章节与设定<small>Source evidence</small>
-            </span>
-          </div>
-          <div className="map-node n2">
-            <span className="map-state-icon">
-              <Icon name="state" />
-            </span>
-            <span>
-              当前 Story State<small>One shared source of truth</small>
-            </span>
-            <span className="live-dot" />
-          </div>
-          <div className="map-node n3">
-            <Icon name="review" />
-            <span>
-              变更审核<small>Review before commit</small>
-            </span>
-          </div>
-          <div className="map-line l1" />
-          <div className="map-line l2" />
-          <span className="map-note">Context → Writer → Delta → State</span>
-        </div>
-      </section>
       {creating && (
         <form
           className="create-form"
@@ -177,8 +122,9 @@ export function StoryLibrary() {
           <thead>
             <tr>
               <th>故事 / STORY</th>
-              <th>当前进度</th>
-              <th>状态</th>
+              <th>Chapter</th>
+              <th>Current State</th>
+              <th>Status</th>
               <th>最近更新</th>
               <th>
                 <span className="sr-only">打开故事</span>
@@ -207,9 +153,14 @@ export function StoryLibrary() {
                   </div>
                 </td>
                 <td>
-                  <strong>{s.ready ? `第 ${s.chapter} 章` : "尚未开始"}</strong>
+                  <strong>
+                    {s.ready ? `Chapter ${s.chapter}` : "Not started"}
+                  </strong>
+                </td>
+                <td>
+                  <strong>{s.ready ? `State v${s.chapter}` : "—"}</strong>
                   <small>
-                    {s.entities.length} 条状态 · {s.versions.length} 个版本
+                    {s.entities.length} records · {s.versions.length} versions
                   </small>
                 </td>
                 <td>
