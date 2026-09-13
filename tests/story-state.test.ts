@@ -75,3 +75,32 @@ test("proposed delta evidence is quoted from the shared writer output", () => {
   for (const d of fixtureDeltas)
     assert.ok(writerOutput.includes(d.evidence), d.id);
 });
+
+test("commit and repeated restore advance state versions independently of chapters", () => {
+  const s = fixture();
+  s.deltas.forEach(
+    (d) => (d.decision = d.risk === "conflict" ? "rejected" : "accepted"),
+  );
+  const committed = commitMock(s, "commit");
+  assert.equal(committed.currentStateVersion, 13);
+  assert.equal(committed.versions[0].stateVersion, 13);
+  const restored = rollbackMock(committed, s.versions[1], "restore");
+  assert.equal(restored.currentStateVersion, 14);
+  assert.equal(restored.chapter, 11);
+  assert.equal(restored.versions[0].stateVersion, 14);
+  assert.equal(restored.versions[0].restoredFromStateVersion, 11);
+  assert.deepEqual(restored.versions.slice(1), committed.versions);
+  assert.deepEqual(restored.entities, s.versions[1].entities);
+  const again = rollbackMock(restored, s.versions[0], "restore-again");
+  assert.equal(again.currentStateVersion, 15);
+  assert.equal(again.chapter, 12);
+  again.deltas = structuredClone(fixtureDeltas).map((d) => ({
+    ...d,
+    decision:
+      d.risk === "conflict" ? ("rejected" as const) : ("accepted" as const),
+  }));
+  const recommitted = commitMock(again, "commit-after-restore");
+  assert.equal(recommitted.currentStateVersion, 16);
+  assert.equal(recommitted.chapter, 13);
+  assert.equal(recommitted.versions[0].stateVersion, 16);
+});

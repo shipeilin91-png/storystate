@@ -1,62 +1,62 @@
 {
   "project": "StoryState",
-  "stage": "Frontend Foundation",
+  "stage": "Frontend Product Flow / Stage 1.2",
   "features": [
     {
       "id": "library",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/",
-      "verification": "列表、搜索、筛选、新建空故事并跳转 setup"
+      "verification": "READY Story 的名称/Open 入口统一进入 Workspace；未初始化 Story 进入 setup；Chapter 和 Current State 分列"
     },
     {
       "id": "setup",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/setup",
-      "verification": "保存基础信息、三项示例载入、初始化前置条件和进度"
+      "verification": "Sources & Story Settings 为次级入口；breadcrumb 正常；示例载入及初始化仍为 mock"
     },
     {
       "id": "state",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/state",
-      "verification": "六类实体切换、搜索、字段与章节证据"
+      "verification": "Current Truth；Hard State 为 Canonical；Soft Interpretation 默认非 Canonical；Knowledge Boundary 读取已提交知识"
     },
     {
       "id": "workspace",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/workspace",
-      "verification": "编辑任务、固定 Writer 示例、六类 Context 及选择理由"
+      "verification": "READY 默认入口；Context Why Included；Writer Output 不直接写 State；Run 内提供 Review changes 入口"
     },
     {
       "id": "review",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/review",
-      "verification": "Accept/Edit/Reject、冲突阻止直接接受、模拟提交同步状态"
+      "verification": "Workspace run 节点；未解决冲突阻止 Commit；仅 accepted Delta 写入 State"
     },
     {
       "id": "history",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/history",
-      "verification": "版本快照、State Delta、模拟恢复确认并保留历史"
+      "verification": "独立 State Version；Commit/Restore 均 +1；Restore 使用历史 Chapter/snapshot 并保留历史和来源版本"
     },
     {
       "id": "shared-state",
       "status": "completed",
       "scope": "frontend mock only",
       "route": null,
-      "verification": "跨路由一致、按故事隔离、刷新保留 Mock 编辑"
+      "verification": "故事数据隔离；刷新持久化；Stage 1.1 缓存兼容迁移保留历史"
     },
     {
       "id": "shell",
       "status": "completed",
       "scope": "frontend mock only",
       "route": null,
-      "verification": "StoryState 品牌、任务导航、桌面布局"
+      "verification": "一级导航仅 Workspace/State/History；READY Current Story switch 进入 Workspace；Setup/Review breadcrumb 正常；删除无效 review nav 判断"
     },
     {
       "id": "real-import",
@@ -105,6 +105,43 @@
       "status": "planned",
       "description": "独立生产环境部署",
       "verification": "需下一阶段单独确认验收标准"
+    },
+    {
+      "id": "component-refactor",
+      "status": "completed",
+      "scope": "frontend mock only",
+      "verification": "StoryScreen 只保留查找/guard/分派；页面和 Context 拆入 components/story"
+    },
+    {
+      "id": "database",
+      "status": "planned",
+      "description": "持久化数据库",
+      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+    },
+    {
+      "id": "llm",
+      "status": "planned",
+      "description": "真实 LLM 调用",
+      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+    },
+    {
+      "id": "rag",
+      "status": "planned",
+      "description": "检索增强生成",
+      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+    },
+    {
+      "id": "embedding",
+      "status": "planned",
+      "description": "向量化",
+      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+    },
+    {
+      "id": "mcp",
+      "status": "planned",
+      "description": "MCP 接口",
+      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
     }
-  ]
+  ],
+  "contract": "Frontend Mock Contract ≠ Backend State Schema"
 }

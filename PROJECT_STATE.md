@@ -1,34 +1,39 @@
 # StoryState — Project State
 
-- Current Stage: **Frontend Foundation / Stage 1.1**
-- 定位：面向长篇／连续文本 AIGC 的 Stateful Context Infrastructure；不是 AI Writer。
-- 架构：干净 Next.js App Router + React + TypeScript + Tailwind CSS。仅客户端 Mock 状态；无 API routes、数据库、真实 AI、部署适配器或环境变量。
-- Source reference: EvalPilot `2191650de6896295f12bacf4dc3226ea0eaf56a5`，只读审计与少量通用 UI pattern 复用。见 `docs/REUSE_AUDIT.md`。
+- Current Stage: **Frontend Product Flow / Stage 1.2**
+- 定位：面向长篇／连续文本 AIGC 的 Stateful Context Infrastructure；增强已有 Writer，不是 AI Writer。
+- 当前架构：标准 Next.js App Router + React + TypeScript + Tailwind CSS；浏览器 localStorage Mock，无后端／数据库／AI。
+- 本次核实的 main 基线：`b5ba77d24409a232a10ac6b0c97f19e520fa1456`（2026-09-13 fetch 后未变化）。
+- 已集成前端分支：`ui/stage-1-2`，提交 `ca1566ba60298e7c56a93fe8e1de7bcbac76ef50`。
+- 技术集成分支：`integration/stage-1-2`；实际当前 HEAD 使用 `git rev-parse HEAD`，最终交付报告给出 merge SHA。
 
-## 本轮完成
+## 已完成的 Stage 1.2 产品流程
 
-六个产品页面；共享导航与品牌；统一《雾港》人物／知识／关系／道具／线索／事件数据；本地新建与资料模拟初始化；状态与上下文 inspector；Accept/Edit/Reject、冲突处理、模拟提交与版本快照；模拟恢复与确认；浏览器刷新持久化；空态、未找到故事与无效路由处理。
+- Story 一级导航收敛为 Workspace / State / History，保留前端 AI 已确认的布局与视觉。
+- READY Story 在 Library、Open Story 与 Current Story switch 都默认进入 Workspace；未初始化 Story 进入 setup。
+- Setup 为 Sources & Story Settings；Review 为 Workspace run 内的流程节点。独立 route label map 保证两者 breadcrumb 非空，不重新加入一级导航。
+- State Explorer 为 Current Truth；Hard State 为已提交的 Canonical Truth；Soft Interpretation 默认不是 Canonical Truth。
+- Knowledge Boundary 明确 World Truth ≠ Character Knowledge；State 和 Context 显示同一已提交知识记录，不再写死 Suspects。
+- Context Inspector 保留 Why Included；Writer Output 不直接改变 State，只有审核后的 accepted Delta 经 Commit 才进入 Current State。
+- Chapter 与 State Version 分离。`story.chapter` 表示叙事快照章节；`currentStateVersion` / `version.stateVersion` 表示单独递增的前端状态版本。
+- Commit 和 Restore 均生成新的 State Version。v13 / Chapter 13 恢复 v11 快照后为 v14 / Chapter 11，并保留 `restoredFromStateVersion: 11` 及全部历史。
+- 旧 Stage 1.1 localStorage 按历史顺序补齐版本号，保留原章节、实体、编辑和版本记录；不通过清空浏览器状态升级。
+- `StoryScreen` 仅负责查找故事、ready guard 和页面分派；页面、Context Inspector、共享知识边界拆入 `components/story/`。
 
-## 未完成（有意保持 planned）
+## 范围边界
 
-真实文件解析、State Extraction、Context Compiler、Writer/LLM 集成、真实 Commit/Rollback、数据库、账户和协作。未实现生产部署。本轮没有把这些功能冒称完成。
+**Frontend Mock Contract ≠ Backend State Schema**。
 
-## 验证
+这些字段、迁移及 snapshot 操作只用于前端 fixture，不定义正式 Backend State Schema。示例输出与下一轮任务仍是预置演示；没有真实 Run、解析或抽取。当前持久化不提供跨设备或并发协作能力。
 
-见 `docs/VERIFICATION.md`。生产构建、lint、状态流测试以及桌面浏览器验收为交付门槛。
+Backend、Database、State Extraction、Context Compiler、LLM、RAG、Embedding、MCP、Auth、真实文件解析及真实版本服务全部保持 planned。没有新增 API routes 或后端依赖。
+
+## Verification
+
+`npm install`、生产 build、lint、13 项自动 tests 已通过；浏览器验证 Library → Workspace → Review → Commit → History → Restore → State，及 Setup breadcrumb、未初始化入口、刷新持久化。详见 `docs/STAGE_1_2_VERIFICATION.md`。
+
+main 合并门槛：以上全部通过，并在 `git pull --ff-only origin main` 后再次安全合并；main 上重跑 build/lint/test 后才 push。
 
 ## 下一阶段
 
-先评审产品信息架构、知识边界语义、状态及 Delta 数据契约；经用户确认后再确定最小真实状态流程，不直接开始后端开发。
-
-## 当前 HEAD
-
-本文件与 Stage 1.1 foundation 提交一起版本化。**当前 HEAD 的权威值为 `git rev-parse HEAD`**；不在同一提交内硬编码其自身 SHA（Git 提交哈希包含本文件，无法自引用）。最终交付报告给出完整 SHA。当前交付分支：`main`。
-
-## Git 收尾记录
-
-- 已验证的前端代码 checkpoint：`3d77fa8631b4d66ea95400ab90df543c2c8bdc7c`。
-- 首次提交缺少作者身份，已按中断保护停止功能修改、重新构建并保存 checkpoint。
-- 仅本仓库使用已认证 GitHub 账户 `shipeilin91-png` 及其 noreply 地址；未更改全局 Git 配置。
-- Stage 1.1 本地验收已完成：build、lint、6 项 tests、六个 dev routes、桌面交互均通过。本阶段无剩余功能开发。
-- 最终 foundation 提交封存此交付记录；后续请从 `git rev-parse HEAD` 读取实际 HEAD，并先评审下一阶段契约。
+下一阶段单独评审正式 State Data Contract（角色知识、Canonical/Interpretation、版本与恢复语义），经用户确认后再决定后端集成范围。本轮不继续实现 Backend。

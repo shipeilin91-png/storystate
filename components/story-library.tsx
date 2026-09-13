@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useStories } from "./story-provider";
 import { Empty, Icon, PageIntro, StatusPill } from "./product-ui";
 import { newStory } from "@/lib/mock-story";
+import { storyEntryHref } from "@/lib/story-navigation";
 export function StoryLibrary() {
   const { stories, add, ready } = useStories();
   const router = useRouter();
@@ -45,7 +46,7 @@ export function StoryLibrary() {
             if (!title.trim()) return;
             const story = newStory(crypto.randomUUID(), title, description);
             add(story);
-            router.push(`/stories/${story.id}/setup`);
+            router.push(storyEntryHref(story));
           }}
         >
           <h2>新建 Story</h2>
@@ -141,10 +142,7 @@ export function StoryLibrary() {
                       <small>STORY</small>
                     </span>
                     <div>
-                      <Link
-                        className="story-title"
-                        href={`/stories/${s.id}/${s.ready ? "workspace" : "setup"}`}
-                      >
+                      <Link className="story-title" href={storyEntryHref(s)}>
                         {s.title}
                       </Link>
                       <small>{s.genre}</small>
@@ -158,7 +156,9 @@ export function StoryLibrary() {
                   </strong>
                 </td>
                 <td>
-                  <strong>{s.ready ? `State v${s.chapter}` : "—"}</strong>
+                  <strong>
+                    {s.ready ? `State v${s.currentStateVersion}` : "—"}
+                  </strong>
                   <small>
                     {s.entities.length} records · {s.versions.length} versions
                   </small>
@@ -181,7 +181,7 @@ export function StoryLibrary() {
                   <Link
                     className="icon-link"
                     aria-label={`打开${s.title}`}
-                    href={`/stories/${s.id}/${s.ready ? "workspace" : "setup"}`}
+                    href={storyEntryHref(s)}
                   >
                     <Icon name="arrow" />
                   </Link>

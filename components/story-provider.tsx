@@ -7,6 +7,10 @@ import {
   type ReactNode,
 } from "react";
 import { initialStories, type Story } from "@/lib/mock-story";
+import {
+  restoreStoredStories,
+  updateStoryInCollection,
+} from "@/lib/story-store";
 const KEY = "storystate.foundation.v1";
 type Store = { stories: Story[]; ready: boolean; storageWarning: boolean };
 type Action =
@@ -23,9 +27,7 @@ function reducer(state: Store, action: Action): Store {
     return { ...state, stories: [...state.stories, action.story] };
   return {
     ...state,
-    stories: state.stories.map((s) =>
-      s.id === action.id ? action.update(s) : s,
-    ),
+    stories: updateStoryInCollection(state.stories, action.id, action.update),
   };
 }
 const Context = createContext<{
@@ -46,22 +48,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (
-          Array.isArray(parsed) &&
-          parsed.length &&
-          parsed.every(
-            (s) =>
-              typeof s.id === "string" &&
-              typeof s.title === "string" &&
-              Array.isArray(s.entities) &&
-              Array.isArray(s.deltas) &&
-              Array.isArray(s.versions) &&
-              Array.isArray(s.imports) &&
-              typeof s.prompt === "string",
-          )
-        )
-          stories = parsed;
+        stories = restoreStoredStories(JSON.parse(raw)) ?? initialStories;
       }
     } catch {
       /* A corrupt or inaccessible cache falls back to fixtures. */
