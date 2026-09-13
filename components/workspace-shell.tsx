@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Icon, StatusPill, type IconName } from "./product-ui";
 import { useStories } from "./story-provider";
+import { storyEntryHref, storyRouteLabels } from "@/lib/story-navigation";
+import type { Story } from "@/lib/mock-story";
 const items: { path: string; label: string; en: string; icon: IconName }[] = [
   {
     path: "workspace",
@@ -12,9 +14,7 @@ const items: { path: string; label: string; en: string; icon: IconName }[] = [
     icon: "workspace",
   },
   { path: "state", label: "故事状态", en: "State", icon: "state" },
-  { path: "review", label: "变更审核", en: "Delta review", icon: "review" },
   { path: "history", label: "版本历史", en: "History", icon: "history" },
-  { path: "setup", label: "设定与导入", en: "Setup", icon: "setup" },
 ];
 export function WorkspaceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -50,18 +50,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="sidebar-divider" />
         <div className="nav-caption">CURRENT STORY</div>
-        <Link href={`/stories/${selected.id}/state`} className="story-switch">
-          <span className="mini-cover">{selected.title[0]}</span>
-          <div>
-            <strong>{selected.title}</strong>
-            <small>
-              {selected.ready
-                ? `第 ${selected.chapter} 章 · 当前状态`
-                : "等待建立初始状态"}
-            </small>
-          </div>
-          <Icon name="chevron" size={14} />
-        </Link>
+        <CurrentStorySwitch story={selected} />
         <nav aria-label="故事导航">
           {items.map((item) => {
             const active = pathname === `/stories/${selected.id}/${item.path}`;
@@ -74,19 +63,19 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
               >
                 <Icon name={item.icon} />
                 {item.label}
-                {item.path === "review" &&
-                  selected.deltas.some((d) => d.decision === "pending") && (
-                    <span className="nav-count review-count">
-                      {
-                        selected.deltas.filter((d) => d.decision === "pending")
-                          .length
-                      }
-                    </span>
-                  )}
               </Link>
             );
           })}
         </nav>
+        {selected.ready && (
+          <Link
+            className="story-settings-link"
+            href={`/stories/${selected.id}/setup`}
+          >
+            <Icon name="setup" size={15} />
+            Sources & settings
+          </Link>
+        )}
         <div className="sidebar-bottom">
           <div className="connection-dot" />
           <strong>Frontend preview</strong>
@@ -115,7 +104,9 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
                 <span>{story.title}</span>
                 <span>/</span>
                 <strong>
-                  {items.find((i) => pathname.endsWith(i.path))?.label}
+                  {storyRouteLabels[
+                    pathname.split("/")[3] as keyof typeof storyRouteLabels
+                  ] ?? "Story"}
                 </strong>
               </>
             )}
@@ -139,5 +130,22 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
         </footer>
       </div>
     </div>
+  );
+}
+
+export function CurrentStorySwitch({ story }: { story: Story }) {
+  return (
+    <Link href={storyEntryHref(story)} className="story-switch">
+      <span className="mini-cover">{story.title[0]}</span>
+      <div>
+        <strong>{story.title}</strong>
+        <small>
+          {story.ready
+            ? `第 ${story.chapter} 章 · 当前状态`
+            : "等待建立初始状态"}
+        </small>
+      </div>
+      <Icon name="chevron" size={14} />
+    </Link>
   );
 }

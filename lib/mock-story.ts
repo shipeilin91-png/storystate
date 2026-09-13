@@ -29,8 +29,11 @@ export type Delta = {
   resolved?: boolean;
   note?: string;
 };
+/* Frontend fixture contract only; not an authoritative backend schema. */
 export type Version = {
   id: string;
+  stateVersion: number;
+  restoredFromStateVersion?: number;
   chapter: number;
   date: string;
   title: string;
@@ -44,6 +47,7 @@ export type Story = {
   description: string;
   updated: string;
   chapter: number;
+  currentStateVersion: number;
   ready: boolean;
   imports: string[];
   entities: Entity[];
@@ -209,6 +213,7 @@ export const writerOutput =
   "急诊室的灯把雨夜照得苍白。林夏推开门，看见陈默站在走廊尽头。\n\n“顾言说你会来。”他没有解释手臂上的伤，只从大衣里取出那枚银色 USB，放进她手里。\n\n“保管好它。”\n\n银色外壳下，藏着那艘货船最后的行踪。\n\n林夏握紧冰冷的金属。她忽然明白，他也许并非码头的人。但她没有问。门后的仪器又响了一声，打断了沉默。";
 const baseVersion: Version = {
   id: "v12",
+  stateVersion: 12,
   chapter: 12,
   date: "2026-09-10 21:40",
   title: "码头之后",
@@ -241,6 +246,7 @@ export const initialStories: Story[] = [
       "一座被雾笼罩的港城，一份消失的货运记录，和三个各自保守秘密的人。",
     updated: baseVersion.date,
     chapter: 12,
+    currentStateVersion: 12,
     ready: true,
     imports: [...importOptions],
     entities: structuredClone(fixtureEntities),
@@ -249,6 +255,7 @@ export const initialStories: Story[] = [
       baseVersion,
       {
         id: "v11",
+        stateVersion: 11,
         chapter: 11,
         date: "2026-09-09 19:15",
         title: "不存在的货船",
@@ -271,6 +278,7 @@ export function newStory(
     genre: "未分类",
     updated: new Date().toISOString(),
     chapter: 0,
+    currentStateVersion: 0,
     ready: false,
     imports: [],
     entities: [],
@@ -286,6 +294,7 @@ export function initializeStory(story: Story): Story {
     ...story,
     ready: true,
     chapter: 12,
+    currentStateVersion: 12,
     entities: structuredClone(fixtureEntities),
     deltas: structuredClone(fixtureDeltas),
     versions: [structuredClone(baseVersion)],
@@ -325,7 +334,8 @@ export function commitMock(story: Story, date: string): Story {
     entity.chapter = story.chapter + 1;
   }
   const version: Version = {
-    id: `v${story.versions.length + 1}-${date}`,
+    id: `v${story.currentStateVersion + 1}-${date}`,
+    stateVersion: story.currentStateVersion + 1,
     chapter: story.chapter + 1,
     date,
     title: "急诊室的交接",
@@ -339,6 +349,7 @@ export function commitMock(story: Story, date: string): Story {
     ...story,
     entities,
     chapter: version.chapter,
+    currentStateVersion: version.stateVersion,
     updated: date,
     deltas: [],
     versions: [version, ...story.versions],
@@ -349,17 +360,27 @@ export function rollbackMock(
   version: Version,
   date: string,
 ): Story {
+  // Restore only snapshots owned by this story, never a caller's foreign data.
+  const source = story.versions.find(
+    (candidate) => candidate.id === version.id,
+  );
+  if (!source || source.id === story.versions[0]?.id) return story;
   const restored: Version = {
-    ...structuredClone(version),
-    id: `restore-${date}`,
+    ...structuredClone(source),
+    id: `restore-v${story.currentStateVersion + 1}-${date}`,
+    stateVersion: story.currentStateVersion + 1,
+    restoredFromStateVersion: source.stateVersion,
     date,
-    title: `恢复至第 ${version.chapter} 章（模拟）`,
-    changes: [`从版本 ${version.id} 恢复完整状态快照`],
+    title: `恢复至第 ${source.chapter} 章（模拟）`,
+    changes: [
+      `Restored from State v${source.stateVersion} · Snapshot chapter: ${source.chapter}`,
+    ],
   };
   return {
     ...story,
-    entities: structuredClone(version.entities),
-    chapter: version.chapter,
+    entities: structuredClone(source.entities),
+    chapter: source.chapter,
+    currentStateVersion: restored.stateVersion,
     updated: date,
     deltas: [],
     versions: [restored, ...story.versions],
