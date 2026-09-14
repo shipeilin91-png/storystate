@@ -6,7 +6,7 @@
   "canonicalStateBackendFoundation": "completed",
   "contractHardening": {
     "stage": "Stage 2.1.2",
-    "status": "implemented on local branch / awaiting review",
+    "status": "completed / merged main",
     "branch": "hardening/stage-2-1-2-contract",
     "scope": [
       "Validator Result Admission Gate",
@@ -14,7 +14,7 @@
       "Frozen Benchmark Exact Executable Contract Tests"
     ],
     "verification": "build/lint PASS; full 98/98; backend 62/62; exact benchmark 11/11; Stage 1.3 regression 25/25; PGlite migration executed",
-    "remoteStatus": "REMOTE_BLOCKED by Trae sandbox credential access; Codex owns remote integration",
+    "integrationStatus": "reviewed branch pushed; non-squash merged on main",
     "extractionEvaluation": false
   },
   "features": [

@@ -1,8 +1,8 @@
 # Stage 2.1.2 Contract Hardening
 
-Status: implemented on local branch `hardening/stage-2-1-2-contract`, awaiting Product Owner Review and independent Codex engineering review.
+Status: completed / merged main. Product Owner Review and independent Codex engineering review passed; reviewed commit `c1c84e8002bd0fecd808b282c483cda54e961384` retained in non-squash merge.
 
-Base main: `753ca6a0cc0f7625898ae8839f8bc461788d502e`.
+Implementation base main: `753ca6a0cc0f7625898ae8839f8bc461788d502e`.
 Stage 2.1 remains completed on main. Stage 1.3 frontend product flow remains frozen.
 
 ## Scope and motivation
@@ -114,4 +114,4 @@ Browser smoke check used the existing development server at `http://127.0.0.1:30
 
 Runtime Validator, AI Extraction, RAG, Context Compiler, frontend/backend integration, Auth, Writer Connector, MCP and deployment remain planned. Stage 2.2 has not started. Structural admission trusts the supplied validator result; it is not an evidence-reasoning engine. Full aggregate loading remains a scalability risk recorded but not refactored here. Raw repository/SQL access remains an internal trust boundary.
 
-This delivery is local implementation + tests + local commit only. Per Product Owner instruction, no fetch, pull, push, credential/remote edits or Keychain permission requests were made during this implementation. Remote status: **REMOTE_BLOCKED by Trae sandbox credential access**. Codex owns independent review and remote integration/push. Do not merge main before approval.
+Trae's original implementation was local only because its sandbox blocked remote credential access. Codex independently reviewed and pushed the unchanged reviewed branch; after Product Owner approval, Stage 2.1.2 was non-squash merged into main and all verification commands were rerun successfully. No next stage has started.
