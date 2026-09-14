@@ -4,9 +4,11 @@ import { invariant } from "../domain/errors";
 import { applyDelta, assertValidatorAcceptable, equal, evidenceFor, rows, validateCanonical, validateDelta } from "../domain/governance";
 import { annotationSchema, commitInputSchema, decisionInputSchema, deltaInputSchema, emptyState, eventInputSchema, evidenceSchema, idSchema, restoreInputSchema, sourceDocumentSchema, sourceRevisionSchema, targetTypeSchema, validatorInputSchema, type StateDelta, type StoryAggregate, type StateVersion } from "../domain/state";
 import type { StateRepository } from "../repositories/state-repository";
+import { RuntimeValidator } from "./validator/runtime-validator";
+import { productionSemanticClient, type SemanticModelClient } from "./validator/semantic";
 const now = () => new Date().toISOString();
 export class StateService {
-  constructor(private repository: StateRepository) {}
+  constructor(private repository: StateRepository, private semanticClient?: SemanticModelClient) {}
   async createStory(input: unknown) {
     const story = z.strictObject({ id: idSchema, title: z.string().trim().min(1).max(500) }).parse(input);
     await this.repository.create({ story: { ...story, currentVersion: 0, currentChapter: null, storyRevision: 0, createdAt: now() }, state: emptyState(), documents: [], revisions: [], evidence: [], events: [], deltas: [], versions: [], annotations: [] });
@@ -77,6 +79,10 @@ export class StateService {
       invariant(d && !d.committedVersionId, "NOT_FOUND", "Open delta not found", 404);
       d.validatorResult = result; return d;
     });
+  }
+  validateDelta(id: string, deltaId: string, input: unknown) {
+    const { expectedVersion } = z.strictObject({ expectedVersion: z.number().int().nonnegative() }).parse(input);
+    return new RuntimeValidator(this.repository, this.semanticClient ?? productionSemanticClient()).validate(id, deltaId, expectedVersion);
   }
   commitAcceptedDeltas(id: string, input: unknown) {
     const { deltaIds, expectedVersion } = commitInputSchema.parse(input);

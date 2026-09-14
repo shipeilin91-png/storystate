@@ -43,6 +43,7 @@ export async function storyRequest(service: StateService, method: "GET"|"POST", 
     if (key === "evidence") return service.addEvidence(storyId,body);
     if (key === "annotations") return service.addAnnotation(storyId,body);
     if (path.length === 3 && path[0] === "deltas" && path[2] === "decision") return service.decideDelta(storyId,path[1],body);
+    if (path.length === 3 && path[0] === "deltas" && path[2] === "validate") return service.validateDelta(storyId,path[1],body);
     if (path.length === 3 && path[0] === "versions" && path[2] === "restore") return service.restoreVersion(storyId,path[1],body);
   }
   throw new DomainError("NOT_FOUND","API operation not found",404);

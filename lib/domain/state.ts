@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validationCheckSchema } from "./validation";
 
 // Formal backend contract. Intentionally independent of lib/mock-story.ts.
 export const idSchema = z.uuid();
@@ -61,7 +62,18 @@ export const deltaInputSchema = z.strictObject({
   resolutionSupport: z.strictObject({ coreQuestion: text, answer: text, evidenceIds: ids.min(1), assessment: z.enum(["direct_answer", "strong_inference"]) }).nullable(),
 });
 export type DeltaInput = z.infer<typeof deltaInputSchema>;
-export const validatorResultSchema = z.strictObject({ status: z.enum(["passed", "failed", "conflict", "needs_review"]), recommendation: z.enum(["AUTO_ACCEPT_ELIGIBLE", "NEEDS_REVIEW", "REJECT", "CONFLICT"]), reason: text, risk: z.enum(["LOW", "MEDIUM", "HIGH", "CONFLICT"]) });
+export const validatorResultSchema = z.strictObject({
+  status: z.enum(["passed", "failed", "conflict", "needs_review"]),
+  recommendation: z.enum(["AUTO_ACCEPT_ELIGIBLE", "NEEDS_REVIEW", "REJECT", "CONFLICT"]),
+  reason: text, risk: z.enum(["LOW", "MEDIUM", "HIGH", "CONFLICT"]),
+  checks: z.array(validationCheckSchema).max(8).optional(),
+  validatorVersion: z.string().max(80).optional(),
+  modelId: z.string().max(200).optional(),
+  evaluatedAt: z.iso.datetime().optional(),
+  evaluatedAgainstVersion: z.number().int().nonnegative().optional(),
+  evaluatedAgainstStoryRevision: z.number().int().nonnegative().optional(),
+  packetHash: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+});
 export type StateDelta = DeltaInput & { id: string; decision: z.infer<typeof decisionSchema>; validatorResult: z.infer<typeof validatorResultSchema> | null; decisions: { decision: z.infer<typeof decisionSchema>; actor: string; reason: string; createdAt: string }[]; committedVersionId: string | null; createdAt: string };
 export type StateVersion = { id: string; versionNumber: number; parentVersionId: string | null; commitKind: "delta_commit" | "restore"; createdAt: string; deltaIds: string[]; snapshot: CanonicalState; restoredFromVersionId: string | null; chapter: number | null; storyRevision: number };
 export const annotationSchema = z.strictObject({ id: idSchema, sourceRevisionId: idSchema, targetType: targetTypeSchema, targetId: idSchema, evidenceIds: ids.min(1), content: text, confidence: z.number().min(0).max(1), basis: basisSchema, scope: z.record(z.string(), z.json()).default({}) });
