@@ -8,7 +8,8 @@
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "test": "node --import tsx --test tests/*.test.ts",
-    "test:backend": "node --import tsx --test tests/backend-foundation.test.ts"
+    "test:backend": "node --import tsx --test tests/backend-foundation.test.ts tests/contract-hardening.test.ts",
+    "test:benchmark": "node --import tsx --test tests/benchmark-pilot-exact.test.ts"
   },
   "dependencies": {
     "next": "^16.1.0",

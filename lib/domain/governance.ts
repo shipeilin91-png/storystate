@@ -3,6 +3,11 @@ import { invariant } from "./errors";
 import { canonicalSchema, targetSchemas, type CanonicalState, type CanonicalRow, type StateDelta, type StoryAggregate, type TargetType } from "./state";
 export const equal = isDeepStrictEqual;
 export const rows = (state: CanonicalState, type: TargetType): CanonicalRow[] => state[type];
+export function assertValidatorAcceptable(result: StateDelta["validatorResult"]) {
+  if (result === null) return;
+  invariant(result.status !== "conflict" && result.recommendation !== "CONFLICT", "UNRESOLVED_CONFLICT", "Resolve conflict with a corrected delta", 409);
+  invariant(result.status !== "failed" && result.recommendation !== "REJECT", "VALIDATOR_REJECTED", "Validator result prohibits canonical admission", 409);
+}
 export function evidenceFor(a: StoryAggregate, ids: string[]) {
   invariant(new Set(ids).size === ids.length, "DUPLICATE_EVIDENCE", "Duplicate evidence reference");
   return ids.map(id => {
@@ -74,8 +79,10 @@ export function validateCanonical(state: CanonicalState) {
   for (const list of Object.values(state)) invariant(new Set(list.map(r => r.id)).size === list.length, "DUPLICATE_ID", "Duplicate canonical identity");
   const has = (type: TargetType, id: string) => rows(state, type).some(r => r.id === id && r.active);
   const unique = (values: string[]) => invariant(new Set(values).size === values.length, "DUPLICATE_STATE", "Duplicate semantic state");
-  for (const item of state.items.filter(r => r.active)) for (const field of [item.owner, item.holder])
-    for (const id of [field.value, field.lastConfirmedValue]) if (id) invariant(has("characters", id), "FOREIGN_REFERENCE", "Owner/holder must reference a character in this story");
+  for (const item of state.items.filter(r => r.active)) for (const field of [item.owner, item.holder, item.custodian]) {
+    if (field === null) continue;
+    for (const id of [field.value, field.lastConfirmedValue]) if (id) invariant(has("characters", id), "FOREIGN_REFERENCE", "Owner/holder/custodian must reference an active character in this story");
+  }
   for (const p of state.propositions.filter(r => r.active)) {
     invariant(p.kind === "reported" ? p.reporterId && p.reportedPropositionId && p.reportedPropositionId !== p.id && has("characters", p.reporterId) && has("propositions", p.reportedPropositionId) : p.reporterId === null && p.reportedPropositionId === null, "INVALID_PROPOSITION", "Reported propositions need an independent claim and reporter");
   }
