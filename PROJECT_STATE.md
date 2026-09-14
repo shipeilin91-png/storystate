@@ -1,10 +1,10 @@
 # StoryState — Project State
 
-- Current Stage: **State Diff Review / Stage 1.3 — completed; frontend product flow frozen**
+- Current Stage: **Backend Foundation / Stage 2.1 — in progress on backend/stage-2-1**. Stage 1.3 frontend product flow completed and frozen.
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
-- 本轮安全基线：`origin/main = 86ff3d3d5233b2fb3c1c944a6f9ac3205e86ff5b`，开始时 fetch 核实无变化。
+- 本轮安全基线：`origin/main = c54adce496851bc30c254201b9a7a5d8d19f5b1d`，开始时 fetch 核实无变化；已有本地 Stage 2.1 checkpoint 已合入该基线。
 - 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
-- 架构：Next.js App Router / React / TypeScript / Tailwind；统一浏览器 localStorage mock，无后端连接。
+- 架构：Next.js App Router / React / TypeScript / Tailwind；冻结的浏览器 localStorage Mock 与独立 TypeScript State Service / Supabase PostgreSQL schema 分离。前端尚未接后端。
 
 ## 已完成
 
@@ -25,9 +25,9 @@
 **Frontend Mock Contract ≠ Backend State Schema**。
 **Frontend Review Contract ≠ Backend State Schema**。
 
-已只读参考本机批准的 State Data Contract v0.2.1、Benchmark Pilot v0.2.2、Validator Rulebook v0.1.1；没有改写源文档。路径及 SHA-256 记录于本轮说明。
+State Data Contract v0.2.1、Benchmark Pilot v0.2.2、Validator Rulebook v0.1.1 已从本机原文复制到 `docs/`，未改写。
 
-Reasoning checks 是预置展示数据，并非真实 Validator。没有新增依赖、API、SQL、Supabase、LLM、Extraction、Context Compiler、RAG、Embedding、MCP、Auth、真实文件解析、Writer 集成或部署。
+Stage 1.3 Reasoning checks 仍是预置展示数据。Stage 2.1 提供独立的 typed backend domain、SQL migration、repository、service、API 与 benchmark contract tests；没有 AI extraction、完整 Runtime Validator、Context Compiler、RAG、Embedding、MCP、Auth、真实文件解析、Writer 集成或部署。
 
 State Explorer 继续使用既有 Evidence Inspector；字段级 expandable provenance 留待后续评审。不实现 Reasoning Graph / graph database / graph library / infinite canvas。
 
@@ -38,4 +38,4 @@ State Explorer 继续使用既有 Evidence Inspector；字段级 expandable prov
 
 ## 后续
 
-Stage 1.3 产品流程已冻结。下一阶段需单独确认范围；目前不继续 Backend / Stage 2.1。
+Stage 1.3 产品流程已冻结。Stage 2.1 Backend Foundation 进行中，详见 `docs/STAGE_2_1_BACKEND_FOUNDATION.md`；AI Extraction、Runtime Validator、RAG、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 继续 planned。此分支不合并 main，等待 Product Owner Review。

@@ -61,3 +61,7 @@ Review 先展示 Category / Field / Before → After / Recommendation / User Dec
 旧故事已提交数据原样保留；旧 USB owner 交接候选获得拒绝 gate，不自动修正历史。Soft / NO_CHANGE 不写入状态，NO_CHANGE-only 不产生版本。`Version.reviewedChanges` 保留本次审核与 correction provenance；History 分开显示 USB owner 和 holder。
 
 Frontend Review Contract ≠ Backend State Schema。无后端、Database、AI、运行时 Validator 或 Graph。产品边界与验收见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。Stage 1.3 已审核通过并合并 main；后续阶段需另行确认。
+
+## Stage 2.1 — Backend Foundation（本分支进行中）
+
+`backend/stage-2-1` 增加独立的 TypeScript typed State Service、Supabase PostgreSQL 迁移及后端 API；现有 Stage 1.3 页面仍读本地 Mock，尚未连接后端。未配置 `STORYSTATE_DATABASE_URL` 时 API 返回 503，前端、构建和测试仍可运行。使用 `npm run test:backend` 验证冻结 Ch13–17 Benchmark、治理流程和 PostgreSQL 迁移。架构、接口、事务与部署边界见 `docs/STAGE_2_1_BACKEND_FOUNDATION.md`。本阶段不实施 AI Extraction、完整 Runtime Validator 或部署，不合并 main。

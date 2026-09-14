@@ -1,7 +1,7 @@
 {
   "project": "StoryState",
-  "stage": "State Diff Review / Stage 1.3",
-  "stageStatus": "completed",
+  "stage": "Backend Foundation / Stage 2.1",
+  "stageStatus": "in_progress",
   "frontendProductFlow": "frozen",
   "features": [
     {
@@ -86,15 +86,15 @@
     },
     {
       "id": "real-commit-rollback",
-      "status": "planned",
-      "description": "持久化事务、真实版本与恢复",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "status": "in_progress",
+      "description": "后端事务、真实版本与恢复；前端仍为 Mock",
+      "verification": "Stage 2.1 后端契约测试，等待 Product Owner Review"
     },
     {
       "id": "backend-storage",
-      "status": "planned",
-      "description": "真实数据库与服务端存储",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "status": "in_progress",
+      "description": "Supabase PostgreSQL 迁移、typed repository/service/API",
+      "verification": "Stage 2.1 SQL / repository 测试，等待 Product Owner Review"
     },
     {
       "id": "auth-collaboration",
@@ -116,9 +116,9 @@
     },
     {
       "id": "database",
-      "status": "planned",
-      "description": "持久化数据库",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "status": "in_progress",
+      "description": "正式 PostgreSQL Schema；未配置 hosted Supabase",
+      "verification": "迁移在本地 PostgreSQL 兼容运行时验证"
     },
     {
       "id": "llm",
@@ -160,6 +160,21 @@
       "id": "reasoning-graph",
       "status": "out_of_scope",
       "description": "不作为主界面，不引入图数据库或无限画布"
+    },
+    {
+      "id": "runtime-validator",
+      "status": "planned",
+      "description": "完整运行时 AI Validator；Stage 2.1 仅保留结构门禁及 recommendation 合同"
+    },
+    {
+      "id": "frontend-backend-integration",
+      "status": "planned",
+      "description": "冻结的 Stage 1.3 前端接入正式 API"
+    },
+    {
+      "id": "writer-connector",
+      "status": "planned",
+      "description": "面向已有 Writer 的连接层"
     }
   ],
   "contract": "Frontend Mock Contract ≠ Backend State Schema; Frontend Review Contract ≠ Backend State Schema"
