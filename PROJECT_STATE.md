@@ -1,6 +1,7 @@
 # StoryState — Project State
 
 - Current Stage: **Backend Foundation / Stage 2.1 — completed on main**. Stage 1.3 frontend product flow completed and frozen.
+- Stage 2.2 Runtime Validator: **implemented on branch / awaiting Product Owner Review** (`validator/stage-2-2-runtime`), base main `2dca51fde053bc066b9ca787772e24c987e3795f`; not merged.
 - Stage 2.1.2 Contract Hardening: **completed / merged main**. Product Owner 与 Codex 独立审核 PASS；已审核分支 `hardening/stage-2-1-2-contract` 提交 `c1c84e8002bd0fecd808b282c483cda54e961384` 从 `753ca6a0cc0f7625898ae8839f8bc461788d502e` 非 squash 合并。
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
@@ -49,4 +50,6 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程已冻结；Stage 2.1 Canonical State Backend Foundation 已完成，详见 `docs/STAGE_2_1_BACKEND_FOUNDATION.md`。AI Extraction、Runtime Validator、RAG、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 继续 planned；没有启动 Stage 2.2。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 分支已实现 Runtime Validator V0.1：复用治理逻辑的 deterministic gate、有界结构检索、Evidence / Knowledge Boundary / Temporal 三个 specialist、确定性聚合、结果持久化与最小 validate API。只写 validatorResult，recommendation 不代替 human decision。未实现 AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment。
+
+Stage 2.2 验证：install/build/lint PASS；全量 149/149、backend 62/62、原 exact benchmark 11/11、runtime validator 51/51，Stage 1.3 自动回归 25/25；PGlite 实际执行迁移并回读 checks/audit。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10，真实模型准确率未测量。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。本阶段等待 Product Owner Review，不自行 merge 或启动下一阶段。

@@ -1,7 +1,7 @@
 {
   "project": "StoryState",
-  "stage": "Backend Foundation / Stage 2.1",
-  "stageStatus": "completed",
+  "stage": "Runtime Validator / Stage 2.2",
+  "stageStatus": "implemented on branch / awaiting review",
   "frontendProductFlow": "frozen",
   "canonicalStateBackendFoundation": "completed",
   "contractHardening": {
@@ -177,8 +177,12 @@
     },
     {
       "id": "runtime-validator",
-      "status": "planned",
-      "description": "完整运行时 AI Validator；Stage 2.1 仅保留结构门禁及 recommendation 合同"
+      "status": "implemented on branch / awaiting review",
+      "description": "Runtime Validator V0.1；deterministic gate、bounded context、三个 semantic specialist、确定性聚合；不自动 Decision/Commit",
+      "branch": "validator/stage-2-2-runtime",
+      "verification": "runtime 51/51; full 149/149; backend 62/62; exact contract 11/11; PGlite checks/audit round-trip PASS",
+      "modelEvaluation": "deterministic fake only; live semantic accuracy not measured",
+      "confidence": "NOT IMPLEMENTED"
     },
     {
       "id": "frontend-backend-integration",
