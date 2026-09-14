@@ -1,6 +1,7 @@
 # StoryState — Project State
 
 - Current Stage: **Backend Foundation / Stage 2.1 — completed on main**. Stage 1.3 frontend product flow completed and frozen.
+- Stage 2.1.2 Contract Hardening: **implemented on local branch / awaiting review** (`hardening/stage-2-1-2-contract`), based on `753ca6a0cc0f7625898ae8839f8bc461788d502e`. Not merged; remote integration is assigned to Codex.
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
 - 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
@@ -36,6 +37,15 @@ State Explorer 继续使用既有 Evidence Inspector；字段级 expandable prov
 验证命令：`npm install`、`npm run build`、`npm run lint`、`npm test`。
 浏览器验收覆盖 Library → Workspace → Review → Accept/Reject → Commit → State → History → Restore、Setup、默认折叠/独立展开/键盘、刷新持久化及 Ch16/17。最终结果见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。
 Stage 2.1 合并后全量测试 39/39，后端测试 14/14（含 PGlite 从空库执行迁移）；Hosted Supabase 未配置，前端仍独立使用 Mock。
+
+Stage 2.1.2 本地验证：`npm install`、build、lint 均通过；全量 98/98，backend 62/62（原有 selected 14 + hardening 48），独立 exact benchmark 11/11；原有 Stage 1.3 自动回归 25/25。PGlite 实际执行迁移；三份 Frozen Docs 未修改。测试数量含 Node parent/subtests。详见 `docs/STAGE_2_1_2_CONTRACT_HARDENING.md`。
+
+## Stage 2.1.2 本地实现
+
+- Validator Result Admission Gate：decision-time 与 commit-time 共用规则；failed/conflict 或 REJECT/CONFLICT 不能 accepted/commit，null 保持原行为，recommendation 不代替 human decision。
+- Custodian：与 owner/holder 同样检查 value / lastConfirmedValue 的 same-story active Character 引用；null 合法；Memory / PostgreSQL 行为一致。
+- Exact Frozen Benchmark：独立连续 Ch13–17 Event/Effect/Delta 测试及关键 SHOULD NOT COMMIT 负例；保留原 selected backend tests。Exact Benchmark Contract Test 不等于 AI Extraction Evaluation。
+- 本轮仅本地 commit，未 fetch/pull/push；`REMOTE_BLOCKED by Trae sandbox credential access`。等待 Product Owner 与 Codex 独立审核。
 
 ## 后续
 

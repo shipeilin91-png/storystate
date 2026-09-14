@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { invariant } from "../domain/errors";
-import { applyDelta, equal, evidenceFor, rows, validateCanonical, validateDelta } from "../domain/governance";
+import { applyDelta, assertValidatorAcceptable, equal, evidenceFor, rows, validateCanonical, validateDelta } from "../domain/governance";
 import { annotationSchema, commitInputSchema, decisionInputSchema, deltaInputSchema, emptyState, eventInputSchema, evidenceSchema, idSchema, restoreInputSchema, sourceDocumentSchema, sourceRevisionSchema, targetTypeSchema, validatorInputSchema, type StateDelta, type StoryAggregate, type StateVersion } from "../domain/state";
 import type { StateRepository } from "../repositories/state-repository";
 const now = () => new Date().toISOString();
@@ -66,7 +66,7 @@ export class StateService {
       const d = a.deltas.find(d=>d.id===deltaId);
       invariant(d, "NOT_FOUND", "Delta not found", 404);
       invariant(!d.committedVersionId, "ALREADY_COMMITTED", "Committed delta is immutable", 409);
-      invariant(decision.decision !== "accepted" || d.validatorResult?.status !== "conflict", "UNRESOLVED_CONFLICT", "Resolve conflict with a corrected delta", 409);
+      if (decision.decision === "accepted") assertValidatorAcceptable(d.validatorResult);
       d.decision = decision.decision; d.decisions.push({ ...decision, createdAt: now() }); return d;
     });
   }
@@ -123,7 +123,7 @@ export class StateService {
     invariant(deltas.length > 0 && deltas.some(d=>d.operation !== "NO_CHANGE"), "NO_STATE_CHANGE", "At least one real canonical mutation is required", 409);
     for (const d of deltas) {
       invariant(d.decision === "accepted" && !d.committedVersionId, "NOT_ACCEPTED", "Only uncommitted accepted deltas can commit", 409);
-      invariant(d.validatorResult?.status !== "conflict", "UNRESOLVED_CONFLICT", "Conflict needs a corrected delta", 409);
+      assertValidatorAcceptable(d.validatorResult);
     }
     // Validate all initial before values, then also check sequential overlap during apply.
     for (const d of deltas) {
