@@ -35,3 +35,9 @@ Real commit creates the next integer State Version; it does not derive version f
 `POST /api/stories` creates a story. Story-scoped GET routes: `state`, `events`, `deltas`, `versions`, `annotations`. POST routes: `source-documents`, `source-revisions`, `evidence`, `events`, `deltas`, `deltas/{id}/decision`, `commit`, `versions/{id}/restore`, `annotations`. Bodies are strict Zod-validated; error responses carry structured codes and appropriate HTTP status. No frontend page consumes these routes in Stage 2.1. Authentication and deployment are planned; do not expose these write routes publicly without an access-control stage.
 
 `npm run test:backend` exercises Ch13–17, governance, typed persistence, SQL migration, constraints, transaction behavior, provenance and API dispatch with PGlite running PostgreSQL SQL locally. The migration is also suitable for Supabase PostgreSQL; no Supabase credentials are required. A real hosted Supabase migration run is deferred until an environment is provisioned.
+
+## Stage 2.1.1 contract corrections
+
+- A source revision increments Story Revision without incrementing State Version. Its document chapter may advance `currentChapter` but can never rewind it; only an explicit governed Restore can set `currentChapter` back to the selected historical snapshot chapter.
+- `Item.condition` remains a typed, trimmed, non-empty narrative state string (at most 120 characters), rather than a USB-specific enum. The existing benchmark conditions and generic states such as `sealed → opened` are valid; `Unknown` and `unresolved` remain epistemic labels, not conditions.
+- `Item.custodian` is an optional epistemic slot independent of owner and holder. Absent custodian is `null`; when supplied it has `value`, `status`, and `lastConfirmedValue`. PostgreSQL stores these in separate nullable typed columns, and version snapshots and repository reads preserve the distinction.

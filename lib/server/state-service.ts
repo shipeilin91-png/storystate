@@ -28,7 +28,9 @@ export class StateService {
       invariant(!a.revisions.some(r=>r.id===revision.id || (r.documentId===revision.documentId && r.revisionNumber===revision.revisionNumber)), "DUPLICATE_REVISION", "Revision already exists", 409);
       for (const annotation of a.annotations) if (a.revisions.some(r=>r.id===annotation.sourceRevisionId && r.documentId===revision.documentId) && !annotation.invalidatedAt) annotation.invalidatedAt = now();
       a.revisions.push(revision); a.story.storyRevision += 1;
-      a.story.currentChapter = a.documents.find(d=>d.id===revision.documentId)?.chapter ?? a.story.currentChapter;
+      const sourceChapter = a.documents.find(d=>d.id===revision.documentId)?.chapter;
+      if (sourceChapter !== null && sourceChapter !== undefined)
+        a.story.currentChapter = Math.max(a.story.currentChapter ?? sourceChapter, sourceChapter);
       return revision;
     });
   }

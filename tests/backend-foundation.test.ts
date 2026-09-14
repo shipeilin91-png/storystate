@@ -87,6 +87,50 @@ test("Ch14: unresolved location preserves last confirmed Hospital; no sentinel d
   await assert.rejects(service.proposeDelta(storyId,proposal("characters",CHEN,"UPDATE",epistemic(null,"Hospital"),epistemic("Unknown"),"location")));
 });
 
+test("old source revision increments Story Revision without rewinding Chapter or changing State; explicit restore still restores chapter",async()=>{
+  const {service,storyId}=await setup(); await seed(service,storyId);
+  const historical=(await service.getVersions(storyId))[0];
+  await service.addSourceDocument(storyId,{id:id(403),title:"Chapter 5",sourceOrder:5,chapter:5});
+  await service.addSourceRevision(storyId,{id:id(405),documentId:id(403),revisionNumber:1,content:"Original Ch5",visibility:"canonical"});
+  await service.addSourceDocument(storyId,{id:id(401),title:"Chapter 17",sourceOrder:17,chapter:17});
+  await service.addSourceRevision(storyId,{id:id(402),documentId:id(401),revisionNumber:1,content:"Ch17 source",visibility:"canonical"});
+  const before=await service.getCurrentState(storyId);
+  assert.equal(before.story.currentChapter,17);
+  assert.equal(before.story.storyRevision,3);
+  await service.addSourceRevision(storyId,{id:id(404),documentId:id(403),revisionNumber:2,content:"Revised Ch5",visibility:"canonical"});
+  const after=await service.getCurrentState(storyId);
+  assert.equal(after.story.storyRevision,4);
+  assert.equal(after.story.currentChapter,17);
+  assert.equal(after.story.currentVersion,1);
+  assert.deepEqual(after.state,before.state);
+  const d=await add(service,storyId,proposal("items",USB,"UPDATE",before.state.items[0].holder,epistemic(LIN),"holder"));
+  const v17=await commit(service,storyId,[d],1);
+  assert.equal(v17.chapter,17);
+  const restored=await service.restoreVersion(storyId,historical.id,{expectedVersion:2,actor:"human",reason:"Restore snapshot"});
+  assert.equal(restored.versionNumber,3);
+  assert.equal(restored.chapter,13);
+  assert.equal((await service.getCurrentState(storyId)).story.currentChapter,13);
+  assert.equal((await service.getCurrentState(storyId)).story.storyRevision,4);
+});
+
+test("generic Item condition and independent optional custodian use governed typed Deltas",async()=>{
+  const {service,storyId}=await setup(); await seed(service,storyId);
+  assert.equal((await state(service)).items[0].custodian,null);
+  const newItem={...item(FRAGMENT,"sealed fragment",CHEN,LIN),custodian:epistemic(GU),condition:"sealed"};
+  const created=await add(service,storyId,proposal("items",FRAGMENT,"CREATE",null,newItem));
+  await commit(service,storyId,[created],1);
+  const old=(await state(service)).items.find(i=>i.id===FRAGMENT)!;
+  assert.equal(old.owner.value,CHEN); assert.equal(old.holder.value,LIN); assert.equal(old.custodian?.value,GU);
+  const changes=[await add(service,storyId,proposal("items",FRAGMENT,"UPDATE",old.condition,"opened","condition")),await add(service,storyId,proposal("items",FRAGMENT,"UPDATE",old.custodian,epistemic(null,GU),"custodian"))];
+  await commit(service,storyId,changes,2);
+  const result=(await state(service)).items.find(i=>i.id===FRAGMENT)!;
+  assert.equal(result.condition,"opened");
+  assert.deepEqual(result.custodian,{value:null,status:"unresolved",lastConfirmedValue:GU});
+  assert.equal(result.owner.value,CHEN); assert.equal(result.holder.value,LIN);
+  await assert.rejects(service.proposeDelta(storyId,proposal("items",FRAGMENT,"UPDATE",result.custodian,epistemic("Unknown"),"custodian")),/Epistemic/);
+  await assert.rejects(service.proposeDelta(storyId,proposal("items",FRAGMENT,"UPDATE",result.condition,"   ","condition")));
+});
+
 test("Ch15: belief differs from World Truth, reported proposition R and fragment CREATE",async()=>{
   const {service,storyId}=await setup(); await seed(service,storyId);
   await assert.rejects(service.proposeDelta(storyId,proposal("items",FRAGMENT,"UPDATE",null,item(FRAGMENT,"fragment",null,LIN))));
@@ -240,6 +284,7 @@ test("migration and production repository: typed rows, transaction rollback, FK 
     const {service,storyId}=await setup(repository);
     await seed(service,storyId);
     assert.equal((await state(service)).items[0].owner.value,CHEN);
+    assert.equal((await state(service)).items[0].custodian,null);
     const s=await state(service),old=s.items[0];
     const event=await service.appendEvent(storyId,{sourceRevisionId:id(102),sourceOrder:13,storyTime:null,eventType:"handoff",summary:"Event only",payload:{who:"Lin"},participantIds:[LIN],evidenceIds:[id(103)]});
     assert.equal((await service.getCurrentState(storyId)).story.currentVersion,1);
@@ -257,11 +302,23 @@ test("migration and production repository: typed rows, transaction rollback, FK 
     await assert.rejects(db.query("update state_deltas set reason='tampered' where story_id=$1 and id=$2",[storyId,d.id]),/provenance is immutable/);
     await assert.rejects(db.query("delete from event_evidence where story_id=$1 and event_id=$2",[storyId,event.id]),/append-only/);
     await assert.rejects(db.query("insert into items(story_id,id,name,owner_status,holder_status,condition) values ($1,$2,'bad','invalid','unresolved','encrypted')",[storyId,id(500)]),/check constraint/);
+    await assert.rejects(db.query("insert into items(story_id,id,name,owner_status,holder_status,custodian_value,condition) values ($1,$2,'bad','unresolved','unresolved',$3,'sealed')",[storyId,id(501),GU]),/check constraint/);
+    const itemWithCustodian={...item(FRAGMENT,"generic item",CHEN,LIN),custodian:epistemic(GU),condition:"locked"};
+    const creation=await add(service,storyId,proposal("items",FRAGMENT,"CREATE",null,itemWithCustodian));
+    await commit(service,storyId,[creation],2);
+    const roundTrip=(await state(service)).items.find(i=>i.id===FRAGMENT)!;
+    assert.equal(roundTrip.owner.value,CHEN); assert.equal(roundTrip.holder.value,LIN); assert.equal(roundTrip.custodian?.value,GU);
+    const changedCustodian=await add(service,storyId,proposal("items",FRAGMENT,"UPDATE",roundTrip.custodian,epistemic(null,GU),"custodian"));
+    await commit(service,storyId,[changedCustodian],3);
+    const persisted=(await state(service)).items.find(i=>i.id===FRAGMENT)!;
+    assert.deepEqual(persisted.custodian,epistemic(null,GU));
+    assert.equal(persisted.owner.value,CHEN); assert.equal(persisted.holder.value,LIN);
+    assert.deepEqual((await service.getVersions(storyId)).at(-1)?.snapshot.items.find(i=>i.id===FRAGMENT)?.custodian,epistemic(null,GU));
     const other=await setup(repository,id(900));
     await assert.rejects(db.query("insert into event_evidence(story_id,event_id,evidence_id) values ($1,$2,$3)",[other.storyId,event.id,id(103)]),/foreign key/);
     const response=await respond(()=>storyRequest(service,"GET",storyId,["state"]));
     assert.equal(response.status,200);
-    assert.equal((await response.json()).story.currentVersion,2);
+    assert.equal((await response.json()).story.currentVersion,4);
     const invalid=await respond(()=>storyRequest(service,"POST",storyId,["deltas"],new Request("http://localhost/api",{method:"POST",body:"{}"})));
     assert.equal(invalid.status,400);
   } finally {await db.close();}

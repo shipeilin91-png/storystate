@@ -43,14 +43,24 @@ create table items (
   story_id uuid not null references stories(id), id uuid not null, name text not null,
   owner_value uuid, owner_status text not null check (owner_status in ('resolved','unresolved')),
   owner_last_confirmed uuid, holder_value uuid, holder_status text not null check (holder_status in ('resolved','unresolved')),
-  holder_last_confirmed uuid, condition text not null check (condition in ('intact','encrypted','index_unlocked','decrypted','damaged','destroyed')),
+  holder_last_confirmed uuid,
+  custodian_value uuid, custodian_status text check (custodian_status in ('resolved','unresolved')),
+  custodian_last_confirmed uuid,
+  condition text not null check (length(condition) between 1 and 120 and condition = btrim(condition) and lower(condition) not in ('unknown','unresolved')),
   active boolean not null default true, updated_at timestamptz not null default now(), primary key (story_id,id),
   foreign key (story_id,owner_value) references characters(story_id,id),
   foreign key (story_id,owner_last_confirmed) references characters(story_id,id),
   foreign key (story_id,holder_value) references characters(story_id,id),
   foreign key (story_id,holder_last_confirmed) references characters(story_id,id),
+  foreign key (story_id,custodian_value) references characters(story_id,id),
+  foreign key (story_id,custodian_last_confirmed) references characters(story_id,id),
   check ((owner_status = 'resolved' and owner_value is not null and owner_value = owner_last_confirmed) or (owner_status = 'unresolved' and owner_value is null)),
-  check ((holder_status = 'resolved' and holder_value is not null and holder_value = holder_last_confirmed) or (holder_status = 'unresolved' and holder_value is null))
+  check ((holder_status = 'resolved' and holder_value is not null and holder_value = holder_last_confirmed) or (holder_status = 'unresolved' and holder_value is null)),
+  check (case
+    when custodian_status is null then custodian_value is null and custodian_last_confirmed is null
+    when custodian_status = 'resolved' then custodian_value is not null and custodian_last_confirmed is not null and custodian_value = custodian_last_confirmed
+    when custodian_status = 'unresolved' then custodian_value is null
+    else false end)
 );
 create table plot_threads (
   story_id uuid not null references stories(id), id uuid not null, title text not null, core_question text not null,

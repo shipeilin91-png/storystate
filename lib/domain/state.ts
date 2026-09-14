@@ -21,7 +21,8 @@ export const epistemicSchema = z.strictObject({
 });
 const row = { id: idSchema, active: z.boolean() };
 export const characterSchema = z.strictObject({ ...row, name: text, role: text, location: epistemicSchema });
-export const itemSchema = z.strictObject({ ...row, name: text, owner: epistemicSchema, holder: epistemicSchema, condition: z.enum(["intact", "encrypted", "index_unlocked", "decrypted", "damaged", "destroyed"]) });
+const itemConditionSchema = z.string().trim().min(1).max(120).refine(v => !/^(unknown|unresolved)$/i.test(v), "Epistemic status is not an item condition");
+export const itemSchema = z.strictObject({ ...row, name: text, owner: epistemicSchema, holder: epistemicSchema, custodian: epistemicSchema.nullable().default(null), condition: itemConditionSchema });
 export const plotThreadSchema = z.strictObject({ ...row, title: text, coreQuestion: text, status: z.enum(["open", "progressing", "resolved"]), resolution: text.nullable() });
 export const propositionSchema = z.strictObject({ ...row, statement: text, kind: z.enum(["assertion", "reported"]), reportedPropositionId: idSchema.nullable(), reporterId: idSchema.nullable() });
 export const worldTruthSchema = z.strictObject({ ...row, propositionId: idSchema, status: z.enum(["confirmed_true", "confirmed_false", "unresolved"]) });
