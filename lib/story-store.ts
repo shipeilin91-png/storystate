@@ -1,4 +1,9 @@
-import { type Entity, type Story, type Version } from "./mock-story";
+import {
+  fixtureDeltas,
+  type Entity,
+  type Story,
+  type Version,
+} from "./mock-story";
 
 export function updateStoryInCollection(
   stories: Story[],
@@ -34,6 +39,41 @@ function entities(value: unknown): value is Entity[] {
     )
   );
 }
+function reviewMetadata(d: Record<string, unknown>): boolean {
+  if (
+    d.additionalFields !== undefined &&
+    (!Array.isArray(d.additionalFields) ||
+      !d.additionalFields.every(
+        (f) =>
+          object(f) &&
+          ["field", "before", "after"].every((k) => typeof f[k] === "string"),
+      ))
+  )
+    return false;
+  if (d.review === undefined) return true;
+  const r = d.review;
+  return (
+    object(r) &&
+    ["canonical", "soft", "no_change"].includes(r.kind as string) &&
+    counter(r.chapter) &&
+    ["AUTO_ACCEPT_ELIGIBLE", "NEEDS_REVIEW", "REJECT", "CONFLICT"].includes(
+      r.recommendation as string,
+    ) &&
+    ["LOW", "MEDIUM", "HIGH", "CONFLICT"].includes(r.risk as string) &&
+    typeof r.why === "string" &&
+    typeof r.reason === "string" &&
+    ["context", "rule", "beforeLabel", "afterLabel", "transition"].every(
+      (k) => r[k] === undefined || typeof r[k] === "string",
+    ) &&
+    Array.isArray(r.checks) &&
+    r.checks.every(
+      (c) =>
+        object(c) &&
+        typeof c.label === "string" &&
+        typeof c.passed === "boolean",
+    )
+  );
+}
 function isStoredStory(value: unknown): value is LegacyStory {
   if (!object(value)) return false;
   return (
@@ -44,12 +84,18 @@ function isStoredStory(value: unknown): value is LegacyStory {
     counter(value.chapter) &&
     strings(value.imports) &&
     entities(value.entities) &&
+    (value.reviewSource === undefined ||
+      (object(value.reviewSource) &&
+        counter(value.reviewSource.chapter) &&
+        typeof value.reviewSource.title === "string" &&
+        typeof value.reviewSource.output === "string")) &&
     (value.currentStateVersion === undefined ||
       counter(value.currentStateVersion)) &&
     Array.isArray(value.deltas) &&
     value.deltas.every(
       (d) =>
         object(d) &&
+        reviewMetadata(d) &&
         [
           "id",
           "entityId",
@@ -105,8 +151,26 @@ export function restoreStoredStories(value: unknown): Story[] | null {
       };
     });
     const versions = chronological.reverse();
+    // Preserve historical state and user edits. Legacy ownership candidates receive
+    // the corrected review gate, never a silent rewrite of committed ownership.
+    const deltas = story.deltas.map((d) => {
+      if (
+        !d.review &&
+        d.entityId === "usb" &&
+        d.field === "owner" &&
+        d.evidence.includes("放进她手里")
+      )
+        return {
+          ...d,
+          review: structuredClone(
+            fixtureDeltas.find((f) => f.id === "d5-owner")!.review,
+          ),
+        };
+      return d;
+    });
     return {
       ...story,
+      deltas,
       versions,
       currentStateVersion: versions[0]?.stateVersion ?? 0,
     };

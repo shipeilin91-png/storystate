@@ -1,6 +1,6 @@
 {
   "project": "StoryState",
-  "stage": "Frontend Product Flow / Stage 1.2",
+  "stage": "State Diff Review / Stage 1.3",
   "features": [
     {
       "id": "library",
@@ -35,21 +35,21 @@
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/review",
-      "verification": "Workspace run 节点；未解决冲突阻止 Commit；仅 accepted Delta 写入 State"
+      "verification": "Before → After 分组行；原生 details 默认折叠、独立展开 Evidence / checks / recommendation；系统推荐与用户 Decision 分列；Soft / NO_CHANGE / Reject gate；Ch13/16/17 独立示例"
     },
     {
       "id": "history",
       "status": "completed",
       "scope": "frontend mock only",
       "route": "/stories/[storyId]/history",
-      "verification": "独立 State Version；Commit/Restore 均 +1；Restore 使用历史 Chapter/snapshot 并保留历史和来源版本"
+      "verification": "独立 State Version +1；Restore 保留历史；owner 与 holder 分开显示；版本保存 reviewedChanges 与 correction provenance"
     },
     {
       "id": "shared-state",
       "status": "completed",
       "scope": "frontend mock only",
       "route": null,
-      "verification": "故事数据隔离；刷新持久化；Stage 1.1 缓存兼容迁移保留历史"
+      "verification": "旧缓存快照、历史和决定保留；旧 owner 候选追加拒绝 gate；示例仅补充缺失故事，不覆盖用户数据"
     },
     {
       "id": "shell",
@@ -62,49 +62,49 @@
       "id": "real-import",
       "status": "planned",
       "description": "文件上传与真实解析",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "state-extraction",
       "status": "planned",
       "description": "从正文抽取状态变化",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "context-compiler",
       "status": "planned",
       "description": "真实相关性选择及知识边界编译",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "writer-integration",
       "status": "planned",
       "description": "增强已有 Writer 的上下文接口",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "real-commit-rollback",
       "status": "planned",
       "description": "持久化事务、真实版本与恢复",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "backend-storage",
       "status": "planned",
       "description": "真实数据库与服务端存储",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "auth-collaboration",
       "status": "planned",
       "description": "身份与协作",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "production-deployment",
       "status": "planned",
       "description": "独立生产环境部署",
-      "verification": "需下一阶段单独确认验收标准"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "component-refactor",
@@ -116,32 +116,49 @@
       "id": "database",
       "status": "planned",
       "description": "持久化数据库",
-      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "llm",
       "status": "planned",
       "description": "真实 LLM 调用",
-      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "rag",
       "status": "planned",
       "description": "检索增强生成",
-      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "embedding",
       "status": "planned",
       "description": "向量化",
-      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+      "verification": "仍 planned；不属于 Stage 1.3"
     },
     {
       "id": "mcp",
       "status": "planned",
       "description": "MCP 接口",
-      "verification": "不属于 Stage 1.2；下一阶段需单独确认"
+      "verification": "仍 planned；不属于 Stage 1.3"
+    },
+    {
+      "id": "expandable-reasoning",
+      "status": "completed",
+      "scope": "frontend review fixture only",
+      "verification": "每条独立 details/summary，可鼠标和键盘展开；不引入 Graph 或运行时 Validator"
+    },
+    {
+      "id": "state-provenance-disclosure",
+      "status": "planned",
+      "description": "State Explorer 字段级可展开 provenance；本轮保留现有 Evidence Inspector",
+      "verification": "后续单独评审"
+    },
+    {
+      "id": "reasoning-graph",
+      "status": "out_of_scope",
+      "description": "不作为主界面，不引入图数据库或无限画布"
     }
   ],
-  "contract": "Frontend Mock Contract ≠ Backend State Schema"
+  "contract": "Frontend Mock Contract ≠ Backend State Schema; Frontend Review Contract ≠ Backend State Schema"
 }

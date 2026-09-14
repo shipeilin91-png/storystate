@@ -11,6 +11,7 @@ import {
   restoreStoredStories,
   updateStoryInCollection,
 } from "@/lib/story-store";
+import { withReviewExamples } from "@/lib/review-fixtures";
 const KEY = "storystate.foundation.v1";
 type Store = { stories: Story[]; ready: boolean; storageWarning: boolean };
 type Action =
@@ -53,7 +54,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
     } catch {
       /* A corrupt or inaccessible cache falls back to fixtures. */
     }
-    dispatch({ type: "hydrate", stories });
+    dispatch({ type: "hydrate", stories: withReviewExamples(stories) });
   }, []);
   useEffect(() => {
     if (state.ready) {

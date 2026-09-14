@@ -7,9 +7,39 @@ import {
   type Story,
   type Delta,
 } from "@/lib/mock-story";
+import { reasoningFor, reviewKind } from "@/lib/review-contract";
+import { reviewExamples } from "@/lib/review-fixtures";
 import type { Update } from "./types";
-import { Empty, Icon, PageIntro, StatusPill } from "../product-ui";
+import { Empty, Icon, PageIntro } from "../product-ui";
 import { StoryMeta } from "./story-meta";
+import { StateDiffRow } from "./state-diff-row";
+const filters = [
+  "All",
+  "Recommended",
+  "Needs Review",
+  "Rejected",
+  "Soft",
+  "Conflict",
+] as const;
+type Filter = (typeof filters)[number];
+export function matchesReviewFilter(story: Story, d: Delta, filter: Filter) {
+  const detail = reasoningFor(story, d);
+  if (filter === "All") return true;
+  if (filter === "Soft") return reviewKind(d) === "soft";
+  if (reviewKind(d) !== "canonical") return false;
+  if (filter === "Rejected")
+    return d.decision === "rejected" || detail.recommendation === "REJECT";
+  return (
+    detail.recommendation ===
+    (
+      {
+        Recommended: "AUTO_ACCEPT_ELIGIBLE",
+        "Needs Review": "NEEDS_REVIEW",
+        Conflict: "CONFLICT",
+      } as const
+    )[filter]
+  );
+}
 export function DeltaReview({
   story,
   update,
@@ -17,30 +47,43 @@ export function DeltaReview({
   story: Story;
   update: Update;
 }) {
-  const [editing, setEditing] = useState<string | null>(null);
-  const [value, setValue] = useState("");
-  const [note, setNote] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState<Filter>("All");
   const [message, setMessage] = useState("");
   const decision = (id: string, next: Delta["decision"]) =>
     update((s) => ({
       ...s,
       deltas: s.deltas.map((d) => (d.id === id ? { ...d, decision: next } : d)),
     }));
-  const pending = story.deltas.filter((d) => d.decision === "pending").length;
-  const filtered = story.deltas.filter(
-    (d) =>
-      filter === "all" ||
-      (filter === "pending" ? d.decision === "pending" : d.risk !== "normal"),
+  const canonical = story.deltas.filter((d) => reviewKind(d) === "canonical");
+  const pending = canonical.filter((d) => d.decision === "pending").length;
+  const filtered = story.deltas.filter((d) =>
+    matchesReviewFilter(story, d, filter),
   );
+  const groups =
+    (story.reviewSource?.chapter ?? 13) === 13
+      ? ["Items", "Characters", "Plot Threads", "Knowledge", "Relationships"]
+      : ["Knowledge", "Relationships", "Items", "Characters", "Plot Threads"];
   return (
-    <>
+    <div className="state-diff-review">
       <PageIntro
-        eyebrow="DELTA REVIEW"
-        title="Proposed State Changes"
-        description="Writer Output ≠ Current State。逐项检查 Evidence、Reason 与 Risk，再决定是否写入 Canonical State。"
+        eyebrow="STATE DIFF REVIEW"
+        title="本轮状态变化"
+        description="先看 Before → After，再按需展开证据与判断。系统推荐不是你的决定；Commit 后才更新 Current State。"
       />
       <StoryMeta story={story} />
+      <div className="review-examples" aria-label="独立审核示例">
+        <span>审核示例</span>
+        {reviewExamples.map((e) => (
+          <Link
+            key={e.id}
+            href={`/stories/${e.id}/review`}
+            aria-current={story.id === e.id ? "page" : undefined}
+          >
+            {e.label}
+          </Link>
+        ))}
+        <small>独立故事 · 精选变化</small>
+      </div>
       {message && (
         <p className="notice" role="status">
           {message}
@@ -48,13 +91,13 @@ export function DeltaReview({
       )}
       {!story.deltas.length ? (
         <Empty title="没有待审核的变更">
-          <p>当前没有 Proposed Delta。返回 Workspace 查看当前 State 与任务。</p>
+          <p>当前变化已处理或恢复已清空候选。审核记录保留在版本快照中。</p>
           <div className="actions">
             <Link
               className="button primary"
-              href={`/stories/${story.id}/workspace`}
+              href={`/stories/${story.id}/state`}
             >
-              Back to Workspace
+              查看 Current State
             </Link>
             <Link
               className="button secondary"
@@ -62,252 +105,116 @@ export function DeltaReview({
             >
               查看 Version History
             </Link>
+            <Link
+              className="button secondary"
+              href={`/stories/${story.id}/workspace`}
+            >
+              Back to Workspace
+            </Link>
           </div>
         </Empty>
       ) : (
         <>
-          <div className="review-summary">
-            <div>
-              <strong>{story.deltas.length.toString().padStart(2, "0")}</strong>
-              <span>提出的变化</span>
-            </div>
-            <div>
-              <strong>{pending.toString().padStart(2, "0")}</strong>
-              <span>等待决定</span>
-            </div>
-            <div>
-              <strong className="amber">
-                {story.deltas
-                  .filter((d) => d.risk === "high")
-                  .length.toString()
-                  .padStart(2, "0")}
-              </strong>
-              <span>高风险变化</span>
-            </div>
-            <div>
-              <strong className="red">
-                {story.deltas
-                  .filter(
-                    (d) =>
-                      d.risk === "conflict" &&
-                      !d.resolved &&
-                      d.decision !== "rejected",
-                  )
-                  .length.toString()
-                  .padStart(2, "0")}
-              </strong>
-              <span>未解决冲突</span>
-            </div>
-            <span className="push-right text-muted">
-              来源：第 13 章固定输出示例
-            </span>
-          </div>
-          <div className="toolbar">
-            <div className="tabs">
-              {[
-                ["all", "全部变化"],
-                ["pending", "待处理"],
-                ["risk", "高风险与冲突"],
-              ].map(([id, label]) => (
+          <p className="review-run-summary">
+            Chapter {story.reviewSource?.chapter ?? 13} · {canonical.length}{" "}
+            Canonical 候选 · {pending} 等待决定 · 固定示例检查
+          </p>
+          <div className="toolbar review-filters">
+            <div className="tabs" aria-label="筛选状态变化">
+              {filters.map((f) => (
                 <button
-                  key={id}
-                  aria-pressed={filter === id}
-                  className={filter === id ? "active" : ""}
-                  onClick={() => setFilter(id)}
+                  key={f}
+                  className={filter === f ? "active" : ""}
+                  aria-pressed={filter === f}
+                  onClick={() => setFilter(f)}
                 >
-                  {label}
+                  {f}{" "}
+                  <span>
+                    {
+                      story.deltas.filter((d) =>
+                        matchesReviewFilter(story, d, f),
+                      ).length
+                    }
+                  </span>
                 </button>
               ))}
             </div>
-            <span className="text-muted">Accept / Edit / Reject</span>
           </div>
-          <div className="delta-list">
-            {filtered.map((d, i) => (
-              <article
-                key={d.id}
-                className={`delta-row ${d.risk} ${d.decision}`}
-              >
-                <div className="delta-number">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div className="delta-body">
-                  <header>
-                    <h2>
-                      {story.entities.find((e) => e.id === d.entityId)?.name}
-                      <span>/ {d.field}</span>
-                    </h2>
-                    <StatusPill
-                      tone={
-                        d.risk === "conflict"
-                          ? "bad"
-                          : d.risk === "high"
-                            ? "warn"
-                            : "neutral"
-                      }
-                    >
-                      {d.risk === "conflict"
-                        ? d.resolved
-                          ? "Conflict · 已修订"
-                          : "Conflict · 知识边界"
-                        : d.risk === "high"
-                          ? "高风险 · 关键道具"
-                          : "普通变化"}
-                    </StatusPill>
-                    <StatusPill
-                      tone={
-                        d.decision === "accepted"
-                          ? "good"
-                          : d.decision === "rejected"
-                            ? "bad"
-                            : "neutral"
-                      }
-                    >
-                      {d.decision === "accepted"
-                        ? "已接受"
-                        : d.decision === "rejected"
-                          ? "已拒绝"
-                          : "待审核"}
-                    </StatusPill>
-                  </header>
-                  <div className="delta-values">
-                    <span className="before">{d.before}</span>
-                    <Icon name="arrow" size={17} />
-                    <span className="after">{d.after}</span>
-                  </div>
-                  <p>{d.reason}</p>
-                  <blockquote>
-                    <span>证据 · CH.13</span>“{d.evidence}”
-                  </blockquote>
-                  {d.note && <p className="teal">修订说明：{d.note}</p>}
-                  {editing === d.id && (
-                    <form
-                      className="delta-editor"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (
-                          !value.trim() ||
-                          (d.risk === "conflict" && !note.trim())
-                        )
-                          return;
-                        update((s) => ({
-                          ...s,
-                          deltas: s.deltas.map((item) =>
-                            item.id === d.id
-                              ? {
-                                  ...item,
-                                  after: value.trim(),
-                                  note: note.trim(),
-                                  resolved: true,
-                                  decision: "pending",
-                                }
-                              : item,
-                          ),
-                        }));
-                        setEditing(null);
-                      }}
-                    >
-                      <label>
-                        修订后的值
-                        <input
-                          autoFocus
-                          value={value}
-                          required
-                          maxLength={160}
-                          onChange={(e) => setValue(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        修订说明{" "}
-                        {d.risk === "conflict" ? "（冲突必填）" : "（可选）"}
-                        <input
-                          value={note}
-                          maxLength={300}
-                          required={d.risk === "conflict"}
-                          onChange={(e) => setNote(e.target.value)}
-                          placeholder="说明证据实际支持的状态"
-                        />
-                      </label>
-                      <div className="actions">
-                        <button className="button primary small">
-                          保存修订
-                        </button>
-                        <button
-                          type="button"
-                          className="button secondary small"
-                          onClick={() => setEditing(null)}
-                        >
-                          取消
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </div>
-                <div className="delta-actions">
-                  <button
-                    className="button secondary small accept"
-                    disabled={
-                      editing === d.id ||
-                      (d.risk === "conflict" && !d.resolved) ||
-                      d.decision === "accepted"
-                    }
-                    title={
-                      d.risk === "conflict" && !d.resolved
-                        ? "先修订冲突或拒绝此条变化"
-                        : undefined
-                    }
-                    onClick={() => decision(d.id, "accepted")}
-                  >
-                    <Icon name="check" size={13} />
-                    Accept
-                  </button>
-                  <button
-                    className="button secondary small"
-                    onClick={() => {
-                      setEditing(d.id);
-                      setValue(d.after);
-                      setNote(d.note ?? "");
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="button secondary small"
-                    disabled={editing === d.id || d.decision === "rejected"}
-                    onClick={() => decision(d.id, "rejected")}
-                  >
-                    Reject
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+          <p className="review-filter-note">
+            Rejected 包含建议拒绝与已拒绝的候选；你的最终决定单独显示。
+          </p>
+          {groups.map((category) => {
+            const changes = filtered.filter(
+              (d) =>
+                story.entities.find((e) => e.id === d.entityId)?.category ===
+                category,
+            );
+            return changes.length ? (
+              <section className="diff-group" key={category}>
+                <h2>
+                  {category}
+                  <span>{changes.length}</span>
+                </h2>
+                {changes.map((d) => (
+                  <StateDiffRow
+                    key={d.id}
+                    story={story}
+                    delta={d}
+                    onDecision={decision}
+                  />
+                ))}
+              </section>
+            ) : null;
+          })}
+          {filtered.some(
+            (d) =>
+              !groups.includes(
+                story.entities.find((e) => e.id === d.entityId)?.category ?? "",
+              ),
+          ) && (
+            <section className="diff-group">
+              <h2>需核对的旧候选</h2>
+              {filtered
+                .filter(
+                  (d) =>
+                    !groups.includes(
+                      story.entities.find((e) => e.id === d.entityId)
+                        ?.category ?? "",
+                    ),
+                )
+                .map((d) => (
+                  <StateDiffRow
+                    key={d.id}
+                    story={story}
+                    delta={d}
+                    onDecision={decision}
+                  />
+                ))}
+            </section>
+          )}
           {!filtered.length && (
-            <Empty title="当前筛选下没有变更">
-              切换“全部变化”查看已处理的条目。
-            </Empty>
+            <Empty title="当前筛选下没有变化">切换 All 查看全部候选。</Empty>
           )}
           <div className="commit-bar">
             <div>
               <strong>
-                {story.deltas.filter((d) => d.decision === "accepted").length}{" "}
+                {canonical.filter((d) => d.decision === "accepted").length}{" "}
                 条已接受 ·{" "}
-                {story.deltas.filter((d) => d.decision === "rejected").length}{" "}
+                {canonical.filter((d) => d.decision === "rejected").length}{" "}
                 条已拒绝
               </strong>
               <p>
                 {pending
-                  ? "请逐条处理所有变更；冲突需要修订或拒绝。"
-                  : "确认后，接受的变化将更新本地状态并生成版本。"}
+                  ? "请处理所有 Canonical 候选；冲突与证据不足的候选需拒绝。"
+                  : "只有已接受且通过检查的变化可提交；Soft / No change 不写入状态。"}
               </p>
             </div>
             <button
               className="button primary"
-              disabled={!canCommit(story) || editing !== null}
+              disabled={!canCommit(story)}
               onClick={() => {
                 update((s) => commitMock(s, new Date().toISOString()));
-                setMessage(
-                  "模拟提交已完成。当前状态与版本历史已同步，未调用后端。",
-                );
+                setMessage("模拟提交已完成。Current State 与版本历史已同步。");
               }}
             >
               Commit accepted changes
@@ -315,10 +222,11 @@ export function DeltaReview({
             </button>
           </div>
           <p className="list-note">
-            审核决定保存在本地；只有模拟提交才会更新 Current State。
+            Recommendation ≠ Decision · Event ≠ State · Soft Interpretation ≠
+            Canonical State
           </p>
         </>
       )}
-    </>
+    </div>
   );
 }

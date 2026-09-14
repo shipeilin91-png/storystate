@@ -1294,125 +1294,6 @@ blockquote {
   color: var(--muted);
   margin-top: 10px;
 }
-.review-summary {
-  display: flex;
-  gap: 35px;
-  align-items: center;
-  padding: 10px 0 26px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid var(--line);
-}
-.review-summary > div {
-  display: grid;
-  gap: 5px;
-}
-.review-summary strong {
-  font:
-    26px Georgia,
-    serif;
-}
-.review-summary span {
-  font-size: 10px;
-  color: var(--muted);
-}
-.delta-list {
-  border-top: 1px solid var(--line);
-}
-.delta-row {
-  display: grid;
-  grid-template-columns: 25px minmax(0, 1fr) auto;
-  gap: 15px;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
-}
-.delta-row.conflict {
-  border-left: 2px solid #c57763;
-  padding-left: 13px;
-  background: #fff9f440;
-}
-.delta-row.rejected .delta-values {
-  opacity: 0.5;
-}
-.delta-number {
-  font: 11px monospace;
-  color: #a3ad98;
-  padding-top: 3px;
-}
-.delta-body header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-.delta-body h2 {
-  font-size: 13px;
-}
-.delta-body h2 > span {
-  font-size: 11px;
-  color: #879579;
-  margin-left: 10px;
-  font-weight: 400;
-}
-.delta-values {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin: 17px 0;
-  font: 12px monospace;
-  color: #95a087;
-}
-.delta-values > span {
-  padding: 4px 9px;
-  border-radius: 4px;
-  overflow-wrap: anywhere;
-}
-.before {
-  background: #f0eee7;
-  color: #9b8e76;
-  text-decoration: line-through;
-}
-.after {
-  background: #e8f0e1;
-  color: #598147;
-}
-.delta-body > p {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.8;
-}
-.delta-body blockquote {
-  font-size: 11px;
-  background: transparent;
-  border-left: 2px solid #d4ddc8;
-  margin-top: 13px;
-  padding: 5px 10px;
-}
-.delta-body blockquote > span {
-  display: block;
-  font-size: 8px;
-  letter-spacing: 0.6px;
-  margin-bottom: 4px;
-  color: #9daa8e;
-}
-.delta-actions {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
-.delta-actions .accept {
-  color: var(--teal);
-}
-.delta-editor {
-  display: grid;
-  gap: 12px;
-  margin-top: 20px;
-  padding: 17px;
-  border: 1px solid var(--line);
-  background: #f5f7ef;
-}
-.delta-editor input {
-  font-size: 12px;
-}
 .commit-bar {
   position: sticky;
   bottom: 15px;
@@ -1636,9 +1517,6 @@ blockquote {
   .n3 {
     left: 28%;
   }
-  .delta-actions {
-    flex-direction: column;
-  }
   .category-tabs {
     gap: 16px;
   }
@@ -1647,9 +1525,6 @@ blockquote {
   }
   .context-panel {
     padding-left: 18px;
-  }
-  .review-summary {
-    gap: 23px;
   }
   .story-cell p {
     max-width: 220px;
@@ -1716,9 +1591,6 @@ blockquote {
     padding: 24px 0 0;
     border-left: 0;
     border-top: 1px solid var(--line);
-  }
-  .review-summary > .push-right {
-    display: none;
   }
   .commit-bar {
     align-items: flex-start;
@@ -1796,20 +1668,6 @@ blockquote {
   }
   .story-meta .push-right {
     display: none;
-  }
-  .delta-row {
-    grid-template-columns: 20px minmax(0, 1fr);
-  }
-  .delta-actions {
-    grid-column: 2;
-    flex-direction: row;
-  }
-  .review-summary {
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .review-summary strong {
-    font-size: 23px;
   }
   .commit-bar {
     position: static;
@@ -1976,4 +1834,265 @@ blockquote {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+/* Stage 1.3: comparison first, per-change reasoning on demand. */
+.review-examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0 20px;
+  font-size: 11px;
+}
+.review-examples > span,
+.review-examples small {
+  color: var(--muted);
+}
+.review-examples a {
+  border-bottom: 1px solid var(--line-dark);
+  padding: 4px 0;
+}
+.review-examples a[aria-current="page"] {
+  color: var(--teal);
+  font-weight: 700;
+  border-color: currentColor;
+}
+.review-filter-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.review-filters .tabs {
+  flex-wrap: wrap;
+}
+.review-filters .tabs span {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.diff-group {
+  margin: 24px 0;
+}
+.diff-group > h2 {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-dark);
+}
+.diff-group > h2 > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.state-diff-row {
+  padding: 19px 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.diff-overview {
+  display: grid;
+  grid-template-columns: minmax(145px, 1fr) minmax(250px, 1.8fr) 110px 138px;
+  align-items: start;
+  gap: 20px;
+}
+.diff-subject h3 {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+.diff-subject > span {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.diff-subject small {
+  display: block;
+  font-size: 10px;
+  margin-top: 6px;
+  color: var(--teal);
+}
+.state-comparison {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr);
+  gap: 10px;
+}
+.state-comparison > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.state-comparison small,
+.diff-recommendation > small,
+.diff-decision > small {
+  font-size: 9px;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+.state-comparison div > span {
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 6px 8px;
+  background: #f0eee7;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+.state-comparison div:last-child > span {
+  background: #e9f0e4;
+  color: #344f2c;
+}
+.state-diff-row.soft .state-comparison div:last-child > span {
+  background: #f4eee2;
+  color: #6b5839;
+}
+.state-diff-row.no_change .state-comparison div:last-child > span {
+  background: #f0eee7;
+  color: inherit;
+}
+.state-comparison code {
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.diff-arrow {
+  padding-top: 24px;
+  color: var(--muted);
+}
+.diff-recommendation,
+.diff-decision {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+.diff-recommendation > strong {
+  font-size: 11px;
+}
+.diff-decision .actions {
+  gap: 5px;
+  margin: 2px 0 0;
+}
+.diff-decision .button {
+  padding: 6px 9px;
+}
+.diff-reasoning {
+  margin-top: 9px;
+}
+.diff-reasoning summary {
+  width: fit-content;
+  cursor: pointer;
+  padding: 7px 2px;
+  font-size: 11px;
+  color: var(--teal);
+}
+.diff-reasoning summary span {
+  color: var(--muted);
+  margin-left: 5px;
+}
+.diff-reasoning summary:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+.reasoning-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  padding: 22px;
+  margin-top: 6px;
+  background: #f4f6ee;
+  border-left: 2px solid #b7c6a8;
+}
+.reasoning-detail h4 {
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.reasoning-detail h4 span {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 5px;
+}
+.reasoning-detail p,
+.reasoning-detail li {
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.reasoning-detail p + p {
+  margin-top: 5px;
+}
+.reasoning-detail blockquote {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.reasoning-detail ul {
+  list-style: none;
+  padding: 0;
+}
+.reasoning-detail .check-pass > span {
+  color: #45613a;
+}
+.reasoning-detail .check-fail > span {
+  color: #984b36;
+}
+.reasoning-rule {
+  font-weight: 600;
+}
+@media (max-width: 1200px) {
+  .diff-overview {
+    grid-template-columns: minmax(130px, 1fr) minmax(220px, 1.7fr) 100px;
+    gap: 14px;
+  }
+  .diff-decision {
+    grid-column: 2 / -1;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 680px) {
+  .diff-overview {
+    grid-template-columns: 1fr;
+  }
+  .diff-decision {
+    grid-column: auto;
+  }
+  .diff-recommendation {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .reasoning-detail {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+}
+.state-diff-review .page-intro {
+  margin-bottom: 16px;
+}
+.state-diff-review .story-meta {
+  padding: 9px 0;
+  margin-bottom: 8px;
+}
+.state-diff-review .review-examples {
+  padding: 6px 0 12px;
+}
+.review-run-summary {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.state-diff-review .review-filters {
+  margin-bottom: 8px;
+}
+.state-diff-review .review-filter-note {
+  margin-bottom: 8px;
+}
+.state-diff-review .diff-group {
+  margin: 14px 0;
+}
+.state-diff-review .commit-bar {
+  position: static;
 }
