@@ -1,8 +1,9 @@
 {
   "project": "StoryState",
   "stage": "Backend Foundation / Stage 2.1",
-  "stageStatus": "in_progress",
+  "stageStatus": "completed",
   "frontendProductFlow": "frozen",
+  "canonicalStateBackendFoundation": "completed",
   "features": [
     {
       "id": "library",
@@ -86,15 +87,15 @@
     },
     {
       "id": "real-commit-rollback",
-      "status": "in_progress",
+      "status": "completed",
       "description": "后端事务、真实版本与恢复；前端仍为 Mock",
-      "verification": "Stage 2.1 后端契约测试，等待 Product Owner Review"
+      "verification": "Stage 2.1/2.1.1 Product Owner Review PASS；后端契约测试通过"
     },
     {
       "id": "backend-storage",
-      "status": "in_progress",
+      "status": "completed",
       "description": "Supabase PostgreSQL 迁移、typed repository/service/API",
-      "verification": "Stage 2.1 SQL / repository 测试，等待 Product Owner Review"
+      "verification": "Stage 2.1/2.1.1 Product Owner Review PASS；SQL / repository 测试通过"
     },
     {
       "id": "auth-collaboration",
@@ -116,7 +117,7 @@
     },
     {
       "id": "database",
-      "status": "in_progress",
+      "status": "completed",
       "description": "正式 PostgreSQL Schema；未配置 hosted Supabase",
       "verification": "迁移在本地 PostgreSQL 兼容运行时验证"
     },

@@ -1,8 +1,8 @@
 # StoryState — Project State
 
-- Current Stage: **Backend Foundation / Stage 2.1 — in progress on backend/stage-2-1**. Stage 1.3 frontend product flow completed and frozen.
+- Current Stage: **Backend Foundation / Stage 2.1 — completed on main**. Stage 1.3 frontend product flow completed and frozen.
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
-- 本轮安全基线：`origin/main = c54adce496851bc30c254201b9a7a5d8d19f5b1d`，开始时 fetch 核实无变化；已有本地 Stage 2.1 checkpoint 已合入该基线。
+- Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
 - 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
 - 架构：Next.js App Router / React / TypeScript / Tailwind；冻结的浏览器 localStorage Mock 与独立 TypeScript State Service / Supabase PostgreSQL schema 分离。前端尚未接后端。
 
@@ -35,7 +35,8 @@ State Explorer 继续使用既有 Evidence Inspector；字段级 expandable prov
 
 验证命令：`npm install`、`npm run build`、`npm run lint`、`npm test`。
 浏览器验收覆盖 Library → Workspace → Review → Accept/Reject → Commit → State → History → Restore、Setup、默认折叠/独立展开/键盘、刷新持久化及 Ch16/17。最终结果见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。
+Stage 2.1 合并后全量测试 39/39，后端测试 14/14（含 PGlite 从空库执行迁移）；Hosted Supabase 未配置，前端仍独立使用 Mock。
 
 ## 后续
 
-Stage 1.3 产品流程已冻结。Stage 2.1 Backend Foundation 进行中，详见 `docs/STAGE_2_1_BACKEND_FOUNDATION.md`；AI Extraction、Runtime Validator、RAG、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 继续 planned。此分支不合并 main，等待 Product Owner Review。
+Stage 1.3 产品流程已冻结；Stage 2.1 Canonical State Backend Foundation 已完成，详见 `docs/STAGE_2_1_BACKEND_FOUNDATION.md`。AI Extraction、Runtime Validator、RAG、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 继续 planned；没有启动 Stage 2.2。

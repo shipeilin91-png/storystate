@@ -1,6 +1,6 @@
 # Stage 2.1 — Canonical State Backend Foundation
 
-Status: in progress on `backend/stage-2-1`; Stage 1.3 frontend flow remains frozen. The backend contract is independent of the browser fixture (`Frontend Mock Contract ≠ Backend State Schema`). This stage provides no AI extraction, runtime AI validator, context compiler, Writer connector, authentication, or deployment.
+Status: completed and merged to main after Product Owner Review of Stage 2.1 and 2.1.1; Stage 1.3 frontend flow remains frozen. The backend contract is independent of the browser fixture (`Frontend Mock Contract ≠ Backend State Schema`). This stage provides no AI extraction, runtime AI validator, context compiler, Writer connector, authentication, or deployment.
 
 ## Reference baseline
 
