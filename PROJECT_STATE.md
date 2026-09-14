@@ -1,9 +1,9 @@
 # StoryState — Project State
 
-- Current Stage: **State Diff Review / Stage 1.3**
+- Current Stage: **State Diff Review / Stage 1.3 — completed; frontend product flow frozen**
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - 本轮安全基线：`origin/main = 86ff3d3d5233b2fb3c1c944a6f9ac3205e86ff5b`，开始时 fetch 核实无变化。
-- 工作分支：`ui/stage-1-3-state-diff-review`。本轮禁止 merge main；最终 branch SHA 见交付报告。
+- 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
 - 架构：Next.js App Router / React / TypeScript / Tailwind；统一浏览器 localStorage mock，无后端连接。
 
 ## 已完成
@@ -38,4 +38,4 @@ State Explorer 继续使用既有 Evidence Inspector；字段级 expandable prov
 
 ## 后续
 
-Product Owner Review 当前 Stage 1.3 分支。验收后再单独决定合并；本轮停止，不继续 Backend / Stage 2.1。
+Stage 1.3 产品流程已冻结。下一阶段需单独确认范围；目前不继续 Backend / Stage 2.1。

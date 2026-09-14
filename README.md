@@ -1,6 +1,6 @@
 # StoryState
 
-当前阶段：State Diff Review / Stage 1.3。
+当前阶段：State Diff Review / Stage 1.3，已通过 Product Owner Review；前端产品流程已冻结。
 
 面向长篇／连续文本 AIGC 的 Stateful Context Infrastructure。为已有 Writer 提供状态工作台：查看事实与知识边界、检查上下文、审核变化和追溯版本。
 
@@ -60,4 +60,4 @@ Review 先展示 Category / Field / Before → After / Recommendation / User Dec
 
 旧故事已提交数据原样保留；旧 USB owner 交接候选获得拒绝 gate，不自动修正历史。Soft / NO_CHANGE 不写入状态，NO_CHANGE-only 不产生版本。`Version.reviewedChanges` 保留本次审核与 correction provenance；History 分开显示 USB owner 和 holder。
 
-Frontend Review Contract ≠ Backend State Schema。无后端、AI、运行时 Validator 或 Graph。产品边界与验收见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。本轮推送审核分支，不合并 main。
+Frontend Review Contract ≠ Backend State Schema。无后端、Database、AI、运行时 Validator 或 Graph。产品边界与验收见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。Stage 1.3 已审核通过并合并 main；后续阶段需另行确认。

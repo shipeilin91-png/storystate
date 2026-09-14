@@ -1,6 +1,8 @@
 {
   "project": "StoryState",
   "stage": "State Diff Review / Stage 1.3",
+  "stageStatus": "completed",
+  "frontendProductFlow": "frozen",
   "features": [
     {
       "id": "library",
