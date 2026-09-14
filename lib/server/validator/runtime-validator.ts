@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { DomainError, invariant } from "../../domain/errors";
-import { idSchema, validatorResultSchema, type StoryAggregate } from "../../domain/state";
+import { idSchema, validatorResultSchema, type CanonicalRow, type StoryAggregate } from "../../domain/state";
 import type { StateRepository } from "../../repositories/state-repository";
 import { aggregateChecks, type ValidatorResult } from "./aggregate";
 import { candidateInput, packetHash, StructuredValidationContextProvider, type ValidationContextProvider, type ValidationPacket } from "./context";
@@ -8,13 +8,24 @@ import { deterministicGate } from "./deterministic";
 import { routeAgents, ValidationOrchestrator, type SemanticModelClient } from "./semantic";
 
 const VERSION = "runtime-validator/0.1";
+const byId = <T extends { id: string }>(values: T[]): T[] => [...values].sort((a, b) => a.id.localeCompare(b.id));
+function orderedObjectKeys(_key: string, value: unknown): unknown {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)))
+    : value;
+}
 function inputFingerprint(a: StoryAggregate) {
   // Do not hold a DB transaction while awaiting a model. Changes to inputs or
   // human decisions invalidate the in-flight run, including an ABA state change.
+  // Row and join-table order is not part of the repository contract. Normalize
+  // only those sets; keep ordered payload arrays and decision history unchanged.
   return createHash("sha256").update(JSON.stringify({
-    story: a.story, state: a.state, documents: a.documents, revisions: a.revisions, evidence: a.evidence, events: a.events,
-    deltas: a.deltas.map(d => ({ ...candidateInput(d), decision: d.decision, decisions: d.decisions, committedVersionId: d.committedVersionId, validatorResult: d.validatorResult })),
-  })).digest("hex");
+    story: a.story, state: Object.fromEntries(Object.entries(a.state).map(([key, values]) => [key, byId<CanonicalRow>(values)])),
+    documents: byId(a.documents), revisions: byId(a.revisions), evidence: byId(a.evidence),
+    events: byId(a.events).map(event => ({ ...event, participantIds: [...event.participantIds].sort(), evidenceIds: [...event.evidenceIds].sort() })),
+    deltas: byId(a.deltas).map(d => ({ ...candidateInput(d), evidenceIds: [...d.evidenceIds].sort(),
+      decision: d.decision, decisions: d.decisions, committedVersionId: d.committedVersionId, validatorResult: d.validatorResult })),
+  }, orderedObjectKeys)).digest("hex");
 }
 export class RuntimeValidator {
   private orchestrator: ValidationOrchestrator;

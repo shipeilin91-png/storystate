@@ -240,6 +240,7 @@ test("future intent and historical location are semantic review, never hard REJE
   for (const text of ["明天去北堤。", "三天前到过 C-19。"]) await t.test(text, async () => {
     const client = new FakeSemanticClient(request => ({ ...supported(request), verdict: request.agent === "temporal_state" ? "UNSUPPORTED" : "SUPPORTED" }));
     const f = await runtimeFixture("Ch17-A", undefined, client);
+    await f.service.decideDelta(f.storyId, f.delta.id, { decision: "deferred", actor: "test setup", reason: "Isolate the temporal candidate from the unused fixture proposal" });
     const docId = randomUUID(), revisionId = randomUUID(), evidenceId = randomUUID();
     await f.service.addSourceDocument(f.storyId, { id: docId, title: "Temporal negative", sourceOrder: 18, chapter: 18 });
     await f.service.addSourceRevision(f.storyId, { id: revisionId, documentId: docId, revisionNumber: 1, content: text, visibility: "canonical" });

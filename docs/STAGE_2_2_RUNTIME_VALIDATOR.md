@@ -26,7 +26,7 @@ Why hybrid: schema, references and stale state are executable contracts; evidenc
 Reuses `deltaInputSchema`, `validateDelta`, `applyDelta` and `validateCanonical`. `applyDelta` is run against a private aggregate clone with an internal simulated accepted value; it does not record a decision, persist the clone, or call commit. Existing correction provenance, psychological-state, thread-resolution and reference rules therefore remain enforced.
 
 Invalid schema/operation/lifecycle/reference/knowledge representation -> failed/REJECT.
-Stale expected version, stale before or a competing accepted overlapping mutation -> conflict/CONFLICT.
+Stale expected version, stale before or incompatible effects from a pending (`needs_review`) / accepted mutation -> conflict/CONFLICT. Rejected and deferred proposals are not active competitors. Whole-record and field proposals are compared by changed fields, not by payload shape; agreeing effects are not conflicts. Existing commit stale-before checks still prevent duplicate application.
 A terminal gate prevents context/model calls. Missing/inactive UPDATE targets are contract failures. CREATE checks canonical absence. NO_CHANGE remains audit only and cannot create a version.
 
 The existing Stage 2.1.2 `assertValidatorAcceptable` still owns decision-time and commit-time admission; it is not duplicated or weakened.
@@ -118,7 +118,7 @@ The existing `state_deltas.validator_result` JSONB stores optional backward-comp
 
 Only validatorResult is written. No decision, decision audit, State Version, Event or Canonical State is changed. Current result is traceable to its delta and cited Evidence IDs. This is latest-result persistence, not a new immutable history of every validation attempt.
 
-Models run outside the transaction. Before writeback, a fingerprint checks the aggregate's state/version, sources/evidence/events, candidate inputs, decisions and validation results under the repository transaction. Any concurrent relevant update discards the result with VALIDATION_STALE (409); a concurrent commit is immutable and rejected. A newer result or human decision cannot be overwritten. The fingerprint is intentionally conservative and may reject a run after an unrelated change in the same story.
+Models run outside the transaction. Before writeback, a fingerprint checks the aggregate's state/version, sources/evidence/events, candidate inputs, decisions and validation results under the repository transaction. Unordered repository rows, join IDs and object keys are normalized; payload arrays and decision history retain their meaningful order. Any concurrent relevant update discards the result with VALIDATION_STALE (409); a concurrent commit is immutable and rejected. A newer result or human decision cannot be overwritten. The fingerprint is intentionally conservative and may reject a run after an unrelated actual change in the same story.
 
 ## Ten-case benchmark
 
@@ -166,10 +166,10 @@ Executed: npm install (up to date, 0 reported vulnerabilities; existing install-
 
 | Suite | Result |
 | --- | --- |
-| npm test | 149/149 PASS |
+| npm test | 166/166 PASS |
 | npm run test:backend | 62/62 PASS |
 | npm run test:benchmark | 11/11 PASS, frozen exact representation suite |
-| npm run test:validator | 51/51 PASS |
+| npm run test:validator | 68/68 PASS |
 | Stage 1.3 automatic regression | 25/25 PASS |
 | Stage 2.1/2.1.2 | Existing 62 backend + 11 exact tests unchanged and passing |
 | PGlite migration | Actually executed from empty databases, including new validator JSONB round-trip/API test |
@@ -184,4 +184,50 @@ Node totals include parent tests and subtests. Hosted Supabase and live LLM vali
 
 Remaining risks: unmeasured live-model accuracy/provider compatibility, model prompt injection, bounded structured retrieval recall, conservative same-story invalidation of in-flight runs, latest-result-only audit, full-aggregate repository scaling, and existing unauthenticated write APIs. Do not expose this API publicly before the separate access-control stage.
 
-Remote credential access remains blocked by the TRAE sandbox. This stage uses the confirmed local main baseline and local commit only; no fetch/pull/push, credential edits or Keychain permission requests. Remote status: REMOTE_BLOCKED. Stop for Product Owner Review; do not merge main or initiate the next stage.
+The original implementation delivery used the confirmed local baseline and local commit only, with REMOTE_BLOCKED by the TRAE sandbox. The subsequent review attempts remote integration only after local verification and a clean commit, without credential edits or Keychain permission requests; its remote outcome is reported separately. Stop for Product Owner Review; do not merge main or initiate the next stage.
+
+## Engineering Review Corrections
+
+本轮重新审核原提交 `b5b88299f638415d14f4bde24813035342ea50df`，独立执行 install/build/lint 及所有测试；不是沿用实现者报告的结果。三个 P2 问题均由探针复现，并经两路独立复核确认。仅修复 correctness，不重构 provider、repository 或 ontology。
+
+| ID | 原缺陷与规则 | 最小修复 / 回归 |
+| --- | --- | --- |
+| R1 | pending 同 target/path 的互斥提案被忽略，违反 Frozen Rulebook 4.1/4.4，可误给 AUTO_ACCEPT | gate 同时检查 needs_review/accepted；Memory 与 PGlite 验证零模型调用的 CONFLICT |
+| R2 | 同一 holder 变化用整行与字段表达时误报 CONFLICT | 比较实际 changed fields；覆盖等价、独立字段、互斥、INVALIDATE、Rejected/Deferred 与重复 commit 的 stale 保护 |
+| R3 | raw JSON 指纹依赖未排序 SELECT 的行序，数据不变也会 VALIDATION_STALE | 仅规范化无序行、join IDs、对象键；真实 PGlite 查询计划切换、行序/键序/join 顺序与有序 payload 变化分别验证 |
+
+新增 `tests/runtime-validator-review.test.ts` 的 17 个 Node test/subtest。原 temporal 单测将未使用的基础候选明确 deferred，避免两个候选同时存在而提前触发正确的 conflict gate；没有改变 temporal verdict、最终建议或 Frozen Ground Truth。
+
+审核后的业务流程：
+
+```mermaid
+flowchart LR
+    D[Open Delta] --> G{结构与 Before 合法?}
+    G -->|否| R[REJECT 或 CONFLICT]
+    G -->|是| C{Pending / Accepted 互斥效果?}
+    C -->|是| X[CONFLICT: 不调用模型]
+    C -->|否| S[独立 Specialist Checks]
+    S --> A[确定性聚合建议]
+    A --> H[保留 Human Decision]
+    style C fill:#bbdefb,color:#0d47a1
+    style X fill:#fff3e0,color:#e65100
+    style A fill:#c8e6c9,color:#1a5e20
+```
+
+审核后的写回流程：
+
+```mermaid
+flowchart LR
+    DB[Canonical Repository] --> F[读取快照并规范化指纹]
+    F --> M[事务外模型调用]
+    M --> T[进入 Story 写事务]
+    T --> V{规范化指纹仍匹配?}
+    V -->|是| W[只写 validatorResult]
+    V -->|否| E[409 VALIDATION_STALE: 丢弃旧结果]
+    style F fill:#bbdefb,color:#0d47a1
+    style V fill:#bbdefb,color:#0d47a1
+    style W fill:#c8e6c9,color:#1a5e20
+    style E fill:#fff3e0,color:#e65100
+```
+
+其余审核结论：生产代码无 benchmark case ID 特判；fake 只提供 specialist verdict，不提供最终 recommendation。三个 prompt 的职责独立，共享同一有界 packet，并不交换判断。已有 overflow、缺失上下文、partial failure、provider unavailable、输出解析及 citation 校验保持通过。实际语义准确率仍未测量，十案例的 fake 指标仍为 routing 10/10、false AUTO_ACCEPT 0/10（错误候选 0/4）。No confidence、无自动 Decision/Commit、latest-result-only audit 和三份 Frozen Docs 边界均保留。
