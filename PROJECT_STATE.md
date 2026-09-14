@@ -1,39 +1,41 @@
 # StoryState — Project State
 
-- Current Stage: **Frontend Product Flow / Stage 1.2**
-- 定位：面向长篇／连续文本 AIGC 的 Stateful Context Infrastructure；增强已有 Writer，不是 AI Writer。
-- 当前架构：标准 Next.js App Router + React + TypeScript + Tailwind CSS；浏览器 localStorage Mock，无后端／数据库／AI。
-- 本次核实的 main 基线：`b5ba77d24409a232a10ac6b0c97f19e520fa1456`（2026-09-13 fetch 后未变化）。
-- 已集成前端分支：`ui/stage-1-2`，提交 `ca1566ba60298e7c56a93fe8e1de7bcbac76ef50`。
-- 技术集成分支：`integration/stage-1-2`；实际当前 HEAD 使用 `git rev-parse HEAD`，最终交付报告给出 merge SHA。
+- Current Stage: **State Diff Review / Stage 1.3 — completed; frontend product flow frozen**
+- 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
+- 本轮安全基线：`origin/main = 86ff3d3d5233b2fb3c1c944a6f9ac3205e86ff5b`，开始时 fetch 核实无变化。
+- 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
+- 架构：Next.js App Router / React / TypeScript / Tailwind；统一浏览器 localStorage mock，无后端连接。
 
-## 已完成的 Stage 1.2 产品流程
+## 已完成
 
-- Story 一级导航收敛为 Workspace / State / History，保留前端 AI 已确认的布局与视觉。
-- READY Story 在 Library、Open Story 与 Current Story switch 都默认进入 Workspace；未初始化 Story 进入 setup。
-- Setup 为 Sources & Story Settings；Review 为 Workspace run 内的流程节点。独立 route label map 保证两者 breadcrumb 非空，不重新加入一级导航。
-- State Explorer 为 Current Truth；Hard State 为已提交的 Canonical Truth；Soft Interpretation 默认不是 Canonical Truth。
-- Knowledge Boundary 明确 World Truth ≠ Character Knowledge；State 和 Context 显示同一已提交知识记录，不再写死 Suspects。
-- Context Inspector 保留 Why Included；Writer Output 不直接改变 State，只有审核后的 accepted Delta 经 Commit 才进入 Current State。
-- Chapter 与 State Version 分离。`story.chapter` 表示叙事快照章节；`currentStateVersion` / `version.stateVersion` 表示单独递增的前端状态版本。
-- Commit 和 Restore 均生成新的 State Version。v13 / Chapter 13 恢复 v11 快照后为 v14 / Chapter 11，并保留 `restoredFromStateVersion: 11` 及全部历史。
-- 旧 Stage 1.1 localStorage 按历史顺序补齐版本号，保留原章节、实体、编辑和版本记录；不通过清空浏览器状态升级。
-- `StoryScreen` 仅负责查找故事、ready guard 和页面分派；页面、Context Inspector、共享知识边界拆入 `components/story/`。
+- **Default to state diff. Expand into reasoning.** Review 默认按类别显示 Before → After，推荐、风险与用户 Decision 分列。
+- 原生 details/summary 逐条独立展开 Evidence、Why、关键 checks、risk、recommendation 与 reason；支持鼠标、键盘、多条展开。
+- 一级导航保持 Workspace / State / History；READY → Workspace，未初始化 → Setup；Setup/Review breadcrumb 保留。
+- Ch13：holder 陈默 → 林夏；owner 候选拒绝；心理信任为 Soft only；P 的身份知情不由 Q 的 suspects 推导。
+- Ch16：顾言对 P unaware → knows，需人工审核；林夏对 P unaware、对 Q suspects 保持。
+- Ch17：World Truth unresolved → confirmed_false；林夏 stance believes → knows、believed_value true → false 成对检查/提交；correction 为 provenance。
+- Ch17：bounded cooperation active/current escape；长期 trust 仍 distrust，拒绝升级候选。
+- 推荐不自动形成 Decision。只有通过 gate 的 accepted mutation 可 Commit；Rejected、Soft、NO_CHANGE 不改变 Canonical State，NO_CHANGE-only 不递增版本。
+- Chapter 与 State Version 独立。Commit/Restore +1，Restore 保留旧历史、来源版本与章节快照。
+- 新版本保存 reviewedChanges；History 修正旧 owner/holder 混用，缺失 holder 的历史显示“未单独记录”。
+- Ch13/16/17 作为独立示例故事持久化，不替换已有故事；旧缓存 owner 候选获得纠正后的 gate，已提交快照、历史、用户决定原样保留。
 
-## 范围边界
+## Contract 与范围
 
 **Frontend Mock Contract ≠ Backend State Schema**。
+**Frontend Review Contract ≠ Backend State Schema**。
 
-这些字段、迁移及 snapshot 操作只用于前端 fixture，不定义正式 Backend State Schema。示例输出与下一轮任务仍是预置演示；没有真实 Run、解析或抽取。当前持久化不提供跨设备或并发协作能力。
+已只读参考本机批准的 State Data Contract v0.2.1、Benchmark Pilot v0.2.2、Validator Rulebook v0.1.1；没有改写源文档。路径及 SHA-256 记录于本轮说明。
 
-Backend、Database、State Extraction、Context Compiler、LLM、RAG、Embedding、MCP、Auth、真实文件解析及真实版本服务全部保持 planned。没有新增 API routes 或后端依赖。
+Reasoning checks 是预置展示数据，并非真实 Validator。没有新增依赖、API、SQL、Supabase、LLM、Extraction、Context Compiler、RAG、Embedding、MCP、Auth、真实文件解析、Writer 集成或部署。
+
+State Explorer 继续使用既有 Evidence Inspector；字段级 expandable provenance 留待后续评审。不实现 Reasoning Graph / graph database / graph library / infinite canvas。
 
 ## Verification
 
-`npm install`、生产 build、lint、13 项自动 tests 已通过；浏览器验证 Library → Workspace → Review → Commit → History → Restore → State，及 Setup breadcrumb、未初始化入口、刷新持久化。详见 `docs/STAGE_1_2_VERIFICATION.md`。
+验证命令：`npm install`、`npm run build`、`npm run lint`、`npm test`。
+浏览器验收覆盖 Library → Workspace → Review → Accept/Reject → Commit → State → History → Restore、Setup、默认折叠/独立展开/键盘、刷新持久化及 Ch16/17。最终结果见 `docs/STAGE_1_3_STATE_DIFF_REVIEW.md`。
 
-main 合并门槛：以上全部通过，并在 `git pull --ff-only origin main` 后再次安全合并；main 上重跑 build/lint/test 后才 push。
+## 后续
 
-## 下一阶段
-
-下一阶段单独评审正式 State Data Contract（角色知识、Canonical/Interpretation、版本与恢复语义），经用户确认后再决定后端集成范围。本轮不继续实现 Backend。
+Stage 1.3 产品流程已冻结。下一阶段需单独确认范围；目前不继续 Backend / Stage 2.1。

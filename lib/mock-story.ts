@@ -1,3 +1,9 @@
+import {
+  canAcceptChange,
+  changeFields,
+  reviewKind,
+  type ReasoningDetail,
+} from "./review-contract";
 export const categories = [
   "Characters",
   "Knowledge",
@@ -28,6 +34,8 @@ export type Delta = {
   decision: "pending" | "accepted" | "rejected";
   resolved?: boolean;
   note?: string;
+  review?: ReasoningDetail;
+  additionalFields?: { field: string; before: string; after: string }[];
 };
 /* Frontend fixture contract only; not an authoritative backend schema. */
 export type Version = {
@@ -39,6 +47,7 @@ export type Version = {
   title: string;
   changes: string[];
   entities: Entity[];
+  reviewedChanges?: Delta[];
 };
 export type Story = {
   id: string;
@@ -54,6 +63,7 @@ export type Story = {
   deltas: Delta[];
   versions: Version[];
   prompt: string;
+  reviewSource?: { chapter: number; title: string; output: string };
 };
 export const importOptions = [
   "已有章节 · 第 01–12 章",
@@ -91,7 +101,7 @@ export const fixtureEntities: Entity[] = [
   {
     id: "identity",
     category: "Knowledge",
-    name: "陈默的真实身份",
+    name: "P · 陈默是市刑侦支队警察，并正在港务安保中卧底",
     summary: "叙述者已知 ≠ 林夏已知",
     fields: { 林夏: "unaware", 陈默: "knows", 顾言: "unaware" },
     evidence: "“你到底替谁做事？”林夏问。陈默没有回答。",
@@ -101,7 +111,7 @@ export const fixtureEntities: Entity[] = [
     id: "relation",
     category: "Relationships",
     name: "林夏 → 陈默",
-    summary: "合作尚未建立，动机仍受怀疑",
+    summary: "有向关系 · 长期判断与当次合作分别记录",
     fields: { trust: "distrust", direction: "林夏 → 陈默" },
     evidence: "林夏退后一步，没有接他递来的名片。",
     chapter: 12,
@@ -110,8 +120,8 @@ export const fixtureEntities: Entity[] = [
     id: "usb",
     category: "Items",
     name: "加密 USB",
-    summary: "内含未解密的港口货运记录",
-    fields: { owner: "陈默", status: "encrypted" },
+    summary: "承载港口货运记录的关键物件",
+    fields: { owner: "陈默", holder: "陈默", status: "encrypted" },
     evidence: "陈默把银色 USB 收回大衣内袋。",
     chapter: 12,
   },
@@ -160,6 +170,15 @@ export const fixtureEntities: Entity[] = [
     chapter: 12,
   },
 ];
+fixtureEntities.push({
+  id: "identity-q",
+  category: "Knowledge",
+  name: "Q · 陈默的公开身份不完整",
+  summary: "独立于完整卧底身份命题 P",
+  fields: { 林夏: "unaware" },
+  evidence: "林夏尚未接收到完整身份信息。",
+  chapter: 12,
+});
 export const fixtureDeltas: Delta[] = [
   {
     id: "d1",
@@ -169,18 +188,41 @@ export const fixtureDeltas: Delta[] = [
     after: "Hospital",
     risk: "normal",
     reason: "新场景明确改变了人物位置。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "AUTO_ACCEPT_ELIGIBLE",
+      risk: "LOW",
+      checks: [{ label: "明确到达医院，不是未来意图", passed: true }],
+      why: "林夏推开医院的门，人物已在场。",
+      reason: "明确场景证据支持位置更新。",
+    },
     evidence: "林夏推开门，看见陈默站在走廊尽头。",
     decision: "pending",
   },
   {
     id: "d2",
     entityId: "usb",
-    field: "owner",
+    field: "holder",
     before: "陈默",
     after: "林夏",
-    risk: "high",
-    reason: "关键道具转移，将影响后续可执行行动。",
-    evidence: "只从大衣里取出那枚银色 USB，放进她手里。",
+    risk: "normal",
+    reason: "明确发生物理交接，因此 holder 改变；owner 不变。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "AUTO_ACCEPT_ELIGIBLE",
+      risk: "LOW",
+      checks: [
+        { label: "明确 physical handoff", passed: true },
+        { label: "Holder evidence sufficient", passed: true },
+      ],
+      why: "放进她手里，加上“保管好它”，明确支持实际持有转移。",
+      reason: "明确持有转移。",
+      rule: "Physical possession ≠ ownership",
+      context: "陈默 → 林夏的交接是 source event；这里审核的是 holder effect。",
+    },
+    evidence: "只从大衣里取出那枚银色 USB，放进她手里。\n\n“保管好它。”",
     decision: "pending",
   },
   {
@@ -191,6 +233,18 @@ export const fixtureDeltas: Delta[] = [
     after: "progressing",
     risk: "normal",
     reason: "USB 已交接，但货运记录尚未解密。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "AUTO_ACCEPT_ELIGIBLE",
+      risk: "LOW",
+      checks: [
+        { label: "关键线索已推进", passed: true },
+        { label: "未将推进误判为 resolved", passed: true },
+      ],
+      why: "关键载体完成交接，但内容没有解密。",
+      reason: "仅推进线索，不提前关闭问题。",
+    },
     evidence: "银色外壳下，藏着那艘货船最后的行踪。",
     decision: "pending",
   },
@@ -203,8 +257,89 @@ export const fixtureDeltas: Delta[] = [
     risk: "conflict",
     reason:
       "与本章“不可揭露卧底身份”的知识边界冲突。证据只支持怀疑，不能证明知情。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "CONFLICT",
+      risk: "CONFLICT",
+      checks: [
+        { label: "证据足以确认完整卧底身份 P", passed: false },
+        { label: "Q 与 P 保持独立", passed: true },
+      ],
+      why: "“也许并非码头的人”只支持 Q 的怀疑，没有完整身份披露。",
+      reason: "拒绝此候选；林夏对 P 保持 unaware。",
+      rule: "Same World Truth ≠ Same Character Knowledge",
+    },
     evidence: "她忽然明白，他也许并非码头的人。",
     decision: "pending",
+  },
+  {
+    id: "d5-owner",
+    entityId: "usb",
+    field: "owner",
+    before: "陈默",
+    after: "林夏",
+    risk: "high",
+    decision: "pending",
+    reason: "交付保管不构成所有权转让。",
+    evidence: "只从大衣里取出那枚银色 USB，放进她手里。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "REJECT",
+      risk: "HIGH",
+      checks: [
+        { label: "Evidence supports possession", passed: true },
+        { label: "Evidence of ownership transfer", passed: false },
+      ],
+      why: "证据支持 possession，没有购买、赠与或明确归属声明。",
+      reason: "Owner 保持陈默；此候选不能提交。",
+      rule: "Physical possession ≠ ownership",
+    },
+  },
+  {
+    id: "d6-soft",
+    entityId: "relation",
+    field: "心理信任（解释）",
+    before: "未形成判断",
+    after: "可能开始信任陈默",
+    risk: "high",
+    decision: "pending",
+    reason: "接受 USB、没有追问，可能支持心理解释，不能确认为长期信任。",
+    evidence: "她忽然明白，他也许并非码头的人。但她没有问。",
+    review: {
+      kind: "soft",
+      chapter: 13,
+      recommendation: "REJECT",
+      risk: "HIGH",
+      checks: [
+        { label: "存在可供解释的行为", passed: true },
+        { label: "足以建立 Canonical trust", passed: false },
+      ],
+      why: "接受 USB 和没有追问也可能出于任务需要。",
+      reason: "Soft only · 不进入 Canonical State。",
+      rule: "Soft Interpretation ≠ Canonical State",
+    },
+  },
+  {
+    id: "d7-q",
+    entityId: "identity-q",
+    field: "林夏",
+    before: "unaware",
+    after: "suspects",
+    risk: "normal",
+    decision: "pending",
+    reason: "只对公开身份不完整产生怀疑，不是知道卧底身份。",
+    evidence: "他也许并非码头的人。",
+    review: {
+      kind: "canonical",
+      chapter: 13,
+      recommendation: "AUTO_ACCEPT_ELIGIBLE",
+      risk: "LOW",
+      checks: [{ label: "Q 与正式身份 P 独立", passed: true }],
+      why: "林夏接触到异常信息，但没有获得完整披露。",
+      reason: "仅更新 Q 的 suspects；P 保持 unaware。",
+    },
   },
 ];
 export const defaultPrompt =
@@ -303,47 +438,51 @@ export function initializeStory(story: Story): Story {
   };
 }
 export function canCommit(story: Story) {
+  const canonical = story.deltas.filter((d) => reviewKind(d) === "canonical");
+  const accepted = canonical.filter((d) => d.decision === "accepted");
+  const paths = accepted.flatMap((d) =>
+    changeFields(d).map((f) => `${d.entityId}/${f.field}`),
+  );
   return (
-    story.deltas.length > 0 &&
-    story.deltas.every(
+    accepted.length > 0 &&
+    new Set(paths).size === paths.length &&
+    canonical.every(
       (d) =>
-        d.decision !== "pending" &&
-        (d.decision === "rejected" || d.risk !== "conflict" || d.resolved),
-    ) &&
-    story.deltas.some((d) => d.decision === "accepted") &&
-    story.deltas
-      .filter((d) => d.decision === "accepted")
-      .every(
-        (d) =>
-          story.entities.find((e) => e.id === d.entityId)?.fields[d.field] ===
-            d.before && d.after.trim(),
-      )
+        d.decision === "rejected" ||
+        (d.decision === "accepted" && canAcceptChange(story, d)),
+    )
   );
 }
 export function commitMock(story: Story, date: string): Story {
   if (!canCommit(story)) return story;
-  const accepted = story.deltas.filter((d) => d.decision === "accepted");
+  const accepted = story.deltas.filter(
+    (d) => d.decision === "accepted" && reviewKind(d) === "canonical",
+  );
   const entities = story.entities.map((e) => ({
     ...e,
     fields: { ...e.fields },
   }));
   for (const delta of accepted) {
     const entity = entities.find((e) => e.id === delta.entityId)!;
-    entity.fields[delta.field] = delta.after.trim();
+    for (const field of changeFields(delta))
+      entity.fields[field.field] = field.after.trim();
     entity.evidence = delta.evidence;
-    entity.chapter = story.chapter + 1;
+    entity.chapter = story.reviewSource?.chapter ?? story.chapter + 1;
   }
   const version: Version = {
     id: `v${story.currentStateVersion + 1}-${date}`,
     stateVersion: story.currentStateVersion + 1,
-    chapter: story.chapter + 1,
+    chapter: story.reviewSource?.chapter ?? story.chapter + 1,
     date,
-    title: "急诊室的交接",
+    title: story.reviewSource?.title ?? "急诊室的交接",
     changes: accepted.map(
       (d) =>
-        `${entities.find((e) => e.id === d.entityId)!.name} · ${d.field}: ${d.before} → ${d.after}`,
+        `${entities.find((e) => e.id === d.entityId)!.name} · ${changeFields(d)
+          .map((f) => `${f.field}: ${f.before} → ${f.after}`)
+          .join(" · ")}`,
     ),
     entities: structuredClone(entities),
+    reviewedChanges: structuredClone(story.deltas),
   };
   return {
     ...story,

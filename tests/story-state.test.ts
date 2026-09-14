@@ -1,3 +1,4 @@
+import { canAcceptChange } from "../lib/review-contract";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -22,13 +23,17 @@ test("review preserves current facts until commit; unresolved conflict blocks co
 test("commit applies accepted changes only and preserves snapshot history", () => {
   const s = fixture();
   s.deltas.forEach(
-    (d) => (d.decision = d.risk === "conflict" ? "rejected" : "accepted"),
+    (d) => (d.decision = canAcceptChange(s, d) ? "accepted" : "rejected"),
   );
   const next = commitMock(s, "2026-09-11T00:00:00Z");
   assert.equal(next.chapter, 13);
   assert.equal(next.deltas.length, 0);
   assert.equal(next.versions.length, 3);
-  assert.equal(next.entities.find((e) => e.id === "usb")!.fields.owner, "林夏");
+  assert.equal(
+    next.entities.find((e) => e.id === "usb")!.fields.holder,
+    "林夏",
+  );
+  assert.equal(next.entities.find((e) => e.id === "usb")!.fields.owner, "陈默");
   assert.equal(
     next.entities.find((e) => e.id === "identity")!.fields["林夏"],
     "unaware",
@@ -43,9 +48,9 @@ test("stale before value blocks commit and pending changes block commit", () => 
   const s = fixture();
   assert.equal(canCommit(s), false);
   s.deltas.forEach(
-    (d) => (d.decision = d.risk === "conflict" ? "rejected" : "accepted"),
+    (d) => (d.decision = canAcceptChange(s, d) ? "accepted" : "rejected"),
   );
-  s.entities.find((e) => e.id === "usb")!.fields.owner = "顾言";
+  s.entities.find((e) => e.id === "usb")!.fields.holder = "顾言";
   assert.equal(canCommit(s), false);
 });
 test("new story is isolated and only initializes after all fixture imports", () => {
@@ -54,7 +59,7 @@ test("new story is isolated and only initializes after all fixture imports", () 
   assert.equal(initializeStory(s), s);
   const next = initializeStory({ ...s, imports: [...importOptions] });
   assert.equal(next.ready, true);
-  assert.equal(next.entities.length, 10);
+  assert.equal(next.entities.length, 11);
   next.entities[0].fields.location = "Elsewhere";
   assert.equal(initialStories[0].entities[0].fields.location, "Home");
 });
@@ -79,7 +84,7 @@ test("proposed delta evidence is quoted from the shared writer output", () => {
 test("commit and repeated restore advance state versions independently of chapters", () => {
   const s = fixture();
   s.deltas.forEach(
-    (d) => (d.decision = d.risk === "conflict" ? "rejected" : "accepted"),
+    (d) => (d.decision = canAcceptChange(s, d) ? "accepted" : "rejected"),
   );
   const committed = commitMock(s, "commit");
   assert.equal(committed.currentStateVersion, 13);
@@ -96,8 +101,9 @@ test("commit and repeated restore advance state versions independently of chapte
   assert.equal(again.chapter, 12);
   again.deltas = structuredClone(fixtureDeltas).map((d) => ({
     ...d,
-    decision:
-      d.risk === "conflict" ? ("rejected" as const) : ("accepted" as const),
+    decision: canAcceptChange(again, d)
+      ? ("accepted" as const)
+      : ("rejected" as const),
   }));
   const recommitted = commitMock(again, "commit-after-restore");
   assert.equal(recommitted.currentStateVersion, 16);

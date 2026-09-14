@@ -1,3 +1,4 @@
+import { canAcceptChange } from "../lib/review-contract";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
@@ -43,7 +44,7 @@ test("Workspace output exposes Review as a run action without mutating state", (
     }),
   );
   assert.ok(html.includes(`href="/stories/${story.id}/review"`));
-  assert.match(html, /Review 4 changes/);
+  assert.match(html, /Review 7 changes/);
   assert.match(html, /Current State v12/);
   assert.deepEqual(story, before);
   assert.equal(storyRouteLabels.setup, "Sources & settings");
@@ -93,7 +94,7 @@ test("review, commit and restore one story leave another story untouched", () =>
     ...story,
     deltas: story.deltas.map((d) => ({
       ...d,
-      decision: d.risk === "conflict" ? "rejected" : "accepted",
+      decision: canAcceptChange(story, d) ? "accepted" : "rejected",
     })),
   }));
   const committed = updateStoryInCollection(reviewed, "a", (story) =>
@@ -114,7 +115,7 @@ test("review, commit and restore one story leave another story untouched", () =>
 test("legacy cache migrates commits and restores chronologically without data loss", () => {
   const story = fixture();
   story.deltas.forEach(
-    (d) => (d.decision = d.risk === "conflict" ? "rejected" : "accepted"),
+    (d) => (d.decision = canAcceptChange(story, d) ? "accepted" : "rejected"),
   );
   const committed = commitMock(story, "commit");
   const restored = rollbackMock(committed, story.versions[1], "restore");

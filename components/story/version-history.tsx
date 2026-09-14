@@ -107,12 +107,17 @@ export function History({ story, update }: { story: Story; update: Update }) {
                   </dd>
                 </div>
                 <div>
+                  <dt>USB 所有者</dt>
+                  <dd>
+                    {selected.entities.find((e) => e.id === "usb")?.fields
+                      .owner ?? "未记录"}
+                  </dd>
+                </div>
+                <div>
                   <dt>USB 持有者</dt>
                   <dd>
-                    {
-                      selected.entities.find((e) => e.id === "usb")?.fields
-                        .owner
-                    }
+                    {selected.entities.find((e) => e.id === "usb")?.fields
+                      .holder ?? "未单独记录"}
                   </dd>
                 </div>
               </dl>
