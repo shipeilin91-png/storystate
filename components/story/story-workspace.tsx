@@ -14,6 +14,11 @@ export function WritingWorkspace({
   update: Update;
 }) {
   const [preview, setPreview] = useState(true);
+  const source = story.reviewSource ?? {
+    chapter: 13,
+    title: "急诊室的交接",
+    output: writerOutput,
+  };
   return (
     <>
       <PageIntro
@@ -63,12 +68,12 @@ export function WritingWorkspace({
             {preview ? (
               <>
                 <div className="chapter-title">
-                  <small>CHAPTER 13</small>
-                  <h2>急诊室的交接</h2>
+                  <small>CHAPTER {source.chapter}</small>
+                  <h2>{source.title}</h2>
                   <div />
                 </div>
                 <div className="prose">
-                  {writerOutput.split("\n\n").map((p, i) => (
+                  {source.output.split("\n\n").map((p, i) => (
                     <p key={i}>{p}</p>
                   ))}
                 </div>

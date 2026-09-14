@@ -1,14 +1,16 @@
 # StoryState
 
 - 定位：面向长篇／连续文本 AIGC 的 Stateful Context Infrastructure。管理故事状态、上下文、变更审核与版本，增强已有 Writer。禁止将产品改成 AI Writer。
-- 当前阶段：Frontend Product Flow / Stage 1.2。标准 Next.js App Router + React + TypeScript + Tailwind CSS；统一浏览器 Mock State。
+- 当前阶段：State Diff Review / Stage 1.3。标准 Next.js App Router + React + TypeScript + Tailwind CSS；统一浏览器 Mock State。
 - 只修改本仓库。不修改 EvalPilot，不整仓复制，不引入其业务逻辑、API、数据、脚本或部署配置。
 - 修改前阅读 PROJECT_STATE.md 和 feature_list.json。保持信息密度、清晰任务导航、可访问性，以及所有页面的数据一致性。
 - READY Story 默认进入 Workspace；Setup 为 Sources & Settings，Review 为 Workspace run 节点。Chapter 与 State Version 独立，Commit/Restore 均递增版本并保留历史。Frontend Mock Contract ≠ Backend State Schema。
+- Review 原则：Default to state diff. Expand into reasoning. Recommendation ≠ Decision；Soft / NO_CHANGE 不进入 Canonical mutation。Frontend Review Contract ≠ Backend State Schema。禁止 Graph、无限画布和 graph library。
+- 本轮仅推送 ui/stage-1-3-state-diff-review，Product Owner Review 前禁止 merge main。
 - 未经用户确认不扩大 scope；后端、数据库、登录、支付、真实 AI、解析、Context Compiler 和真实版本操作保持 planned。
 - 验证：npm install、npm run build、npm run lint、npm test；启动 npm run dev，检查所有主要路由及桌面宽度。复杂状态流需回归测试。
 - Git 收尾：检查 git status、git diff --stat、git diff，确保没有 secrets/.env/node_modules/build artifacts；提交并在 remote 可用时 push，最后确认 clean。不得冒称验证或推送成功。
-- 中断保护：遇到额度、网络、无法继续或 Git 问题，停止新增功能，运行 git status 和 git diff --stat，可构建时 npm run build；尽可能提交 `chore: checkpoint Stage 1.2 integration`，remote 正常则 push。输出已完成、未完成、构建状态、SHA、续接位置。本地 Git 失败标记 GIT_BLOCKED，远程失败标记 REMOTE_BLOCKED。
+- 中断保护：遇到额度、网络、无法继续或 Git 问题，停止新增功能，运行 git status 和 git diff --stat，可构建时 npm run build；尽可能提交 `chore: checkpoint StoryState Stage 1.3 state diff review`，remote 正常则 push。输出已完成、未完成、构建状态、SHA、续接位置。本地 Git 失败标记 GIT_BLOCKED，远程失败标记 REMOTE_BLOCKED。
 
 <!-- BEGIN:nextjs-agent-rules -->
 
