@@ -23,7 +23,8 @@ function inputFingerprint(a: StoryAggregate) {
     story: a.story, state: Object.fromEntries(Object.entries(a.state).map(([key, values]) => [key, byId<CanonicalRow>(values)])),
     documents: byId(a.documents), revisions: byId(a.revisions), evidence: byId(a.evidence),
     events: byId(a.events).map(event => ({ ...event, participantIds: [...event.participantIds].sort(), evidenceIds: [...event.evidenceIds].sort() })),
-    deltas: byId(a.deltas).map(d => ({ ...candidateInput(d), evidenceIds: [...d.evidenceIds].sort(),
+    deltas: byId(a.deltas).map(d => ({ ...candidateInput(d), confidence: d.confidence, risk: d.risk, proposedBy: d.proposedBy,
+      evidenceIds: [...d.evidenceIds].sort(),
       decision: d.decision, decisions: d.decisions, committedVersionId: d.committedVersionId, validatorResult: d.validatorResult })),
   }, orderedObjectKeys)).digest("hex");
 }

@@ -133,3 +133,24 @@ test("normalizing object keys must not ignore ordered source payload changes", a
   };
   await assert.rejects(new RuntimeValidator(repository, new FakeSemanticClient()).validate(f.storyId, f.delta.id, 1), /inputs changed/);
 });
+
+test("in-flight changes to previously omitted DeltaInput fields invalidate the model result", async (t) => {
+  for (const change of ["confidence", "risk", "proposedBy"] as const) await t.test(change, async () => {
+    const f = await runtimeFixture();
+    let started!: () => void, release!: () => void;
+    const waiting = new Promise<void>(resolve => { started = resolve; });
+    const blocked = new Promise<void>(resolve => { release = resolve; });
+    const client = new FakeSemanticClient(async request => { started(); await blocked; return supported(request); });
+    const running = new RuntimeValidator(f.repository, client).validate(f.storyId, f.delta.id, 1);
+    await waiting;
+    await f.repository.transaction(f.storyId, aggregate => {
+      const delta = aggregate.deltas.find(row => row.id === f.delta.id)!;
+      if (change === "confidence") delta.confidence = 0.2;
+      else if (change === "risk") delta.risk = ["ownership_uncertain"];
+      else delta.proposedBy = "different proposer";
+    });
+    release();
+    await assert.rejects(running, /inputs changed/);
+    assert.equal((await f.repository.read(f.storyId)).deltas.find(row => row.id === f.delta.id)?.validatorResult, null);
+  });
+});

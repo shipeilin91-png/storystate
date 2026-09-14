@@ -166,10 +166,10 @@ Executed: npm install (up to date, 0 reported vulnerabilities; existing install-
 
 | Suite | Result |
 | --- | --- |
-| npm test | 166/166 PASS |
+| npm test | 170/170 PASS after Codex independent review fix |
 | npm run test:backend | 62/62 PASS |
 | npm run test:benchmark | 11/11 PASS, frozen exact representation suite |
-| npm run test:validator | 68/68 PASS |
+| npm run test:validator | 72/72 PASS after Codex independent review fix |
 | Stage 1.3 automatic regression | 25/25 PASS |
 | Stage 2.1/2.1.2 | Existing 62 backend + 11 exact tests unchanged and passing |
 | PGlite migration | Actually executed from empty databases, including new validator JSONB round-trip/API test |
@@ -186,9 +186,9 @@ Remaining risks: unmeasured live-model accuracy/provider compatibility, model pr
 
 The original implementation delivery used the confirmed local baseline and local commit only, with REMOTE_BLOCKED by the TRAE sandbox. The subsequent review attempts remote integration only after local verification and a clean commit, without credential edits or Keychain permission requests; its remote outcome is reported separately. Stop for Product Owner Review; do not merge main or initiate the next stage.
 
-## Engineering Review Corrections
+## Astra Self-Review Corrections
 
-本轮重新审核原提交 `b5b88299f638415d14f4bde24813035342ea50df`，独立执行 install/build/lint 及所有测试；不是沿用实现者报告的结果。三个 P2 问题均由探针复现，并经两路独立复核确认。仅修复 correctness，不重构 provider、repository 或 ontology。
+Astra 在原提交 `b5b88299f638415d14f4bde24813035342ea50df` 后自行审核并修复三个 P2 问题，最终形成提交 `2a28ead17190d158134c7e3c015b74992579d086`。这不是 Codex 独立审核；Codex 随后重新复核了三个修复。仅修复 correctness，不重构 provider、repository 或 ontology。
 
 | ID | 原缺陷与规则 | 最小修复 / 回归 |
 | --- | --- | --- |
@@ -231,3 +231,7 @@ flowchart LR
 ```
 
 其余审核结论：生产代码无 benchmark case ID 特判；fake 只提供 specialist verdict，不提供最终 recommendation。三个 prompt 的职责独立，共享同一有界 packet，并不交换判断。已有 overflow、缺失上下文、partial failure、provider unavailable、输出解析及 citation 校验保持通过。实际语义准确率仍未测量，十案例的 fake 指标仍为 routing 10/10、false AUTO_ACCEPT 0/10（错误候选 0/4）。No confidence、无自动 Decision/Commit、latest-result-only audit 和三份 Frozen Docs 边界均保留。
+
+## Codex Independent Review Correction
+
+Codex 独立重跑验证并复核上述三个 P2 修复。额外发现指纹只投影给模型的候选字段，遗漏已有 DeltaInput 的 `confidence`、`risk`、`proposedBy`。模型等待期间若这些字段改变，原逻辑仍会写回旧 validatorResult，违反 Delta input 变化必须 `VALIDATION_STALE` 的并发约束。新增回归先在三个字段分别复现旧结果覆盖，随后仅将遗漏字段纳入写回指纹；模型 packet、语义评分与现有无序行/关联 ID 规范化均保持不变。独立重跑结果：build/lint PASS、全量 170/170、backend 62/62、exact benchmark 11/11、validator 72/72；PGlite 迁移和 JSONB 回读实际执行。等待 Product Owner Review，不合并 main。
