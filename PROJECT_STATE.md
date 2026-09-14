@@ -1,7 +1,7 @@
 # StoryState — Project State
 
-- Current Stage: **Backend Foundation / Stage 2.1 — completed on main**. Stage 1.3 frontend product flow completed and frozen.
-- Stage 2.2 Runtime Validator: **implemented on branch / awaiting Product Owner Review** (`validator/stage-2-2-runtime`), base main `2dca51fde053bc066b9ca787772e24c987e3795f`; not merged.
+- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2 — completed / frozen on main**.
+- Stage 2.2 Runtime Validator V0.1: **completed / merged / frozen**. 工程与治理验证完成；LIVE SEMANTIC MODEL ACCURACY NOT YET VALIDATED。实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.1.2 Contract Hardening: **completed / merged main**. Product Owner 与 Codex 独立审核 PASS；已审核分支 `hardening/stage-2-1-2-contract` 提交 `c1c84e8002bd0fecd808b282c483cda54e961384` 从 `753ca6a0cc0f7625898ae8839f8bc461788d502e` 非 squash 合并。
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
@@ -50,6 +50,6 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 分支已实现 Runtime Validator V0.1：复用治理逻辑的 deterministic gate、有界结构检索、Evidence / Knowledge Boundary / Temporal 三个 specialist、确定性聚合、结果持久化与最小 validate API。只写 validatorResult，recommendation 不代替 human decision。未实现 AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2/2.2 均已完成并冻结。Stage 2.2 Runtime Validator V0.1 复用治理逻辑的 deterministic gate、有界结构检索、Evidence / Knowledge Boundary / Temporal 三个 specialist、确定性聚合、结果持久化与最小 validate API。只写 validatorResult，recommendation 不代替 human decision。Live Semantic Validation、AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
 
-Stage 2.2 Codex 独立工程审核后验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 实际执行迁移并回读 checks/audit。Astra 自审修复 pending 冲突漏检、整行/字段等价效果误判及数据库返回顺序导致的假 stale；Codex 独立复核并修复指纹遗漏 DeltaInput 三个字段导致的并发旧结果写回，新增对应回归。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10，真实模型准确率未测量。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。本阶段等待 Product Owner Review，不自行 merge 或启动下一阶段。
+Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。

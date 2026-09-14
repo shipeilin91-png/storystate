@@ -1,12 +1,13 @@
 {
   "project": "StoryState",
   "stage": "Runtime Validator / Stage 2.2",
-  "stageStatus": "implemented on branch / awaiting review",
-  "frontendProductFlow": "frozen",
-  "canonicalStateBackendFoundation": "completed",
+  "stageStatus": "completed / merged / frozen",
+  "frontendProductFlow": "completed / frozen",
+  "canonicalStateBackendFoundation": "completed / frozen",
+  "liveSemanticValidation": "planned",
   "contractHardening": {
     "stage": "Stage 2.1.2",
-    "status": "completed / merged main",
+    "status": "completed / frozen",
     "branch": "hardening/stage-2-1-2-contract",
     "scope": [
       "Validator Result Admission Gate",
@@ -177,11 +178,11 @@
     },
     {
       "id": "runtime-validator",
-      "status": "implemented on branch / awaiting review",
+      "status": "completed / merged / frozen",
       "description": "Runtime Validator V0.1；deterministic gate、bounded context、三个 semantic specialist、确定性聚合；不自动 Decision/Commit",
       "branch": "validator/stage-2-2-runtime",
       "verification": "Codex independent review: runtime 72/72; full 170/170; backend 62/62; exact contract 11/11; PGlite checks/audit and query-order regression PASS; complete DeltaInput fingerprint concurrency regression PASS",
-      "modelEvaluation": "deterministic fake only; live semantic accuracy not measured",
+      "modelEvaluation": "deterministic fake only; LIVE SEMANTIC MODEL ACCURACY NOT YET VALIDATED",
       "confidence": "NOT IMPLEMENTED"
     },
     {

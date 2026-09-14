@@ -1,8 +1,8 @@
 # Stage 2.2 Runtime Validator
 
-Status: implemented on `validator/stage-2-2-runtime`, awaiting Product Owner Review.
-Base main: `2dca51fde053bc066b9ca787772e24c987e3795f`.
-Stage 1.3, 2.1 and 2.1.2 remain completed/frozen. No merge is authorized.
+Status: completed / merged main / frozen. Runtime Validator V0.1 engineering / governance validation complete; LIVE SEMANTIC MODEL ACCURACY NOT YET VALIDATED.
+Implementation base main: `2dca51fde053bc066b9ca787772e24c987e3795f`. Stage 1.3, 2.1 and 2.1.2 remain completed/frozen.
+Provenance: Astra implementation `b5b88299f638415d14f4bde24813035342ea50df`; Astra self-review `2a28ead17190d158134c7e3c015b74992579d086`; Codex independent review `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2`. All three commits remain in the non-squash merge history.
 
 ## Goal and architecture
 
@@ -184,7 +184,7 @@ Node totals include parent tests and subtests. Hosted Supabase and live LLM vali
 
 Remaining risks: unmeasured live-model accuracy/provider compatibility, model prompt injection, bounded structured retrieval recall, conservative same-story invalidation of in-flight runs, latest-result-only audit, full-aggregate repository scaling, and existing unauthenticated write APIs. Do not expose this API publicly before the separate access-control stage.
 
-The original implementation delivery used the confirmed local baseline and local commit only, with REMOTE_BLOCKED by the TRAE sandbox. The subsequent review attempts remote integration only after local verification and a clean commit, without credential edits or Keychain permission requests; its remote outcome is reported separately. Stop for Product Owner Review; do not merge main or initiate the next stage.
+The original implementation was local to Trae, followed by Astra self-review and Codex independent review. Product Owner final review passed; the reviewed branch was non-squash merged into main and the full verification suite reran successfully. Live Semantic Validation, AI Extraction, pgvector RAG, Context Compiler, Frontend–Backend Integration, Writer Connector, MCP and Deployment remain planned; no next stage has started.
 
 ## Astra Self-Review Corrections
 
@@ -234,4 +234,4 @@ flowchart LR
 
 ## Codex Independent Review Correction
 
-Codex 独立重跑验证并复核上述三个 P2 修复。额外发现指纹只投影给模型的候选字段，遗漏已有 DeltaInput 的 `confidence`、`risk`、`proposedBy`。模型等待期间若这些字段改变，原逻辑仍会写回旧 validatorResult，违反 Delta input 变化必须 `VALIDATION_STALE` 的并发约束。新增回归先在三个字段分别复现旧结果覆盖，随后仅将遗漏字段纳入写回指纹；模型 packet、语义评分与现有无序行/关联 ID 规范化均保持不变。独立重跑结果：build/lint PASS、全量 170/170、backend 62/62、exact benchmark 11/11、validator 72/72；PGlite 迁移和 JSONB 回读实际执行。等待 Product Owner Review，不合并 main。
+Codex 独立重跑验证并复核上述三个 P2 修复。额外发现指纹只投影给模型的候选字段，遗漏已有 DeltaInput 的 `confidence`、`risk`、`proposedBy`。模型等待期间若这些字段改变，原逻辑仍会写回旧 validatorResult，违反 Delta input 变化必须 `VALIDATION_STALE` 的并发约束。新增回归先在三个字段分别复现旧结果覆盖，随后仅将遗漏字段纳入写回指纹；模型 packet、语义评分与现有无序行/关联 ID 规范化均保持不变。合并后 main 重跑结果：build/lint PASS、全量 170/170、backend 62/62、exact benchmark 11/11、validator 72/72；PGlite 迁移和 JSONB 回读实际执行。工程与治理验证完成，真实模型语义准确率未验证。
