@@ -1,8 +1,8 @@
 # Stage 2.2.1B Live Semantic Architecture Experiment
 
-Status: **COMPLETED / LIVE SEMANTIC ARCHITECTURE EXPERIMENT VALID**.
+Status: **COMPLETED / VALID / MERGED MAIN**.
 
-Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0/B0.1 prepared the provider package, B0.3 froze the post-probe identity and execution provenance contract, and the separately authorized Stage 2.2.1B run completed. The valid result selects a Generic Validator for the planned Stage 2.2.2 simplification. It does not establish strong or unrestricted semantic accuracy.
+Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0/B0.1 prepared the provider package, B0.3 froze the post-probe identity and execution provenance contract, and the separately authorized Stage 2.2.1B run completed. The full five-commit feature history was preserved through non-squash main merge `42aee56acded28efdc15a2bd27bca6a59c352921`. The valid result selects a Generic Validator for the planned Stage 2.2.2 simplification. It does not establish strong or unrestricted semantic accuracy.
 
 ## Frozen experiment boundary
 

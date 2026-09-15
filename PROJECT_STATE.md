@@ -2,7 +2,7 @@
 
 - Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2 — completed / frozen on main**.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
-- Stage 2.2.1B: **completed / live semantic architecture experiment valid** on `eval/stage-2-2-1b-live-prep`; architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
+- Stage 2.2.1B: **completed / valid / merged main**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **planned / not started**。
 - Stage 2.1.2 Contract Hardening: **completed / merged main**. Product Owner 与 Codex 独立审核 PASS；已审核分支 `hardening/stage-2-1-2-contract` 提交 `c1c84e8002bd0fecd808b282c483cda54e961384` 从 `753ca6a0cc0f7625898ae8839f8bc461788d502e` 非 squash 合并。
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
@@ -74,7 +74,7 @@ B0.3 已准备 fail-closed official runner 与 execution provenance：prepared m
 
 ## Stage 2.2.1B Live Semantic Architecture Experiment
 
-Stage 2.2.1B 官方 run 已 **COMPLETED / VALID**：198/198 calls，0 failures；总 usage 为 353,591 input tokens / 25,005 output tokens。provider/requested/observed identity 为 `deepseek-api` / `deepseek-flash` / `deepseek-flash`，identity class 为 `PROVIDER_MODEL_ALIAS_ONLY`。
+Stage 2.2.1B 官方 run 已 **COMPLETED / VALID / MERGED MAIN**，通过非 squash merge commit `42aee56acded28efdc15a2bd27bca6a59c352921` 保留完整准备、probe、freeze 与 finalization 历史：198/198 calls，0 failures；总 usage 为 353,591 input tokens / 25,005 output tokens。provider/requested/observed identity 为 `deepseek-api` / `deepseek-flash` / `deepseek-flash`，identity class 为 `PROVIDER_MODEL_ALIAS_ONLY`。
 
 20-case Holdout 是主要证据。Generic 与 Specialist semantic accuracy 均为 12/20，False AUTO 均为 0/15，Safe AUTO 均为 4/5，Review Rate 均为 16/20。Generic stability 为 10/10，Specialist 为 9/10；Specialist 平均 calls 为 2.15 对 Generic 1.0，mean/median latency 约为两倍，P95 约为 2.9 倍。依预注册 simplification rule，Architecture Decision 为 **SELECT_GENERIC_VALIDATOR**。
 

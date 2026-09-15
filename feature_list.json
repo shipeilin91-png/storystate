@@ -4,7 +4,7 @@
   "stageStatus": "completed / merged / frozen / historical baseline",
   "frontendProductFlow": "completed / frozen",
   "canonicalStateBackendFoundation": "completed / frozen",
-  "liveSemanticValidation": "Stage 2.2.1B completed / live semantic architecture experiment valid",
+  "liveSemanticValidation": "Stage 2.2.1B completed / valid / merged main",
   "liveSemanticEvaluationHarness": {
     "stage": "Stage 2.2.1A",
     "status": "completed / merged / frozen",
@@ -21,17 +21,19 @@
     "productOwnerFinalReview": "PASS",
     "astraFreezeCommit": "ddfb19260853b441b11934420ec5bce4feab76dd",
     "reviewedPreLiveFrozenCommit": "fe620a3d8e36cf81d70d39c426a22783c555379a",
-    "stage221B": "completed / live semantic architecture experiment valid",
+    "stage221B": "completed / valid / merged main",
     "liveSemanticAccuracy": "architecture comparison measured at 12/20 for both; not sufficient for unrestricted canonical mutation",
     "mockOutput": "HARNESS TEST ONLY",
     "methodologyBoundary": "20-case preregistered internal StoryState challenge set from Ch13-17; supports the current-domain architecture decision, not universal long-horizon AIGC superiority",
     "liveAuthorizationBoundary": "reviewed Git commit and committed lock manifest required before any live call",
     "architectureDecision": "SELECT_GENERIC_VALIDATOR",
-    "finalizationReview": "pending"
+    "finalizationReview": "PASS",
+    "integrationStatus": "non-squash merged main",
+    "mainMergeCommit": "42aee56acded28efdc15a2bd27bca6a59c352921"
   },
   "liveSemanticRunPackage": {
     "stage": "Stage 2.2.1B",
-    "status": "completed / live semantic architecture experiment valid",
+    "status": "completed / valid / merged main",
     "officialProvider": "DeepSeek API",
     "providerId": "deepseek-api",
     "requestedModelId": "deepseek-flash",
@@ -48,7 +50,7 @@
     "liveRunnerStatus": "fail closed",
     "singleSessionRequired": true,
     "cleanWorktreeRequired": true,
-    "stage221B": "completed",
+    "stage221B": "completed / merged main",
     "liveSemanticAccuracy": "architecture evidence valid; Generic 12/20 and Specialist 12/20; no unrestricted mutation claim",
     "realProviderCalls": 199,
     "officialExecutionStatus": "COMPLETED",
@@ -60,7 +62,9 @@
     "providerCallsInFinalization": 0,
     "committedPreparedManifestStatus": "PREPARED_NOT_AUTHORIZED",
     "officialExternalManifestStatus": "AUTHORIZED",
-    "architectureDecision": "SELECT_GENERIC_VALIDATOR"
+    "architectureDecision": "SELECT_GENERIC_VALIDATOR",
+    "integrationStatus": "non-squash merged main",
+    "mainMergeCommit": "42aee56acded28efdc15a2bd27bca6a59c352921"
   },
   "contractHardening": {
     "stage": "Stage 2.1.2",
