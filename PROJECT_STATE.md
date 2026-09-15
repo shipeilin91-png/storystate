@@ -53,3 +53,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 Stage 1.3 产品流程与 Stage 2.1/2.1.2/2.2 均已完成并冻结。Stage 2.2 Runtime Validator V0.1 复用治理逻辑的 deterministic gate、有界结构检索、Evidence / Knowledge Boundary / Temporal 三个 specialist、确定性聚合、结果持久化与最小 validate API。只写 validatorResult，recommendation 不代替 human decision。Live Semantic Validation、AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
+
+## Stage 2.2.1A 分支准备
+
+`eval/stage-2-2-1-live-semantic` 已准备 benchmark freeze 与 evaluation harness，等待审核；**NOT live-run，Stage 2.2.1 NOT complete，不是性能结果冻结**。10 Anchor + 20 Holdout（四组各5，8 SUPPORTED / 8 UNSUPPORTED / 4 UNCERTAIN），20个Holdout均通过冻结gate；H09仅比较有界/无界operational cooperation，H17比较Ch16方向与Ch17实际抵达。四组ablation含精确证据ID审计。Generic一次调用与生产specialist路由使用同一packet/模型配置；统计独立报告Anchor/Holdout，支持安全指标、calls、latency、可选usage/cost和预选stability。真实provider调用为0；Stage 2.2 frozen不变。详见 `docs/STAGE_2_2_1_LIVE_SEMANTIC_VALIDATION.md`。

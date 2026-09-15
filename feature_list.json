@@ -5,6 +5,19 @@
   "frontendProductFlow": "completed / frozen",
   "canonicalStateBackendFoundation": "completed / frozen",
   "liveSemanticValidation": "planned",
+  "liveSemanticEvaluationHarness": {
+    "stage": "Stage 2.2.1A",
+    "status": "benchmark/harness prepared on branch / awaiting review",
+    "branch": "eval/stage-2-2-1-live-semantic",
+    "benchmarkVersion": "stage-2.2.1/v0.1",
+    "benchmarkStatus": "FROZEN_BEFORE_LIVE_RUN",
+    "anchorCount": 10,
+    "holdoutCount": 20,
+    "holdoutEligibleCount": 20,
+    "liveRun": false,
+    "stage221Complete": false,
+    "performanceResultFrozen": false
+  },
   "contractHardening": {
     "stage": "Stage 2.1.2",
     "status": "completed / frozen",

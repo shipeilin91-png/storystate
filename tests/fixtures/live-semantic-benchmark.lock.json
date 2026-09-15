@@ -1,0 +1,12 @@
+{
+  "benchmarkVersion": "stage-2.2.1/v0.1",
+  "status": "FROZEN_BEFORE_LIVE_RUN",
+  "datasetHash": "992db12b706414bec4b9dadb2e591e1c220a90af6962853cb5b3d89af6dda53e",
+  "benchmarkFingerprint": "e4c7db6a4479f35abf9740dfeed78e03cdaa92599094745f0845aa28e71ddbfa",
+  "evaluationConfigHash": "f7c3ec971e427cf32a936d8b1f1f5f0ec813afdc60d2329cf261aa7c447c6420",
+  "sourceDigest": "a8468d2d68b2c20a42ff0721d5d34501cca14b4e172b173ef6194c94e0ba064a",
+  "caseCount": 30,
+  "anchorCount": 10,
+  "holdoutCount": 20,
+  "realProviderCalls": 0
+}
