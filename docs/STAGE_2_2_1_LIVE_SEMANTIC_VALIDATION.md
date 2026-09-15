@@ -1,6 +1,6 @@
 # Stage 2.2.1A Benchmark Freeze and Evaluation Harness
 
-Status: benchmark/harness prepared on `eval/stage-2-2-1-live-semantic`, awaiting review. **NOT live-run. Stage 2.2.1 is NOT complete. No performance result is frozen or claimed.**
+Status: benchmark/harness on `eval/stage-2-2-1-live-semantic` passed Codex independent engineering review after live-freeze authorization hardening; awaiting Product Owner final review. **NOT live-run. Stage 2.2.1 is NOT complete. No performance result is frozen or claimed.**
 
 Base main: `f7f3b29e86723e1c43a381ffef49194ac631b379`. Stage 1.3 / 2.1 / 2.1.2 / 2.2 remain completed and frozen. No production validator semantics, prompts, schema, frontend or Frozen Docs changed.
 
@@ -29,7 +29,7 @@ Version: `stage-2.2.1/v0.1`; status: `FROZEN_BEFORE_LIVE_RUN`; frozenAt: 2026-09
 
 IDs are reproducible UUIDs derived from entity/event identities and exact chapter/span positions, not Gold labels or case difficulty. Existing random fixture IDs/timestamps are normalized only in evaluation copies. Gold and nested fixtures are deep-frozen; the collector does not write files or use a repository mutation API. The lock also detects changes to candidate inputs, sources, state snapshots, packet definitions, prompts, decoding and output schema.
 
-The runner accepts an injected client; live clients are denied unless a later caller supplies explicit live authorization, expected configuration hash and a pre-run freeze commit SHA. A live adapter must report matching provider/model/version identity on every response or the run aborts. This is an interface boundary, not online provider certification or proof that a supplied SHA has been reviewed. The later live-run task must verify that Git commit and the locked manifest before configuring its adapter.
+The runner accepts an injected client; live clients are denied unless a later caller supplies explicit live authorization, expected configuration hash and a pre-run freeze commit SHA. Before any call, the runner resolves that exact commit in the local Git repository, reads the committed lock manifest, and requires its dataset/config hashes and case counts to match the evaluation. Caller-recomputed hashes and an arbitrary 40-hex value cannot authorize a mutated benchmark. A live adapter must report matching provider/model/version identity on every response or the run aborts. Product Owner authorization and provider credentials remain the future live-run caller's responsibility.
 
 ## Binding Method
 

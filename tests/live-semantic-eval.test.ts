@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { buildBenchmark, benchmarkMetadata, benchmarkFingerprint, sourceDigest, evidenceById, minimalPairs } from "./fixtures/live-semantic-benchmark";
 import { aggregateSemantic, digest, type BoundCase, type Verdict } from "../lib/eval/contract";
-import { datasetHash, decoding, evaluationConfigHash, genericPrompt, parseGeneric, runEvaluation, type EvalModelClient, type EvalRequest, type Usage } from "../lib/eval/runner";
+import { datasetHash, decoding, evaluationConfigHash, genericPrompt, parseGeneric, runEvaluation, verifyLiveFreeze, type EvalModelClient, type EvalRequest, type Usage } from "../lib/eval/runner";
 import { calculateMetrics, renderReport } from "../lib/eval/metrics";
 import { deterministicGate } from "../lib/server/validator/deterministic";
 import { packetHash } from "../lib/server/validator/context";
@@ -273,6 +273,15 @@ test("live clients are forbidden by default and model-version drift aborts the c
   const live: EvalModelClient = { kind: "live", identity: { provider: "none", modelId: "none", modelVersion: "none" },
     complete: async () => { calls++; throw new Error("must never run"); } };
   await assert.rejects(runEvaluation(cases, live, runOptions), /LIVE_RUN_NOT_AUTHORIZED/);
+  assert.equal(calls, 0);
+  assert.equal(verifyLiveFreeze(lock.datasetHash, lock.evaluationConfigHash, "ddfb19260853b441b11934420ec5bce4feab76dd").datasetHash, lock.datasetHash);
+  await assert.rejects(runEvaluation(cases, live, { ...runOptions, allowLive: true, frozenCommit: "0".repeat(40) }), /LIVE_RUN_NOT_AUTHORIZED/);
+  const changed = structuredClone(cases);
+  changed[0].metadata.goldSemanticVerdict = "UNCERTAIN";
+  await assert.rejects(runEvaluation(changed, live, {
+    ...runOptions, expectedDatasetHash: datasetHash(changed), allowLive: true,
+    frozenCommit: "ddfb19260853b441b11934420ec5bce4feab76dd",
+  }), /LIVE_RUN_NOT_AUTHORIZED/);
   assert.equal(calls, 0);
   const drift: EvalModelClient = { kind: "mock", identity: live.identity,
     complete: async request => ({ output: answer(request), resolvedIdentity: { ...live.identity, modelVersion: "changed" } }) };

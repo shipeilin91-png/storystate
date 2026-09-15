@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { execFileSync } from "node:child_process";
 import { semanticCheckSchema, type Specialist, type ValidationCheck } from "../domain/validation";
 import { aggregateChecks, impactPolicy } from "../server/validator/aggregate";
 import { deterministicGate } from "../server/validator/deterministic";
@@ -45,6 +46,28 @@ export type EvaluationRun = {
   decoding: typeof decoding; datasetHash: string; evaluationConfigHash: string; frozenCommit: string | null; results: CaseResult[];
 };
 export function datasetHash(cases: readonly BoundCase[]): string { return digest(cases); }
+const freezeLockSchema = z.strictObject({
+  benchmarkVersion: z.string().min(1), status: z.literal("FROZEN_BEFORE_LIVE_RUN"),
+  datasetHash: z.string().regex(/^[a-f0-9]{64}$/), benchmarkFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+  evaluationConfigHash: z.string().regex(/^[a-f0-9]{64}$/), sourceDigest: z.string().regex(/^[a-f0-9]{64}$/),
+  caseCount: z.number().int().positive(), anchorCount: z.number().int().nonnegative(), holdoutCount: z.number().int().positive(),
+  realProviderCalls: z.literal(0),
+});
+export function verifyLiveFreeze(dataset: string, config: string, frozenCommit: string) {
+  try {
+    if (!/^[a-f0-9]{40}$/.test(frozenCommit)) throw new Error("invalid commit");
+    const git = (args: string[]) => execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 128 * 1024 }).trim();
+    const root = git(["rev-parse", "--show-toplevel"]);
+    const resolved = git(["-C", root, "rev-parse", "--verify", `${frozenCommit}^{commit}`]);
+    if (resolved !== frozenCommit) throw new Error("commit mismatch");
+    const lock = freezeLockSchema.parse(JSON.parse(git(["-C", root, "show", `${resolved}:tests/fixtures/live-semantic-benchmark.lock.json`])));
+    if (lock.datasetHash !== dataset || lock.evaluationConfigHash !== config || lock.caseCount !== lock.anchorCount + lock.holdoutCount)
+      throw new Error("lock mismatch");
+    return lock;
+  } catch {
+    throw new Error("LIVE_RUN_NOT_AUTHORIZED: frozen Git commit and lock manifest must match the reviewed dataset/config");
+  }
+}
 export function parseGeneric(raw: unknown, packet: ValidationPacket) {
   if (typeof raw === "string" && raw.length > 8000) throw new Error("Oversized output");
   const result = genericCheckSchema.parse(typeof raw === "string" ? JSON.parse(raw) : raw);
@@ -60,8 +83,11 @@ export async function runEvaluation(cases: readonly BoundCase[], client: EvalMod
   if (datasetHash(cases) !== options.expectedDatasetHash) throw new Error("BENCHMARK_FREEZE_MISMATCH");
   const configHash = evaluationConfigHash();
   if (options.expectedConfigHash && configHash !== options.expectedConfigHash) throw new Error("EVALUATION_CONFIG_MISMATCH");
-  if (client.kind === "live" && (!options.allowLive || !options.expectedConfigHash || !/^[a-f0-9]{40}$/.test(options.frozenCommit ?? "")))
-    throw new Error("LIVE_RUN_NOT_AUTHORIZED: explicit approval and pre-run freeze commit required");
+  if (client.kind === "live") {
+    if (!options.allowLive || !options.expectedConfigHash || !options.frozenCommit)
+      throw new Error("LIVE_RUN_NOT_AUTHORIZED: explicit approval and pre-run freeze commit required");
+    verifyLiveFreeze(options.expectedDatasetHash, configHash, options.frozenCommit);
+  }
   const identity = z.strictObject({ provider: z.string().min(1), modelId: z.string().min(1), modelVersion: z.string().min(1) }).parse(client.identity);
   const identityKey = digest(identity);
   const clock = options.clock ?? (() => performance.now());

@@ -7,7 +7,7 @@
   "liveSemanticValidation": "planned",
   "liveSemanticEvaluationHarness": {
     "stage": "Stage 2.2.1A",
-    "status": "benchmark/harness prepared on branch / awaiting review",
+    "status": "independent engineering review passed with live-freeze hardening / awaiting Product Owner final review",
     "branch": "eval/stage-2-2-1-live-semantic",
     "benchmarkVersion": "stage-2.2.1/v0.1",
     "benchmarkStatus": "FROZEN_BEFORE_LIVE_RUN",
@@ -16,7 +16,9 @@
     "holdoutEligibleCount": 20,
     "liveRun": false,
     "stage221Complete": false,
-    "performanceResultFrozen": false
+    "performanceResultFrozen": false,
+    "independentEngineeringReview": "PASS",
+    "liveAuthorizationBoundary": "reviewed Git commit and committed lock manifest required before any live call"
   },
   "contractHardening": {
     "stage": "Stage 2.1.2",
