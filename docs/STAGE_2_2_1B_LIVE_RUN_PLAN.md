@@ -1,8 +1,8 @@
-# Stage 2.2.1B0.3 DeepSeek Live Runner Freeze
+# Stage 2.2.1B Live Semantic Architecture Experiment
 
-Status: **IDENTITY AND PROVENANCE FROZEN / OFFICIAL RUN NOT AUTHORIZED**.
+Status: **COMPLETED / LIVE SEMANTIC ARCHITECTURE EXPERIMENT VALID**.
 
-Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0/B0.1 prepared the provider package, and B0.3 freezes the post-probe identity and execution provenance contract. Stage 2.2.1B is **NOT STARTED**. Live Semantic Accuracy is **NOT YET VALIDATED**. No provider call was made in B0.3.
+Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0/B0.1 prepared the provider package, B0.3 froze the post-probe identity and execution provenance contract, and the separately authorized Stage 2.2.1B run completed. The valid result selects a Generic Validator for the planned Stage 2.2.2 simplification. It does not establish strong or unrestricted semantic accuracy.
 
 ## Frozen experiment boundary
 
@@ -45,7 +45,7 @@ The official comparison may later use this limitation because Generic and Specia
 
 ## Exact DeepSeek request and response contract
 
-Every future semantic call maps to one `POST https://api.deepseek.com/responses` request:
+Every official experiment call mapped to one `POST https://api.deepseek.com/responses` request:
 
 - `model`: `deepseek-flash`
 - `instructions`: the unchanged Generic or applicable specialist prompt
@@ -64,7 +64,7 @@ Official references: [Responses API](https://api-docs.deepseek.com/api/create-re
 
 `npm run eval:semantic:live` defaults to the committed prepared manifest and returns `LIVE_RUN_NOT_AUTHORIZED`. The prepared manifest remains `PREPARED_NOT_AUTHORIZED`, with null authorization fields and null `liveRunCodeGitSha`. Environment variables cannot authorize a run.
 
-The runner can later accept one explicitly supplied authorized manifest path. Before reading `DEEPSEEK_API_KEY` or constructing the transport it requires:
+The official run used one explicitly supplied external authorized manifest. Before reading `DEEPSEEK_API_KEY` or constructing the transport, the runner required:
 
 1. strict `AUTHORIZED` manifest status and Product Owner authorization fields;
 2. provider `deepseek-api`, requested alias `deepseek-flash`, observed provider model `deepseek-flash`, and identity class `PROVIDER_MODEL_ALIAS_ONLY`;
@@ -95,7 +95,7 @@ The estimate uses `CJK + non-CJK/4` for the low bound and `2×CJK + non-CJK/2` f
 
 ## Execution provenance and artifacts
 
-The artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.json`, `report.md`, and `execution-summary.json`. Official artifacts record:
+The artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.json`, `report.md`, and `execution-summary.json`. Official artifacts recorded:
 
 - benchmark frozen commit, dataset hash, and evaluation configuration hash;
 - live-run code Git SHA and `gitWorktreeState: CLEAN`;
@@ -103,13 +103,13 @@ The artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.
 - `runStartedAt` and `runFinishedAt`;
 - case, architecture, phase, run, agent, packet hash, parsed result, latency, exact usage when available, provider response ID, completion status, and sanitized error category.
 
-The alias-only classification is carried explicitly; artifacts do not describe the observed alias as a specific immutable model version. Files use restrictive temporary writes and atomic linking or renaming. Existing completed runs are immutable. `results/live-semantic/` remains Git-ignored, and B0.3 writes no benchmark result.
+The alias-only classification is carried explicitly; artifacts do not describe the observed alias as a specific immutable model version. Files use restrictive temporary writes and atomic linking or renaming. Existing completed runs are immutable. `results/live-semantic/` remains Git-ignored. The raw official result remains local; only sanitized aggregate artifacts are tracked under `docs/evaluation/stage-2.2.1b/`.
 
 ## Pricing and result policy
 
-No account balance or provider price is committed. Provider pricing may change. Any later cost estimate requires returned usage plus an explicit reviewed pricing configuration. Raw provider results remain local by default; committing sanitized manifest, metrics, or report artifacts remains Product Owner-owned.
+No account balance or provider price is committed. Provider pricing may change. Any later cost estimate requires returned usage plus an explicit reviewed pricing configuration. Raw provider results remain local; the Product Owner-authorized finalization commits only sanitized manifest, summary, aggregate metrics, report, and decision artifacts.
 
-## Verification
+## B0.3 verification
 
 B0.3 verification passed:
 
@@ -124,6 +124,43 @@ B0.3 verification passed:
 - default `npm run eval:semantic:live`: fail closed with `LIVE_RUN_NOT_AUTHORIZED`.
 
 Provider calls in B0.3 remained 0; the historical synthetic probe count remains 1; benchmark calls remain 0.
+
+## Official Stage 2.2.1B result
+
+The authorized run completed from clean code SHA `dad2e6477c008f9daa0211439d3261535d2ef63e` in one contiguous session from `2026-09-15T13:33:18.293Z` to `2026-09-15T13:37:31.872Z`. It completed 198/198 calls with 0 failures and used 353,591 input tokens and 25,005 output tokens.
+
+Holdout is the primary architecture evidence:
+
+| Measure | Generic | Specialist |
+| --- | ---: | ---: |
+| Semantic accuracy | 12/20 | 12/20 |
+| False AUTO | 0/15 | 0/15 |
+| Safe AUTO coverage | 4/5 | 4/5 |
+| Review rate | 16/20 | 16/20 |
+| Stable hard cases | 10/10 | 9/10 |
+| Average model calls | 1.00 | 2.15 |
+| Mean / median / P95 latency | 1,365.79 / 1,249.25 / 1,662.63 ms | 2,760.91 / 2,517.64 / 4,856.91 ms |
+
+Specialist gained one Evidence case and lost one Temporal case; Control and Knowledge were unchanged. Specialist H17 was unstable: `UNCERTAIN`, `UNSUPPORTED`, `UNCERTAIN`. All stability responses were valid.
+
+The preregistered simplification rule therefore yields **SELECT_GENERIC_VALIDATOR**. Specialist supplied no net semantic accuracy, False AUTO, Safe AUTO, or Review Rate gain and required 2.15 times the calls, about twice the mean and median latency, about 2.9 times the P95 latency, and had lower stability.
+
+This is an architecture decision. A 12/20 Holdout result is not evidence that Generic semantic judgment is sufficient for unrestricted canonical mutation. Deterministic gates, conservative routing, high-impact review, human review, and no direct LLM mutation remain required. Stage 2.2 Runtime Validator V0.1 remains the completed and frozen Specialist historical baseline. Stage 2.2.2 Runtime Validator V0.2 Generic Semantic Simplification is **PLANNED / NOT STARTED**.
+
+## Finalization verification
+
+- build and lint: PASS;
+- full suite: 258/258;
+- backend: 62/62;
+- exact benchmark contract: 11/11;
+- runtime validator: 72/72;
+- semantic eval harness: 51/51;
+- live preparation: 37/37;
+- sanitized JSON and existing run/artifact schemas: PASS;
+- dataset and evaluation configuration hashes: unchanged;
+- Frozen Docs, frozen benchmark, prompts, routing, Stage 2.2 behavior, and frontend: unchanged;
+- raw `raw-results.jsonl`: local, ignored, and untracked;
+- provider calls during finalization: 0.
 
 ## Methodology boundary
 
