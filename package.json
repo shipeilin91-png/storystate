@@ -12,9 +12,13 @@
     "test:benchmark": "node --import tsx --test tests/benchmark-pilot-exact.test.ts",
     "test:validator": "node --import tsx --test tests/runtime-validator.test.ts tests/runtime-validator-benchmark.test.ts tests/runtime-validator-review.test.ts",
     "test:eval": "node --import tsx --test tests/live-semantic-eval.test.ts",
-    "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts"
+    "test:live-prep": "node --import tsx --test tests/live-semantic-prep.test.ts",
+    "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts",
+    "eval:semantic:live:preflight": "node --import tsx scripts/eval-semantic-live-preflight.ts",
+    "eval:semantic:live": "node --import tsx scripts/eval-semantic-live-disabled.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.22.0",
     "next": "^16.1.0",
     "pg": "^8.23.0",
     "react": "^19.2.0",
