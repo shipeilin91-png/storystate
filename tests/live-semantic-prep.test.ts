@@ -11,6 +11,7 @@ import {
   buildDeepSeekProbeRequest,
   parseDeepSeekProbeResponse,
   SYNTHETIC_PROBE_PACKET,
+  SYNTHETIC_PROBE_QUOTE,
 } from "../lib/eval/live/deepseek-probe";
 import { buildLivePreflight } from "../lib/eval/live/preflight";
 import {
@@ -305,6 +306,12 @@ test("synthetic probe is independent of Benchmark stories", () => {
   for (const forbidden of ["H01", "H20", "Ch13", "Ch14", "Ch15", "Ch16", "Ch17", "goldSemanticVerdict"])
     assert.ok(!serialized.includes(forbidden), forbidden);
   assert.deepEqual(JSON.parse(buildDeepSeekProbeRequest().input).validationPacket, SYNTHETIC_PROBE_PACKET);
+});
+
+test("synthetic probe evidence span exactly covers its quote", () => {
+  const evidence = SYNTHETIC_PROBE_PACKET.primaryEvidence[0];
+  assert.equal(evidence.quote, SYNTHETIC_PROBE_QUOTE);
+  assert.equal(evidence.end - evidence.start, evidence.quote.length);
 });
 
 test("synthetic probe response exposes version metadata and parser compatibility", () => {

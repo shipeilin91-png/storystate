@@ -10,6 +10,9 @@ import {
 } from "../providers/deepseek";
 import { decoding, genericPrompt, parseGeneric, responseSchemaFor, type EvalRequest } from "../runner";
 
+export const SYNTHETIC_PROBE_QUOTE = "A red key is lying on the desk.";
+const SYNTHETIC_PROBE_QUOTE_START = 0;
+
 export const SYNTHETIC_PROBE_PACKET = deepFreeze<ValidationPacket>({
   candidateDelta: {
     id: "00000000-0000-4000-8000-0000000000d1",
@@ -42,9 +45,9 @@ export const SYNTHETIC_PROBE_PACKET = deepFreeze<ValidationPacket>({
   primaryEvidence: [{
     id: "00000000-0000-4000-8000-0000000000e1",
     sourceRevisionId: "00000000-0000-4000-8000-0000000000c1",
-    quote: "A red key is lying on the desk.",
-    start: 0,
-    end: 35,
+    quote: SYNTHETIC_PROBE_QUOTE,
+    start: SYNTHETIC_PROBE_QUOTE_START,
+    end: SYNTHETIC_PROBE_QUOTE_START + SYNTHETIC_PROBE_QUOTE.length,
     speakerId: null,
     sourceOrder: 1,
     chapter: null,
