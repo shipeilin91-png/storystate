@@ -1,8 +1,8 @@
 # Stage 2.2.1A Benchmark Freeze and Evaluation Harness
 
-Status: benchmark/harness on `eval/stage-2-2-1-live-semantic` passed Codex independent engineering review after live-freeze authorization hardening; awaiting Product Owner final review. **NOT live-run. Stage 2.2.1 is NOT complete. No performance result is frozen or claimed.**
+Status: Stage 2.2.1A Benchmark + Eval Harness **COMPLETED / MERGED / FROZEN_BEFORE_LIVE_RUN**. **NOT live-run. Stage 2.2.1 overall is NOT complete. Stage 2.2.1B is NOT STARTED. Live Semantic Accuracy is NOT YET VALIDATED. No performance result is frozen or claimed.**
 
-Base main: `f7f3b29e86723e1c43a381ffef49194ac631b379`. Stage 1.3 / 2.1 / 2.1.2 / 2.2 remain completed and frozen. No production validator semantics, prompts, schema, frontend or Frozen Docs changed.
+Base main: `f7f3b29e86723e1c43a381ffef49194ac631b379`. Astra benchmark/harness freeze: `ddfb19260853b441b11934420ec5bce4feab76dd`. Codex hardening and reviewed pre-live frozen commit for a future authorized live run: `fe620a3d8e36cf81d70d39c426a22783c555379a`. This provenance does not authorize a live run. Stage 1.3 / 2.1 / 2.1.2 / 2.2 remain completed and frozen. No production validator semantics, prompts, schema, frontend or Frozen Docs changed.
 
 ## Experimental Question
 
@@ -195,6 +195,8 @@ Minimal pairs: H06/H07, H08/H09, H12/Ch15-B, H13/H14, H17/H16, H19/Ch14-A. Pair 
 
 Architecture policy remains PO-owned: retain specialists only when safety does not regress, interpretable Holdout boundary gains are meaningful, and extra calls/latency/cost are justified. Effective equivalence favors simpler Generic; Generic superiority also supports simplification. A one-case difference on N=20 is not automatically meaningful. No significance or automatic product mutation is manufactured.
 
+The 20 Holdout cases are a preregistered internal StoryState challenge set derived from Ch13–17 and known semantic boundary classes. They support an architecture decision within the current StoryState domain. They do not establish universal superiority across all long-horizon AIGC domains.
+
 ## Deterministic Verification
 
 Commands:
@@ -207,7 +209,7 @@ npm run eval:semantic:harness -- --report
 
 The CLI only constructs a uniform-SUPPORTED mock and prints to stdout; it cannot run a live provider, load API keys or rewrite Gold. Mock reports say **HARNESS TEST ONLY**. Uniform mocks intentionally produce semantic 8/20 and false AUTO 6/15 in Holdout; these are metric plumbing checks, not real-model accuracy. The mock does not read Gold to choose verdicts.
 
-Real provider calls made: **NO**. No live result files generated. Network/provider adapter integration and real semantic evaluation require a separate explicitly authorized task after this freeze commit is reviewed. Existing Stage 2.2 production provider behavior and all three Frozen Docs remain unchanged.
+Real provider calls made: **NO**. No live result files generated. Stage 2.2.1B network/provider adapter integration and real semantic evaluation require a separate design and explicit authorization. Existing Stage 2.2 production provider behavior and all three Frozen Docs remain unchanged.
 
 Executed locally after implementation:
 

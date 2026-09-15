@@ -7,7 +7,7 @@
   "liveSemanticValidation": "planned",
   "liveSemanticEvaluationHarness": {
     "stage": "Stage 2.2.1A",
-    "status": "independent engineering review passed with live-freeze hardening / awaiting Product Owner final review",
+    "status": "completed / merged / frozen before live run",
     "branch": "eval/stage-2-2-1-live-semantic",
     "benchmarkVersion": "stage-2.2.1/v0.1",
     "benchmarkStatus": "FROZEN_BEFORE_LIVE_RUN",
@@ -18,6 +18,13 @@
     "stage221Complete": false,
     "performanceResultFrozen": false,
     "independentEngineeringReview": "PASS",
+    "productOwnerFinalReview": "PASS",
+    "astraFreezeCommit": "ddfb19260853b441b11934420ec5bce4feab76dd",
+    "reviewedPreLiveFrozenCommit": "fe620a3d8e36cf81d70d39c426a22783c555379a",
+    "stage221B": "not started",
+    "liveSemanticAccuracy": "not yet validated",
+    "mockOutput": "HARNESS TEST ONLY",
+    "methodologyBoundary": "20-case preregistered internal StoryState challenge set from Ch13-17; supports the current-domain architecture decision, not universal long-horizon AIGC superiority",
     "liveAuthorizationBoundary": "reviewed Git commit and committed lock manifest required before any live call"
   },
   "contractHardening": {
