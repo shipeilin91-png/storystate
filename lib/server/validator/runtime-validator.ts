@@ -5,9 +5,9 @@ import type { StateRepository } from "../../repositories/state-repository";
 import { aggregateChecks, type ValidatorResult } from "./aggregate";
 import { candidateInput, packetHash, StructuredValidationContextProvider, type ValidationContextProvider, type ValidationPacket } from "./context";
 import { deterministicGate } from "./deterministic";
-import { routeAgents, ValidationOrchestrator, type SemanticModelClient } from "./semantic";
+import { GenericValidationOrchestrator, type SemanticModelClient } from "./semantic";
 
-const VERSION = "runtime-validator/0.1";
+const VERSION = "runtime-validator/0.2";
 const byId = <T extends { id: string }>(values: T[]): T[] => [...values].sort((a, b) => a.id.localeCompare(b.id));
 function orderedObjectKeys(_key: string, value: unknown): unknown {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -29,10 +29,10 @@ function inputFingerprint(a: StoryAggregate) {
   }, orderedObjectKeys)).digest("hex");
 }
 export class RuntimeValidator {
-  private orchestrator: ValidationOrchestrator;
+  private orchestrator: GenericValidationOrchestrator;
   constructor(private repository: StateRepository, private client: SemanticModelClient,
     private context: ValidationContextProvider = new StructuredValidationContextProvider(), timeoutMs = 15000) {
-    this.orchestrator = new ValidationOrchestrator(client, timeoutMs);
+    this.orchestrator = new GenericValidationOrchestrator(client, timeoutMs);
   }
   async validate(storyId: string, deltaId: string, expectedVersion: number): Promise<ValidatorResult> {
     idSchema.parse(storyId); idSchema.parse(deltaId);
@@ -54,9 +54,8 @@ export class RuntimeValidator {
         agent: "context", verdict: "UNCERTAIN", reason: "Trusted bounded validation context is unavailable; review the source and packet limits.", evidenceIds: [], code: "CONTEXT_UNAVAILABLE",
       }]);
       else {
-        const agents = routeAgents(packet);
-        const checks = await this.orchestrator.run(packet, agents);
-        result = aggregateChecks(gate, packet, agents, checks);
+        const check = await this.orchestrator.run(packet);
+        result = aggregateChecks(gate, packet, ["generic"], [check]);
       }
     }
     const audit = {

@@ -1,5 +1,5 @@
 import type { StateDelta } from "../../domain/state";
-import type { Specialist, ValidationCheck } from "../../domain/validation";
+import type { SemanticAgent, ValidationCheck } from "../../domain/validation";
 import type { ValidationPacket } from "./context";
 import type { GateResult } from "./deterministic";
 
@@ -19,7 +19,7 @@ export function impactPolicy(packet: ValidationPacket): { risk: "LOW" | "MEDIUM"
   return { risk: d.targetType === "plotThreads" ? "MEDIUM" : "LOW", review: false };
 }
 
-export function aggregateChecks(gate: GateResult, packet: ValidationPacket | null, required: Specialist[], checks: ValidationCheck[]): ValidatorResult {
+export function aggregateChecks(gate: GateResult, packet: ValidationPacket | null, required: SemanticAgent[], checks: ValidationCheck[]): ValidatorResult {
   const all = [gate.check, ...checks];
   if (gate.terminal) return {
     status: gate.terminal, risk: gate.terminal === "conflict" ? "CONFLICT" : "HIGH",
@@ -30,7 +30,7 @@ export function aggregateChecks(gate: GateResult, packet: ValidationPacket | nul
     checks.filter(check => check.agent === agent).length === 1 &&
     checks.find(check => check.agent === agent)?.verdict === "SUPPORTED");
   const review = !complete || policy.review || packet?.provenance.retrievalTruncated ||
-    checks.some(check => check.verdict !== "SUPPORTED" || !required.includes(check.agent as Specialist));
+    checks.some(check => check.verdict !== "SUPPORTED" || !required.includes(check.agent as SemanticAgent));
   return {
     status: review ? "needs_review" : "passed",
     recommendation: review ? "NEEDS_REVIEW" : "AUTO_ACCEPT_ELIGIBLE",

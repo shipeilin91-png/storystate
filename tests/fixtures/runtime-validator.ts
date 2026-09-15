@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import type { CanonicalRow, CharacterKnowledgeState, DeltaInput, StateDelta, TargetType } from "../../lib/domain/state";
-import type { SemanticCheckResult, Specialist } from "../../lib/domain/validation";
+import type { SemanticCheckResult, Specialist, ValidationCheck } from "../../lib/domain/validation";
 import { MemoryStateRepository } from "../../lib/repositories/memory-state-repository";
 import type { StateRepository } from "../../lib/repositories/state-repository";
 import { StateService } from "../../lib/server/state-service";
@@ -34,14 +34,16 @@ export class FakeSemanticClient implements SemanticModelClient {
     return this.answer(request);
   }
 }
-export function supported(request: SemanticRequest): SemanticCheckResult {
+export function supported(request: SemanticRequest): ValidationCheck {
   return { agent: request.agent, verdict: "SUPPORTED", reason: "Explicit deterministic test fixture response.", evidenceIds: request.packet.primaryEvidence.map(e => e.id) };
 }
 export function benchmarkClient(id: CaseId) {
-  return new FakeSemanticClient(request => ({
-    ...supported(request), verdict: expected[id].verdicts[expected[id].route.indexOf(request.agent)],
-    reason: `Frozen ${id} semantic fixture; this is not an online model judgment.`,
-  }));
+  return new FakeSemanticClient(request => {
+    const verdict = request.agent === "generic"
+      ? (expected[id].unsafe ? "UNSUPPORTED" : "SUPPORTED")
+      : expected[id].verdicts[expected[id].route.indexOf(request.agent)];
+    return { ...supported(request), verdict, reason: `Frozen ${id} semantic fixture; this is not an online model judgment.` };
+  });
 }
 
 export async function runtimeFixture(id: CaseId = "Ch13-A", repository: StateRepository = new MemoryStateRepository(), client: SemanticModelClient = new FakeSemanticClient()) {
