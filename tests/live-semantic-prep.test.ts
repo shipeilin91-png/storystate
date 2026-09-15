@@ -5,7 +5,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { digest } from "../lib/eval/contract";
-import { executionSummarySchema, rawResultRecordSchema, writeLiveArtifactBundle } from "../lib/eval/live/artifacts";
+import { executionSummarySchema, provenanceSchema, rawResultRecordSchema, writeLiveArtifactBundle } from "../lib/eval/live/artifacts";
 import {
   assertDeepSeekProbeDisabled,
   buildDeepSeekProbeRequest,
@@ -14,11 +14,14 @@ import {
   SYNTHETIC_PROBE_QUOTE,
 } from "../lib/eval/live/deepseek-probe";
 import { buildLivePreflight } from "../lib/eval/live/preflight";
+import { assertOfficialRunPreconditions } from "../lib/eval/live/official-run";
 import {
   assertAuthorizedManifest,
   assertB0ExecutionDisabled,
   assertPreparedManifest,
   readPreparedManifest,
+  DEEPSEEK_OBSERVED_PROVIDER_MODEL,
+  PROVIDER_MODEL_ALIAS_ONLY,
   REVIEWED_PRE_LIVE_FROZEN_COMMIT,
 } from "../lib/eval/live/manifest";
 import {
@@ -49,7 +52,8 @@ import { buildBenchmark, benchmarkFingerprint, sourceDigest } from "./fixtures/l
 
 const lock = JSON.parse(readFileSync("tests/fixtures/live-semantic-benchmark.lock.json", "utf8"));
 const casesPromise = buildBenchmark();
-const expectedVersion = "deepseek-actual-version-from-probe";
+const expectedVersion = "deepseek-flash";
+const liveRunCodeGitSha = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
 class FakeTransport implements DeepSeekTransport {
   requests: DeepSeekRequest[] = [];
@@ -346,7 +350,9 @@ test("offline preflight serializes DeepSeek wire requests from frozen routing", 
   const preflight = await buildLivePreflight();
   assert.equal(preflight.provider, "deepseek-api");
   assert.equal(preflight.requestedModelId, "deepseek-flash");
-  assert.equal(preflight.resolvedModelVersion, null);
+  assert.equal(preflight.observedProviderModel, "deepseek-flash");
+  assert.equal(preflight.modelIdentityClass, "PROVIDER_MODEL_ALIAS_ONLY");
+  assert.equal(preflight.quotaWorksheet.decision, "PENDING_SEPARATE_OFFICIAL_RUN_AUTHORIZATION");
   assert.deepEqual(preflight.calls.primary, { generic: 30, specialist: 69 });
   assert.deepEqual(preflight.calls.stability, { generic: 30, specialist: 69 });
   assert.deepEqual(preflight.calls.byAgent, { generic: 60, evidence: 60, knowledge_boundary: 20, temporal_state: 58 });
@@ -357,21 +363,94 @@ test("offline preflight serializes DeepSeek wire requests from frozen routing", 
   assert.match(preflight.roughLocalTokenBudgetEstimate.label, /NOT PROVIDER TOKEN COUNT/);
 });
 
-test("prepared manifest selects DeepSeek alias but remains unauthorized and unresolved", () => {
+test("prepared manifest records alias-only probe identity but remains unauthorized", () => {
   const manifest = readPreparedManifest();
   assert.doesNotThrow(() => assertPreparedManifest(manifest));
   assert.equal(manifest.provider, "deepseek-api");
   assert.equal(manifest.requestedModelId, "deepseek-flash");
-  assert.equal(manifest.expectedResolvedModelVersion, null);
+  assert.equal(manifest.observedProviderModel, DEEPSEEK_OBSERVED_PROVIDER_MODEL);
+  assert.equal(manifest.modelIdentityClass, PROVIDER_MODEL_ALIAS_ONLY);
+  assert.equal(manifest.expectedResolvedModelVersion, "deepseek-flash");
+  assert.notEqual(manifest.modelIdentityClass, "SPECIFIC_RESOLVED_MODEL");
   assert.equal(manifest.status, "PREPARED_NOT_AUTHORIZED");
   assert.equal(manifest.authorizedAt, null);
   assert.equal(manifest.authorizedBy, null);
+  assert.equal(manifest.liveRunCodeGitSha, null);
+  assert.equal(manifest.singleSessionRequired, true);
+  assert.equal(manifest.requireCleanWorktree, true);
+});
+
+test("sanitized probe attestation contains only reviewed metadata", () => {
+  const attestation = readPreparedManifest().probeAttestation;
+  assert.deepEqual(attestation, {
+    status: "PASS",
+    providerStatus: "completed",
+    realProbeCalls: 1,
+    benchmarkCalls: 0,
+    requestedModelId: "deepseek-flash",
+    observedProviderModel: "deepseek-flash",
+    modelIdentityClass: "PROVIDER_MODEL_ALIAS_ONLY",
+    inputTokens: 939,
+    outputTokens: 85,
+    reasoningTokens: 0,
+    semanticVerdict: "SUPPORTED",
+    structuredParser: "PASS",
+  });
+  const serialized = JSON.stringify(attestation).toLowerCase();
+  for (const forbidden of ["api_key", "authorization", "balance", "providerresponseid", "rawresponse"])
+    assert.ok(!serialized.includes(forbidden), forbidden);
 });
 
 test("probe and official live execution boundaries both reject execution", () => {
   assert.throws(() => assertDeepSeekProbeDisabled(), /DEEPSEEK_PROBE_NOT_AUTHORIZED/);
   assert.throws(() => assertAuthorizedManifest(readPreparedManifest()), /LIVE_RUN_NOT_AUTHORIZED/);
   assert.throws(() => assertB0ExecutionDisabled(), /LIVE_RUN_NOT_AUTHORIZED/);
+});
+
+test("official live CLI has no environment-only authorization bypass", () => {
+  const run = spawnSync(process.execPath, ["--import", "tsx", "scripts/eval-semantic-live-disabled.ts"], {
+    encoding: "utf8",
+    env: {
+      NODE_ENV: "test",
+      PATH: process.env.PATH ?? "",
+      NODE_PATH: process.env.NODE_PATH ?? "",
+      DEEPSEEK_API_KEY: "fake-secret-must-not-authorize",
+      STORYSTATE_LIVE_AUTHORIZED: "true",
+    },
+  });
+  assert.notEqual(run.status, 0);
+  assert.match(run.stderr, /^LIVE_RUN_NOT_AUTHORIZED/m);
+  assert.ok(!run.stderr.includes("fake-secret-must-not-authorize"));
+});
+
+test("official run preconditions reject a dirty worktree", () => {
+  const manifest = {
+    ...readPreparedManifest(),
+    status: "AUTHORIZED" as const,
+    authorizedAt: "2026-09-15T03:00:00.000Z",
+    authorizedBy: "Product Owner",
+    liveRunCodeGitSha,
+  };
+  assert.throws(() => assertOfficialRunPreconditions(manifest, args =>
+    args[0] === "status" ? " M local-change.ts" : liveRunCodeGitSha), /LIVE_RUN_DIRTY_WORKTREE/);
+});
+
+test("official run preconditions bind a clean worktree to reviewed live-run code", () => {
+  const manifest = {
+    ...readPreparedManifest(),
+    status: "AUTHORIZED" as const,
+    authorizedAt: "2026-09-15T03:00:00.000Z",
+    authorizedBy: "Product Owner",
+    liveRunCodeGitSha,
+  };
+  assert.deepEqual(assertOfficialRunPreconditions(manifest, args =>
+    args[0] === "status" ? "" : liveRunCodeGitSha), {
+    liveRunCodeGitSha,
+    gitWorktreeState: "CLEAN",
+    singleSessionRequired: true,
+  });
+  assert.throws(() => assertOfficialRunPreconditions(manifest, args =>
+    args[0] === "status" ? "" : "cccccccccccccccccccccccccccccccccccccccc"), /LIVE_RUN_CODE_SHA_MISMATCH/);
 });
 
 test("DeepSeek adapter cannot reach transport without runner live authorization", async () => {
@@ -386,8 +465,27 @@ test("DeepSeek adapter cannot reach transport without runner live authorization"
 test("raw result schema rejects missing provenance and accepts DeepSeek example", () => {
   const example = JSON.parse(readFileSync("tests/fixtures/live-semantic-raw-result.example.json", "utf8"));
   assert.doesNotThrow(() => rawResultRecordSchema.parse(example));
+  assert.doesNotThrow(() => provenanceSchema.parse({
+    experimentId: example.experimentId,
+    benchmarkVersion: example.benchmarkVersion,
+    datasetHash: example.datasetHash,
+    evaluationConfigHash: example.evaluationConfigHash,
+    reviewedFrozenCommit: example.reviewedFrozenCommit,
+    provider: example.provider,
+    requestedModelId: example.requestedModelId,
+    observedProviderModel: example.observedProviderModel,
+    modelIdentityClass: example.modelIdentityClass,
+    liveRunCodeGitSha: example.liveRunCodeGitSha,
+    gitWorktreeState: example.gitWorktreeState,
+    runStartedAt: example.runStartedAt,
+    runFinishedAt: example.runFinishedAt,
+  }));
   assert.equal(example.provider, "deepseek-api");
   assert.equal(example.requestedModelId, "deepseek-flash");
+  assert.equal(example.observedProviderModel, "deepseek-flash");
+  assert.equal(example.modelIdentityClass, "PROVIDER_MODEL_ALIAS_ONLY");
+  assert.equal(example.gitWorktreeState, "CLEAN");
+  assert.ok(example.runStartedAt < example.runFinishedAt);
   const missing = structuredClone(example);
   delete missing.datasetHash;
   assert.throws(() => rawResultRecordSchema.parse(missing));
@@ -399,9 +497,9 @@ test("completed official artifact bundles cannot be silently overwritten", () =>
   const manifest = {
     ...prepared,
     status: "AUTHORIZED" as const,
-    expectedResolvedModelVersion: expectedVersion,
     authorizedAt: "2026-09-15T01:00:00.000Z",
     authorizedBy: "Product Owner",
+    liveRunCodeGitSha,
   };
   const raw = rawResultRecordSchema.parse(JSON.parse(readFileSync("tests/fixtures/live-semantic-raw-result.example.json", "utf8")));
   const provenance = {
@@ -412,7 +510,12 @@ test("completed official artifact bundles cannot be silently overwritten", () =>
     reviewedFrozenCommit: manifest.reviewedFrozenCommit,
     provider: manifest.provider,
     requestedModelId: manifest.requestedModelId,
-    resolvedModelVersion: expectedVersion,
+    observedProviderModel: manifest.observedProviderModel,
+    modelIdentityClass: manifest.modelIdentityClass,
+    liveRunCodeGitSha,
+    gitWorktreeState: "CLEAN" as const,
+    runStartedAt: "2026-09-15T01:00:00.000Z",
+    runFinishedAt: "2026-09-15T02:00:00.000Z",
   };
   const rawResults = Array.from({ length: manifest.expectedCallCount }, (_, index) => ({
     ...raw, ...provenance, caseId: `SANITIZED-${index}`,
@@ -420,8 +523,6 @@ test("completed official artifact bundles cannot be silently overwritten", () =>
   const summary = executionSummarySchema.parse({
     ...provenance,
     status: "COMPLETED",
-    startedAt: "2026-09-15T01:00:00.000Z",
-    finishedAt: "2026-09-15T02:00:00.000Z",
     expectedCallCount: manifest.expectedCallCount,
     completedCallCount: manifest.expectedCallCount,
     failedCallCount: 0,

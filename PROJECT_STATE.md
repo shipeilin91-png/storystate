@@ -60,6 +60,12 @@ Stage 2.2.1A Benchmark + Eval Harness 已非 squash 合并 main，状态为 **CO
 
 ## Stage 2.2.1B0 / B0.1 Live Run Package Preparation
 
-Stage 2.2.1B0 已准备 live-run package；B0.1 状态为 **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**。官方 provider 为 `deepseek-api`，requested model 为 `deepseek-flash`，实际 resolved model version 必须等待另行授权的单次 synthetic probe 返回，当前保持 unknown/null。Gemini 仅保留为文档备选研究，相关 runtime adapter 与依赖已移除。DeepSeek evaluation-only adapter 显式发送 `reasoning.effort=none`，拒绝 reasoning 输出或非零 reasoning tokens，并保持既有 model identity drift、parser 与冻结评测语义。
+Stage 2.2.1B0 已准备 live-run package；B0.1 当时状态为 **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**。官方 provider 为 `deepseek-api`，requested model 为 `deepseek-flash`；B0.1 尚未观察 provider 返回的 model identity，故当时保持 unknown/null。Gemini 仅保留为文档备选研究，相关 runtime adapter 与依赖已移除。DeepSeek evaluation-only adapter 显式发送 `reasoning.effort=none`，拒绝 reasoning 输出或非零 reasoning tokens，并保持既有 model identity drift、parser 与冻结评测语义。
 
-离线 preflight、未授权 manifest、synthetic probe package、结果 schemas 与 completed-run 覆盖保护均已准备；probe CLI 固定返回 `DEEPSEEK_PROBE_NOT_AUTHORIZED`，live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`。测试或 preflight 不读取 `DEEPSEEK_API_KEY`；真实 provider 调用为 **0**。Stage 2.2.1B 未开始，Live Semantic Accuracy 未验证。详见 `docs/STAGE_2_2_1B_LIVE_RUN_PLAN.md`。
+离线 preflight、未授权 manifest、synthetic probe package、结果 schemas 与 completed-run 覆盖保护均已准备；B0.1 的 probe CLI 固定返回 `DEEPSEEK_PROBE_NOT_AUTHORIZED`，live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`。测试或 preflight 不读取 `DEEPSEEK_API_KEY`；B0.1 自身真实 provider 调用为 **0**。后续单次授权 probe 的清洗后证明与当前 runner 状态见下方 B0.3；Stage 2.2.1B 未开始，Live Semantic Accuracy 未验证。
+
+## Stage 2.2.1B0.3 DeepSeek Live Runner Freeze
+
+一次独立授权的 non-Benchmark red-key probe 已 PASS：provider status `completed`，requested model 与 observed `response.model` 均为 `deepseek-flash`，input/output tokens 为 939/85，reasoning tokens 为 0，semantic verdict `SUPPORTED`，structured parser PASS。由于 provider 仅返回同名 alias，identity class 正式记录为 **PROVIDER_MODEL_ALIAS_ONLY**，不宣称获得不可变 backend version。该 probe 只验证 connectivity、non-thinking request、structured output 与 usage mapping，不验证准确率或架构质量。
+
+B0.3 已准备 fail-closed official runner 与 execution provenance：prepared manifest 仍为 `PREPARED_NOT_AUTHORIZED`；未来授权 manifest 必须绑定 exact live-run code SHA，且 runner 在读取 key 前检查 clean worktree、冻结 dataset/config、198-call routing、DeepSeek alias-only identity 与单次连续执行约束。B0.3 provider calls=0，历史 synthetic probe calls=1，benchmark calls=0；Stage 2.2.1B 仍未开始，Live Semantic Accuracy 未验证。

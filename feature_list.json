@@ -28,18 +28,28 @@
     "liveAuthorizationBoundary": "reviewed Git commit and committed lock manifest required before any live call"
   },
   "liveSemanticRunPackage": {
-    "stage": "Stage 2.2.1B0.1",
-    "status": "DeepSeek provider prepared / probe not authorized",
+    "stage": "Stage 2.2.1B0.3",
+    "status": "DeepSeek identity and provenance frozen / official run not authorized",
     "officialProvider": "DeepSeek API",
     "providerId": "deepseek-api",
     "requestedModelId": "deepseek-flash",
-    "resolvedModelVersion": null,
+    "observedProviderModel": "deepseek-flash",
+    "modelIdentityClass": "PROVIDER_MODEL_ALIAS_ONLY",
+    "expectedProviderResponseModel": "deepseek-flash",
     "reasoningEffort": "none",
-    "probeStatus": "not authorized",
+    "probeStatus": "PASS",
+    "probeProviderStatus": "completed",
+    "probeSemanticVerdict": "SUPPORTED",
+    "historicalProbeCalls": 1,
+    "providerCallsInB03": 0,
+    "benchmarkProviderCalls": 0,
     "manifestStatus": "PREPARED_NOT_AUTHORIZED",
+    "liveRunnerStatus": "fail closed",
+    "singleSessionRequired": true,
+    "cleanWorktreeRequired": true,
     "stage221B": "not started",
     "liveSemanticAccuracy": "not yet validated",
-    "realProviderCalls": 0
+    "realProviderCalls": 1
   },
   "contractHardening": {
     "stage": "Stage 2.1.2",

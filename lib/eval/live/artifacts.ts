@@ -2,11 +2,16 @@ import { existsSync, linkSync, mkdirSync, readFileSync, renameSync, unlinkSync, 
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { runManifestSchema, assertAuthorizedManifest, type RunManifest } from "./manifest";
+import {
+  runManifestSchema,
+  assertAuthorizedManifest,
+  PROVIDER_MODEL_ALIAS_ONLY,
+  type RunManifest,
+} from "./manifest";
 
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/);
 const timestamp = z.string().datetime({ offset: true });
-const provenanceSchema = z.strictObject({
+export const provenanceSchema = z.strictObject({
   experimentId: z.string().min(1),
   benchmarkVersion: z.string().min(1),
   datasetHash: sha256,
@@ -14,7 +19,12 @@ const provenanceSchema = z.strictObject({
   reviewedFrozenCommit: z.string().regex(/^[a-f0-9]{40}$/),
   provider: z.string().min(1),
   requestedModelId: z.string().min(1),
-  resolvedModelVersion: z.string().min(1),
+  observedProviderModel: z.string().min(1),
+  modelIdentityClass: z.literal(PROVIDER_MODEL_ALIAS_ONLY),
+  liveRunCodeGitSha: z.string().regex(/^[a-f0-9]{40}$/),
+  gitWorktreeState: z.literal("CLEAN"),
+  runStartedAt: timestamp,
+  runFinishedAt: timestamp,
 });
 
 export const rawResultRecordSchema = provenanceSchema.extend({
@@ -42,8 +52,6 @@ export const metricsArtifactSchema = provenanceSchema.extend({
 
 export const executionSummarySchema = provenanceSchema.extend({
   status: z.enum(["PARTIAL", "ABORTED", "COMPLETED"]),
-  startedAt: timestamp,
-  finishedAt: timestamp.nullable(),
   expectedCallCount: z.number().int().positive(),
   completedCallCount: z.number().int().nonnegative(),
   failedCallCount: z.number().int().nonnegative(),
@@ -62,7 +70,7 @@ export type LiveArtifactBundle = {
   summary: ExecutionSummary;
 };
 
-function provenanceFor(manifest: RunManifest, resolvedModelVersion: string) {
+function provenanceFor(manifest: RunManifest, summary: ExecutionSummary) {
   return {
     experimentId: manifest.experimentId,
     benchmarkVersion: manifest.benchmarkVersion,
@@ -71,7 +79,12 @@ function provenanceFor(manifest: RunManifest, resolvedModelVersion: string) {
     reviewedFrozenCommit: manifest.reviewedFrozenCommit,
     provider: manifest.provider,
     requestedModelId: manifest.requestedModelId,
-    resolvedModelVersion,
+    observedProviderModel: manifest.observedProviderModel,
+    modelIdentityClass: manifest.modelIdentityClass,
+    liveRunCodeGitSha: manifest.liveRunCodeGitSha,
+    gitWorktreeState: "CLEAN",
+    runStartedAt: summary.runStartedAt,
+    runFinishedAt: summary.runFinishedAt,
   };
 }
 
@@ -105,7 +118,7 @@ export function writeLiveArtifactBundle(directory: string, bundle: LiveArtifactB
   const report = bundle.report === undefined ? undefined : z.string().min(1).parse(bundle.report);
   if (summary.expectedCallCount !== bundle.manifest.expectedCallCount || rawResults.length !== summary.completedCallCount)
     throw new Error("ARTIFACT_CALL_COUNT_MISMATCH");
-  const expectedProvenance = provenanceFor(bundle.manifest, summary.resolvedModelVersion);
+  const expectedProvenance = provenanceFor(bundle.manifest, summary);
   for (const artifact of [...rawResults, summary, ...(metrics ? [metrics] : [])]) {
     for (const [key, value] of Object.entries(expectedProvenance))
       if (artifact[key as keyof typeof artifact] !== value) throw new Error(`ARTIFACT_PROVENANCE_MISMATCH: ${key}`);

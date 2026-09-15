@@ -9,7 +9,11 @@ import {
   serializeDeepSeekRequestForBudget,
 } from "../providers/deepseek";
 import { datasetHash, decoding, evaluationConfigHash, genericPrompt, responseSchemaFor, verifyLiveFreeze, type EvalAgent, type EvalRequest } from "../runner";
-import { assertPreparedManifest, readPreparedManifest, REVIEWED_PRE_LIVE_FROZEN_COMMIT } from "./manifest";
+import {
+  assertPreparedManifest,
+  readPreparedManifest,
+  REVIEWED_PRE_LIVE_FROZEN_COMMIT,
+} from "./manifest";
 
 type PlannedRequest = {
   caseId: string;
@@ -93,7 +97,8 @@ export async function buildLivePreflight() {
     },
     provider: DEEPSEEK_PROVIDER,
     requestedModelId: DEEPSEEK_REQUESTED_MODEL,
-    resolvedModelVersion: null,
+    observedProviderModel: manifest.observedProviderModel,
+    modelIdentityClass: manifest.modelIdentityClass,
     calls: {
       total: requests.length,
       primary: { generic: primaryGenericCalls, specialist: primarySpecialistCalls },
@@ -123,7 +128,7 @@ export async function buildLivePreflight() {
       actualApplicableTokenLimits: "TO_BE_FILLED_AFTER_PO_REVIEW",
       reviewedPricingConfiguration: "NOT_AUTHORIZED",
       estimatedRequestTokenNeed: "See roughLocalTokenBudgetEstimate; not a provider token count.",
-      decision: "PENDING_SEPARATE_PROBE_AND_RUN_AUTHORIZATION",
+      decision: "PENDING_SEPARATE_OFFICIAL_RUN_AUTHORIZATION",
       rule: "Do not start or switch provider/model without a reviewed manifest and separate Product Owner authorization.",
     },
     realProviderCalls: 0,

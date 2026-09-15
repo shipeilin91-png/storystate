@@ -1,8 +1,8 @@
-# Stage 2.2.1B0.1 DeepSeek Live Semantic Run Package
+# Stage 2.2.1B0.3 DeepSeek Live Runner Freeze
 
-Status: **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**.
+Status: **IDENTITY AND PROVENANCE FROZEN / OFFICIAL RUN NOT AUTHORIZED**.
 
-Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0 contains the prepared live-run package. Stage 2.2.1B is **NOT STARTED**. Live Semantic Accuracy is **NOT YET VALIDATED**. This package made **0 real provider calls** and authorizes neither a probe nor the official experiment.
+Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0/B0.1 prepared the provider package, and B0.3 freezes the post-probe identity and execution provenance contract. Stage 2.2.1B is **NOT STARTED**. Live Semantic Accuracy is **NOT YET VALIDATED**. No provider call was made in B0.3.
 
 ## Frozen experiment boundary
 
@@ -12,63 +12,73 @@ Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0 contains the prepared
 - Reviewed pre-live frozen commit: `fe620a3d8e36cf81d70d39c426a22783c555379a`
 - Frozen decoding: temperature `0`, maximum output tokens `500`, one response, no retry, no tools.
 
-The provider pivot does not change the Validation Packet, Generic prompt, specialist prompts, routing, Gold, Stage 2.2 production behavior, frontend, or Frozen Docs. Provider JSON still passes through the existing StoryState parser and grounding checks.
+The provider package does not change the Validation Packet, Generic prompt, specialist prompts, routing, Gold, Stage 2.2 production behavior, frontend, or Frozen Docs. Provider JSON still passes through the existing StoryState parser and grounding checks.
 
-## Official provider and unresolved model version
+## Sanitized one-shot probe attestation
 
-The official provider for the proposed experiment is the DeepSeek API at `https://api.deepseek.com`, using native Node `fetch` and the `DEEPSEEK_API_KEY` environment variable. The requested model ID is exactly `deepseek-flash`. There is no fallback or automatic switch to an alternate alias, model, provider, or project.
+The separately authorized non-Benchmark red-key probe completed successfully before B0.3. This is the complete committed attestation:
 
-`deepseek-flash` is a provider alias. The package does not assume a resolved version. `expectedResolvedModelVersion` remains null until a separately authorized synthetic probe observes `response.model` and the Product Owner reviews that result. The official runner later requires that reviewed value and retains the existing identity-drift abort.
+| Field | Value |
+| --- | --- |
+| Probe status | PASS |
+| Provider status | `completed` |
+| Real probe calls | 1 |
+| Benchmark calls | 0 |
+| Requested model | `deepseek-flash` |
+| Observed `response.model` | `deepseek-flash` |
+| Model identity class | `PROVIDER_MODEL_ALIAS_ONLY` |
+| Input tokens | 939 |
+| Output tokens | 85 |
+| Reasoning tokens | 0 |
+| Semantic verdict | `SUPPORTED` |
+| Structured parser | PASS |
 
-Gemini remains documentation-only prior research. Its SDK dependency and runtime adapter were removed so the official package exposes one provider path.
+The attestation excludes the API key, Authorization header, raw response, private account balance, and provider response ID. The probe validates connectivity, explicit non-thinking request behavior, structured-output compatibility, and usage mapping. It does not validate model accuracy or architecture quality.
 
-## Exact Responses API mapping
+## Honest alias-only identity
 
-Every future semantic call maps to one `POST /responses` request:
+The requested alias and provider-returned model string were both `deepseek-flash`. The response did not expose a distinct immutable backend model version. The model identity class is therefore `PROVIDER_MODEL_ALIAS_ONLY`, not `SPECIFIC_RESOLVED_MODEL`.
+
+The manifest retains `expectedResolvedModelVersion: deepseek-flash` solely because the provider-neutral runner calls its expected response identity field `modelVersion`. Here it means the exact expected provider-returned string. It is not evidence of an immutable or dated backend version, and it must not be described as `DeepSeek-V4.1-Flash` based on the response.
+
+The official comparison may later use this limitation because Generic and Specialist would run with the same alias and settings in one contiguous process. This reduces, but does not eliminate, the risk of an unobservable backend change behind the alias.
+
+## Exact DeepSeek request and response contract
+
+Every future semantic call maps to one `POST https://api.deepseek.com/responses` request:
 
 - `model`: `deepseek-flash`
-- `instructions`: the unchanged Generic or applicable specialist system prompt
+- `instructions`: the unchanged Generic or applicable specialist prompt
 - `input`: the complete Validation Packet under `UNTRUSTED_STORYSTATE_VALIDATION_DATA`
 - `reasoning`: `{ "effort": "none" }`
 - `temperature`: `0`
 - `max_output_tokens`: `500`
-- `text.format`: the existing response JSON Schema with a stable Generic or specialist schema name
-- no tools, web search, functions, prior response ID, conversation state, reflection, or retry
+- `text.format`: the existing response JSON Schema with a stable Generic or specialist name
+- no tools, search, functions, prior response ID, conversation state, fallback, reflection, or retry
 
-DeepSeek documents that Responses API `reasoning.effort: none` disables thinking, while thinking is otherwise enabled by default. The adapter rejects any reasoning output item or positive `usage.output_tokens_details.reasoning_tokens` with `DEEPSEEK_REASONING_NOT_DISABLED`.
+The adapter rejects reasoning output items and positive `usage.output_tokens_details.reasoning_tokens`. It accepts only completed assistant `output_text`, maps `usage.input_tokens` and `usage.output_tokens` exactly, and passes the result through the existing parser. Missing usage remains null. Each real benchmark response must return `response.model === deepseek-flash`; the existing identity guard aborts on any mismatch.
 
-The adapter reads only assistant `output_text` from message output items. It requires `status=completed`, sends the text through the existing StoryState parser, maps `response.model` to the resolved model version, maps `response.id` to the provider response ID, and records completed status as provider metadata. Reasoning, tool, and unknown output items never become the semantic answer.
+Official references: [Responses API](https://api-docs.deepseek.com/api/create-response/) and [thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/).
 
-Usage mapping is exact when both fields are valid:
+## Fail-closed official runner
 
-- `usage.input_tokens` → `inputTokens`
-- `usage.output_tokens` → `outputTokens`
+`npm run eval:semantic:live` defaults to the committed prepared manifest and returns `LIVE_RUN_NOT_AUTHORIZED`. The prepared manifest remains `PREPARED_NOT_AUTHORIZED`, with null authorization fields and null `liveRunCodeGitSha`. Environment variables cannot authorize a run.
 
-Missing or partial usage remains `usage: null`. No token value is invented. Provider errors are reduced to bounded categories; response bodies, Authorization headers, and keys are excluded from artifacts.
+The runner can later accept one explicitly supplied authorized manifest path. Before reading `DEEPSEEK_API_KEY` or constructing the transport it requires:
 
-Official references: [Responses API](https://api-docs.deepseek.com/api/create-response/), [thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/), and [models/pricing](https://api-docs.deepseek.com/quick_start/pricing/).
+1. strict `AUTHORIZED` manifest status and Product Owner authorization fields;
+2. provider `deepseek-api`, requested alias `deepseek-flash`, observed provider model `deepseek-flash`, and identity class `PROVIDER_MODEL_ALIAS_ONLY`;
+3. expected provider-returned identity string `deepseek-flash`;
+4. the frozen dataset, configuration, reviewed commit, temperature, output limit, primary and stability settings;
+5. an exact `liveRunCodeGitSha` matching `HEAD`;
+6. a clean worktree, including no untracked files;
+7. the locally derived 198-call routing count.
 
-## Synthetic probe boundary
+There is no resume, retry, fallback, provider switch, model switch, or environment-only authorization path. The run executes primary and stability sequentially in one process. It must not be intentionally split across days.
 
-`lib/eval/live/deepseek-probe.ts` prepares one independent synthetic example: evidence says a red key lies on a desk and the candidate says the key is red. It contains no Anchor, Holdout, H01–H20, Ch13–17, Gold, minimal-pair, or benchmark content.
+## Offline preflight
 
-The probe is only for later verification of credentials, `deepseek-flash` acceptance, Responses API compatibility, explicit non-thinking mode, structured output, returned model version and response ID, usage metadata, zero reasoning tokens, and parser compatibility. It is not accuracy or architecture evidence.
-
-`npm run eval:semantic:deepseek:probe` is deliberately disabled and exits with `DEEPSEEK_PROBE_NOT_AUTHORIZED` before reading `DEEPSEEK_API_KEY`, constructing the official transport, or making a request. It has no execute flag or environment bypass.
-
-`npm run eval:semantic:live` remains disabled and exits with `LIVE_RUN_NOT_AUTHORIZED`. The prepared manifest is `PREPARED_NOT_AUTHORIZED`, has no authorization fields or resolved version, and is insufficient to run the benchmark.
-
-## Offline call and budget preflight
-
-Run `npm run eval:semantic:live:preflight` to reconstruct the frozen experiment, verify Git/lock provenance, derive routing, and serialize every exact proposed DeepSeek request locally. This command does not read a key or call a provider.
-
-The token range is labeled **NOT PROVIDER TOKEN COUNT — FOR QUOTA PLANNING ONLY**. For mixed Chinese/English/JSON, each serialized request uses:
-
-- low estimate: `CJK characters + non-CJK characters / 4`
-- conservative high estimate: `2 × CJK characters + non-CJK characters / 2`
-- output ceiling: derived calls × frozen `maxOutputTokens`
-
-Current B0.1 offline output:
+`npm run eval:semantic:live:preflight` reconstructs the frozen experiment, verifies Git/lock provenance, derives routing, and serializes every proposed DeepSeek request without reading a key or calling a provider.
 
 | Derived measurement | Value |
 | --- | --- |
@@ -80,43 +90,40 @@ Current B0.1 offline output:
 | Mean / median / maximum request bytes | 5,681.22 / 5,369 / 8,826 |
 | Rough input-token range | 284,242–568,391 |
 | Frozen output-token ceiling | 99,000 |
-| Real provider calls | 0 |
 
-## Pricing and authorization policy
+The estimate uses `CJK + non-CJK/4` for the low bound and `2×CJK + non-CJK/2` for the conservative high bound. It is **NOT PROVIDER TOKEN COUNT — FOR QUOTA PLANNING ONLY**.
 
-The Product Owner has separately confirmed sufficient account budget; no personal balance is recorded. Provider prices can change and are not embedded in evaluation metrics. Future cost estimates require exact returned usage plus an explicit reviewed pricing configuration. No pricing configuration is authorized in B0.1.
+## Execution provenance and artifacts
 
-| Decision field | Value |
-| --- | --- |
-| Required calls | Derived by offline preflight |
-| Actual provider request limits | `TO_BE_FILLED_AFTER_PO_REVIEW` |
-| Actual applicable token limits | `TO_BE_FILLED_AFTER_PO_REVIEW` |
-| Reviewed pricing configuration | `NOT_AUTHORIZED` |
-| Resolved model version | `UNKNOWN UNTIL PROBE` |
-| Decision | `PENDING_SEPARATE_PROBE_AND_RUN_AUTHORIZATION` |
+The artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.json`, `report.md`, and `execution-summary.json`. Official artifacts record:
 
-Do not split or switch the official experiment across models, providers, or projects. A failure aborts the run for review.
+- benchmark frozen commit, dataset hash, and evaluation configuration hash;
+- live-run code Git SHA and `gitWorktreeState: CLEAN`;
+- provider, requested alias, observed provider model, and identity class;
+- `runStartedAt` and `runFinishedAt`;
+- case, architecture, phase, run, agent, packet hash, parsed result, latency, exact usage when available, provider response ID, completion status, and sanitized error category.
 
-## Artifact contract and Git policy
+The alias-only classification is carried explicitly; artifacts do not describe the observed alias as a specific immutable model version. Files use restrictive temporary writes and atomic linking or renaming. Existing completed runs are immutable. `results/live-semantic/` remains Git-ignored, and B0.3 writes no benchmark result.
 
-The prepared artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.json`, `report.md`, and `execution-summary.json`. Records retain experiment/freeze/model provenance, case/architecture/phase/run/agent, packet hash, parsed result, latency, exact usage when available, provider response ID, completion status, and sanitized errors. No key, Authorization header, or raw sensitive request header is accepted.
+## Pricing and result policy
 
-Writes use restrictive temporary files and atomic linking or renaming. Existing completed runs are immutable; partial, aborted, and completed states are distinct. `results/live-semantic/` remains Git-ignored, and no real results exist. Schemas and the sanitized example remain tracked. A later Product Owner decision may permit sanitized manifest/metrics/report artifacts while raw provider results remain local.
+No account balance or provider price is committed. Provider pricing may change. Any later cost estimate requires returned usage plus an explicit reviewed pricing configuration. Raw provider results remain local by default; committing sanitized manifest, metrics, or report artifacts remains Product Owner-owned.
 
-## B0.1 verification boundary
+## Verification
 
-All provider and probe tests use injected fake responses. Final preparation verification:
+B0.3 verification passed:
 
-- install: PASS, 381 packages audited, 0 vulnerabilities
-- build and lint: PASS
-- full suite: 253/253
-- backend: 62/62; exact benchmark: 11/11; validator: 72/72; evaluation harness: 51/51
-- B0/B0.1 provider, probe, manifest, artifact, freeze, and preflight tests: 32/32
-- offline DeepSeek preflight: PASS with the frozen Git/lock match
-- disabled probe: exits nonzero with `DEEPSEEK_PROBE_NOT_AUTHORIZED`
-- disabled official live runner: exits nonzero with `LIVE_RUN_NOT_AUTHORIZED`
-- `DEEPSEEK_API_KEY` read: NO
-- `REAL_PROVIDER_CALLS`: **0**
+- build and lint: PASS;
+- full suite: 258/258;
+- backend: 62/62;
+- exact benchmark contract: 11/11;
+- runtime validator: 72/72;
+- semantic eval harness: 51/51;
+- live preparation: 37/37;
+- offline preflight: PASS, frozen lock matched, 198 calls derived;
+- default `npm run eval:semantic:live`: fail closed with `LIVE_RUN_NOT_AUTHORIZED`.
+
+Provider calls in B0.3 remained 0; the historical synthetic probe count remains 1; benchmark calls remain 0.
 
 ## Methodology boundary
 
