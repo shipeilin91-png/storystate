@@ -2,7 +2,12 @@ import { readFileSync } from "node:fs";
 import type { ValidationPacket } from "../../server/validator/context";
 import { routeAgents, specialistPrompts } from "../../server/validator/semantic";
 import { buildBenchmark, benchmarkFingerprint, sourceDigest } from "../../../tests/fixtures/live-semantic-benchmark";
-import { buildGeminiRequest, GEMINI_CANDIDATE_MODELS, GEMINI_PROVIDER, serializeGeminiRequestForBudget } from "../providers/gemini";
+import {
+  buildDeepSeekRequest,
+  DEEPSEEK_PROVIDER,
+  DEEPSEEK_REQUESTED_MODEL,
+  serializeDeepSeekRequestForBudget,
+} from "../providers/deepseek";
 import { datasetHash, decoding, evaluationConfigHash, genericPrompt, responseSchemaFor, verifyLiveFreeze, type EvalAgent, type EvalRequest } from "../runner";
 import { assertPreparedManifest, readPreparedManifest, REVIEWED_PRE_LIVE_FROZEN_COMMIT } from "./manifest";
 
@@ -27,7 +32,7 @@ function requestFor(agent: EvalAgent, packet: ValidationPacket): EvalRequest {
     agent,
     system: agent === "generic" ? genericPrompt : specialistPrompts[agent],
     packet,
-    identity: { provider: GEMINI_PROVIDER, modelId: "OFFLINE_SIZING_ONLY", modelVersion: "NOT_RESOLVED" },
+    identity: { provider: DEEPSEEK_PROVIDER, modelId: DEEPSEEK_REQUESTED_MODEL, modelVersion: "NOT_RESOLVED" },
     decoding,
     responseSchema: responseSchemaFor(agent),
     signal: new AbortController().signal,
@@ -55,12 +60,9 @@ export async function buildLivePreflight() {
       benchmarkFingerprint(cases) !== lock.benchmarkFingerprint || sourceDigest() !== lock.sourceDigest)
     throw new Error("LIVE_PREFLIGHT_FREEZE_MISMATCH");
 
-  // Both longest candidate IDs are the same length. This first candidate is used
-  // only to conservatively size the wire request; it is not an official selection.
-  const sizingModel = GEMINI_CANDIDATE_MODELS[0];
   const requests: PlannedRequest[] = [];
   function plan(caseId: string, packet: ValidationPacket, architecture: PlannedRequest["architecture"], phase: PlannedRequest["phase"], run: number, agent: EvalAgent) {
-    const serialized = serializeGeminiRequestForBudget(buildGeminiRequest(requestFor(agent, packet), sizingModel));
+    const serialized = serializeDeepSeekRequestForBudget(buildDeepSeekRequest(requestFor(agent, packet)));
     requests.push({ caseId, architecture, phase, run, agent, serialized, chars: [...serialized].length, bytes: Buffer.byteLength(serialized, "utf8") });
   }
   for (const benchmarkCase of cases) {
@@ -89,15 +91,14 @@ export async function buildLivePreflight() {
       reviewedFrozenCommit: manifest.reviewedFrozenCommit,
       lockMatched: true,
     },
-    provider: GEMINI_PROVIDER,
-    candidateModels: GEMINI_CANDIDATE_MODELS,
-    officialSelectedModel: "UNDECIDED",
-    sizingModelOnly: sizingModel,
+    provider: DEEPSEEK_PROVIDER,
+    requestedModelId: DEEPSEEK_REQUESTED_MODEL,
+    resolvedModelVersion: null,
     calls: {
       total: requests.length,
       primary: { generic: primaryGenericCalls, specialist: primarySpecialistCalls },
       stability: { generic: stabilityGenericCalls, specialist: stabilitySpecialistCalls },
-      byAgent: Object.fromEntries(["evidence", "knowledge_boundary", "temporal_state"].map(agent =>
+      byAgent: Object.fromEntries(["generic", "evidence", "knowledge_boundary", "temporal_state"].map(agent =>
         [agent, requests.filter(request => request.agent === agent).length])),
     },
     requestSize: {
@@ -118,12 +119,12 @@ export async function buildLivePreflight() {
     },
     quotaWorksheet: {
       requiredCalls: requests.length,
-      actualAiStudioRpd: "TO_BE_FILLED_AFTER_PO_REVIEW",
-      actualAiStudioRpm: "TO_BE_FILLED_AFTER_PO_REVIEW",
+      actualProviderRequestLimits: "TO_BE_FILLED_AFTER_PO_REVIEW",
       actualApplicableTokenLimits: "TO_BE_FILLED_AFTER_PO_REVIEW",
+      reviewedPricingConfiguration: "NOT_AUTHORIZED",
       estimatedRequestTokenNeed: "See roughLocalTokenBudgetEstimate; not a provider token count.",
-      decision: "UNDECIDED",
-      rule: "If one reviewed model/project cannot comfortably finish the official run, do not start or split/switch the experiment.",
+      decision: "PENDING_SEPARATE_PROBE_AND_RUN_AUTHORIZATION",
+      rule: "Do not start or switch provider/model without a reviewed manifest and separate Product Owner authorization.",
     },
     realProviderCalls: 0,
   } as const;

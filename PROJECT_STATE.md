@@ -58,6 +58,8 @@ Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、bac
 
 Stage 2.2.1A Benchmark + Eval Harness 已非 squash 合并 main，状态为 **COMPLETED / MERGED / FROZEN_BEFORE_LIVE_RUN**。Astra freeze 为 `ddfb19260853b441b11934420ec5bce4feab76dd`，Codex hardening 与 future live-run 应绑定的 reviewed pre-live frozen commit 为 `fe620a3d8e36cf81d70d39c426a22783c555379a`。10 Anchor + 20 Holdout（四组各5，8 SUPPORTED / 8 UNSUPPORTED / 4 UNCERTAIN）及 lock manifest 已复核；真实 provider 调用为0。**Stage 2.2.1 overall NOT complete；Stage 2.2.1B NOT STARTED；Live Semantic Accuracy NOT YET VALIDATED。** Mock 输出仅为 HARNESS TEST ONLY，不构成模型性能结论。20 个 Holdout 是来自 Ch13–17 与已知语义边界类的预注册内部 StoryState challenge set，仅支持当前 StoryState domain 内的架构决策，不证明所有长篇 AIGC domain 的普遍优越性。Stage 2.2 frozen 不变。详见 `docs/STAGE_2_2_1_LIVE_SEMANTIC_VALIDATION.md`。
 
-## Stage 2.2.1B0 Live Run Package Preparation
+## Stage 2.2.1B0 / B0.1 Live Run Package Preparation
 
-Stage 2.2.1B0 状态为 **LIVE RUN PACKAGE PREPARED / AWAITING PRODUCT OWNER REVIEW**。准备内容包括官方 `@google/genai` 的 evaluation-only adapter、严格 modelVersion/usage 映射、离线 call/request-size/token-budget preflight、未授权 manifest、结果 schemas 与 completed-run 覆盖保护。官方模型仍 `UNDECIDED`；live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`；`GEMINI_API_KEY` 不参与测试或 preflight；真实 provider 调用为 **0**。Stage 2.2.1B 未开始，Live Semantic Accuracy 未验证。详见 `docs/STAGE_2_2_1B_LIVE_RUN_PLAN.md`。
+Stage 2.2.1B0 已准备 live-run package；B0.1 状态为 **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**。官方 provider 为 `deepseek-api`，requested model 为 `deepseek-flash`，实际 resolved model version 必须等待另行授权的单次 synthetic probe 返回，当前保持 unknown/null。Gemini 仅保留为文档备选研究，相关 runtime adapter 与依赖已移除。DeepSeek evaluation-only adapter 显式发送 `reasoning.effort=none`，拒绝 reasoning 输出或非零 reasoning tokens，并保持既有 model identity drift、parser 与冻结评测语义。
+
+离线 preflight、未授权 manifest、synthetic probe package、结果 schemas 与 completed-run 覆盖保护均已准备；probe CLI 固定返回 `DEEPSEEK_PROBE_NOT_AUTHORIZED`，live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`。测试或 preflight 不读取 `DEEPSEEK_API_KEY`；真实 provider 调用为 **0**。Stage 2.2.1B 未开始，Live Semantic Accuracy 未验证。详见 `docs/STAGE_2_2_1B_LIVE_RUN_PLAN.md`。

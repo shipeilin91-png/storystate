@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 import { decoding } from "../runner";
-import { GEMINI_CANDIDATE_MODELS, GEMINI_PROVIDER } from "../providers/gemini";
+import { DEEPSEEK_PROVIDER, DEEPSEEK_REQUESTED_MODEL } from "../providers/deepseek";
 
 export const REVIEWED_PRE_LIVE_FROZEN_COMMIT = "fe620a3d8e36cf81d70d39c426a22783c555379a";
 export const FROZEN_BENCHMARK_VERSION = "stage-2.2.1/v0.1";
@@ -12,16 +12,14 @@ export const PREPARED_MANIFEST_PATH = "config/live-semantic/run-manifest.prepare
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/);
 const commit = z.string().regex(/^[a-f0-9]{40}$/);
 const timestamp = z.string().datetime({ offset: true });
-const candidateModel = z.enum(GEMINI_CANDIDATE_MODELS);
-
 export const runManifestSchema = z.strictObject({
   experimentId: z.string().regex(/^[a-z0-9][a-z0-9.-]+$/),
   benchmarkVersion: z.literal(FROZEN_BENCHMARK_VERSION),
   datasetHash: sha256,
   evaluationConfigHash: sha256,
   reviewedFrozenCommit: commit,
-  provider: z.literal(GEMINI_PROVIDER),
-  requestedModelId: candidateModel.nullable(),
+  provider: z.literal(DEEPSEEK_PROVIDER),
+  requestedModelId: z.literal(DEEPSEEK_REQUESTED_MODEL),
   expectedResolvedModelVersion: z.string().min(1).nullable(),
   temperature: z.number(),
   maxOutputTokens: z.number().int().positive(),
@@ -42,7 +40,7 @@ export function readPreparedManifest(path = PREPARED_MANIFEST_PATH): RunManifest
 }
 
 export function assertPreparedManifest(manifest: RunManifest): void {
-  if (manifest.status !== "PREPARED_NOT_AUTHORIZED" || manifest.requestedModelId !== null ||
+  if (manifest.status !== "PREPARED_NOT_AUTHORIZED" || manifest.requestedModelId !== DEEPSEEK_REQUESTED_MODEL ||
       manifest.expectedResolvedModelVersion !== null || manifest.authorizedAt !== null || manifest.authorizedBy !== null)
     throw new Error("PREPARED_MANIFEST_MUST_NOT_AUTHORIZE_LIVE_RUN");
   if (manifest.datasetHash !== FROZEN_DATASET_HASH || manifest.evaluationConfigHash !== FROZEN_CONFIG_HASH ||
@@ -53,7 +51,7 @@ export function assertPreparedManifest(manifest: RunManifest): void {
 }
 
 export function assertAuthorizedManifest(manifest: RunManifest): asserts manifest is RunManifest & {
-  status: "AUTHORIZED"; requestedModelId: (typeof GEMINI_CANDIDATE_MODELS)[number]; expectedResolvedModelVersion: string;
+  status: "AUTHORIZED"; requestedModelId: typeof DEEPSEEK_REQUESTED_MODEL; expectedResolvedModelVersion: string;
   authorizedAt: string; authorizedBy: string;
 } {
   if (manifest.status !== "AUTHORIZED" || !manifest.requestedModelId || !manifest.expectedResolvedModelVersion ||
@@ -67,5 +65,5 @@ export function assertAuthorizedManifest(manifest: RunManifest): asserts manifes
 }
 
 export function assertB0ExecutionDisabled(): never {
-  throw new Error("LIVE_RUN_NOT_AUTHORIZED: Stage 2.2.1B0 prepares files only; Stage 2.2.1B is not started");
+  throw new Error("LIVE_RUN_NOT_AUTHORIZED: DeepSeek probe and Stage 2.2.1B require separate Product Owner authorization");
 }

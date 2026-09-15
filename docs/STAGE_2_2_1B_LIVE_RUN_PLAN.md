@@ -1,8 +1,8 @@
-# Stage 2.2.1B0 Live Semantic Run Package
+# Stage 2.2.1B0.1 DeepSeek Live Semantic Run Package
 
-Status: **LIVE RUN PACKAGE PREPARED / AWAITING PRODUCT OWNER REVIEW**.
+Status: **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**.
 
-Stage 2.2.1A remains completed and frozen. Stage 2.2.1B is **NOT STARTED**. Live Semantic Accuracy is **NOT YET VALIDATED**. This package made **0 real provider calls** and does not authorize one.
+Stage 2.2.1A remains **COMPLETED / FROZEN**. Stage 2.2.1B0 contains the prepared live-run package. Stage 2.2.1B is **NOT STARTED**. Live Semantic Accuracy is **NOT YET VALIDATED**. This package made **0 real provider calls** and authorizes neither a probe nor the official experiment.
 
 ## Frozen experiment boundary
 
@@ -12,128 +12,111 @@ Stage 2.2.1A remains completed and frozen. Stage 2.2.1B is **NOT STARTED**. Live
 - Reviewed pre-live frozen commit: `fe620a3d8e36cf81d70d39c426a22783c555379a`
 - Frozen decoding: temperature `0`, maximum output tokens `500`, one response, no retry, no tools.
 
-The adapter does not change the Validation Packet, Generic prompt, specialist prompts, routing, Gold, or Stage 2.2 production behavior. Provider JSON still passes through the existing StoryState parser and evidence-grounding checks.
+The provider pivot does not change the Validation Packet, Generic prompt, specialist prompts, routing, Gold, Stage 2.2 production behavior, frontend, or Frozen Docs. Provider JSON still passes through the existing StoryState parser and grounding checks.
 
-## Candidate provider and models
+## Official provider and unresolved model version
 
-The candidate provider is the Google Gemini Developer API through the official `@google/genai` JavaScript SDK. The API key variable is `GEMINI_API_KEY`; it must never be logged, persisted, included in errors, or committed.
+The official provider for the proposed experiment is the DeepSeek API at `https://api.deepseek.com`, using native Node `fetch` and the `DEEPSEEK_API_KEY` environment variable. The requested model ID is exactly `deepseek-flash`. There is no fallback or automatic switch to an alternate alias, model, provider, or project.
 
-Current candidates, with no official selection yet:
+`deepseek-flash` is a provider alias. The package does not assume a resolved version. `expectedResolvedModelVersion` remains null until a separately authorized synthetic probe observes `response.model` and the Product Owner reviews that result. The official runner later requires that reviewed value and retains the existing identity-drift abort.
 
-- `gemini-3.1-flash-lite`
-- `gemini-2.5-flash`
-- `gemini-2.5-flash-lite`
+Gemini remains documentation-only prior research. Its SDK dependency and runtime adapter were removed so the official package exposes one provider path.
 
-A future reviewed manifest must contain exactly one requested model. There is no fallback or provider/model switching within an experiment. A failure aborts the run.
+## Exact Responses API mapping
 
-## Request and response mapping
+Every future semantic call maps to one `POST /responses` request:
 
-Each semantic call becomes one `models.generateContent` request:
+- `model`: `deepseek-flash`
+- `instructions`: the unchanged Generic or applicable specialist system prompt
+- `input`: the complete Validation Packet under `UNTRUSTED_STORYSTATE_VALIDATION_DATA`
+- `reasoning`: `{ "effort": "none" }`
+- `temperature`: `0`
+- `max_output_tokens`: `500`
+- `text.format`: the existing response JSON Schema with a stable Generic or specialist schema name
+- no tools, web search, functions, prior response ID, conversation state, reflection, or retry
 
-- `systemInstruction`: the unchanged Generic or specialist system prompt.
-- `contents`: one user content containing the complete Validation Packet serialized under `UNTRUSTED_STORYSTATE_VALIDATION_DATA`.
-- `temperature`, `maxOutputTokens`, and `candidateCount`: copied from the frozen evaluation decoding configuration.
-- `responseMimeType`: `application/json`.
-- `responseJsonSchema`: the existing response schema, with only the unsupported JSON Schema dialect declaration removed.
-- no tools, search, URL context, code execution, function calling, reflection, or retry.
+DeepSeek documents that Responses API `reasoning.effort: none` disables thinking, while thinking is otherwise enabled by default. The adapter rejects any reasoning output item or positive `usage.output_tokens_details.reasoning_tokens` with `DEEPSEEK_REASONING_NOT_DISABLED`.
 
-The adapter records the response's actual `modelVersion`; it never derives a version from the requested model ID. The current runner requires a predeclared expected resolved version and aborts on drift. Therefore the prepared manifest leaves `expectedResolvedModelVersion` null. A separately authorized version-discovery decision must happen before the official run, followed by manifest review. Identity protection is not weakened.
+The adapter reads only assistant `output_text` from message output items. It requires `status=completed`, sends the text through the existing StoryState parser, maps `response.model` to the resolved model version, maps `response.id` to the provider response ID, and records completed status as provider metadata. Reasoning, tool, and unknown output items never become the semantic answer.
 
-Gemini usage mapping is exact when both fields exist:
+Usage mapping is exact when both fields are valid:
 
-- `usageMetadata.promptTokenCount` → `inputTokens`
-- `usageMetadata.candidatesTokenCount` → `outputTokens`
+- `usage.input_tokens` → `inputTokens`
+- `usage.output_tokens` → `outputTokens`
 
-Missing or partial metadata remains unavailable (`usage: null`). Cached, tool-use, thought, and total token categories are not folded into these fields.
+Missing or partial usage remains `usage: null`. No token value is invented. Provider errors are reduced to bounded categories; response bodies, Authorization headers, and keys are excluded from artifacts.
 
-## Execution boundary
+Official references: [Responses API](https://api-docs.deepseek.com/api/create-response/), [thinking mode](https://api-docs.deepseek.com/guides/thinking_mode/), and [models/pricing](https://api-docs.deepseek.com/quick_start/pricing/).
 
-`npm run eval:semantic:live` is deliberately disabled and always returns `LIVE_RUN_NOT_AUTHORIZED`. It does not read `GEMINI_API_KEY`, construct an SDK client, or expose an execute flag. Tests and offline preflight inject no official transport and make no network request.
+## Synthetic probe boundary
 
-The committed prepared manifest is `config/live-semantic/run-manifest.prepared.json`. Its status is `PREPARED_NOT_AUTHORIZED`; requested model, expected resolved version, authorization time, and authorizer are null. It is insufficient to call the API.
+`lib/eval/live/deepseek-probe.ts` prepares one independent synthetic example: evidence says a red key lies on a desk and the candidate says the key is red. It contains no Anchor, Holdout, H01–H20, Ch13–17, Gold, minimal-pair, or benchmark content.
 
-## Offline call and quota preflight
+The probe is only for later verification of credentials, `deepseek-flash` acceptance, Responses API compatibility, explicit non-thinking mode, structured output, returned model version and response ID, usage metadata, zero reasoning tokens, and parser compatibility. It is not accuracy or architecture evidence.
 
-Run:
+`npm run eval:semantic:deepseek:probe` is deliberately disabled and exits with `DEEPSEEK_PROBE_NOT_AUTHORIZED` before reading `DEEPSEEK_API_KEY`, constructing the official transport, or making a request. It has no execute flag or environment bypass.
 
-```sh
-npm run eval:semantic:live:preflight
-```
+`npm run eval:semantic:live` remains disabled and exits with `LIVE_RUN_NOT_AUTHORIZED`. The prepared manifest is `PREPARED_NOT_AUTHORIZED`, has no authorization fields or resolved version, and is insufficient to run the benchmark.
 
-The command locally reconstructs the frozen benchmark, validates the Git/lock provenance, derives routing, serializes every proposed Gemini request, and reports call counts and request sizes. It does not load a key or call a provider.
+## Offline call and budget preflight
 
-The token range is labeled **NOT PROVIDER TOKEN COUNT — FOR QUOTA PLANNING ONLY**. For mixed Chinese/English/JSON, each request uses:
+Run `npm run eval:semantic:live:preflight` to reconstruct the frozen experiment, verify Git/lock provenance, derive routing, and serialize every exact proposed DeepSeek request locally. This command does not read a key or call a provider.
+
+The token range is labeled **NOT PROVIDER TOKEN COUNT — FOR QUOTA PLANNING ONLY**. For mixed Chinese/English/JSON, each serialized request uses:
 
 - low estimate: `CJK characters + non-CJK characters / 4`
 - conservative high estimate: `2 × CJK characters + non-CJK characters / 2`
 - output ceiling: derived calls × frozen `maxOutputTokens`
 
-No remote tokenizer or `countTokens` call is permitted in B0.
-
-| Quota decision field | Value |
-| --- | --- |
-| Required calls | Derived by offline preflight |
-| Actual AI Studio RPD | `TO_BE_FILLED_AFTER_PO_REVIEW` |
-| Actual AI Studio RPM | `TO_BE_FILLED_AFTER_PO_REVIEW` |
-| Actual applicable token limits | `TO_BE_FILLED_AFTER_PO_REVIEW` |
-| Estimated request-token need | Offline range; not a provider count |
-| Decision | `UNDECIDED` |
-
-If the actual free quota cannot comfortably complete the official run using one reviewed model and project, do not start. Do not split the primary experiment across models or projects.
-
-Current B0 offline output:
+Current B0.1 offline output:
 
 | Derived measurement | Value |
 | --- | --- |
 | Total calls | 198 |
 | Primary Generic / Specialist | 30 / 69 |
 | Stability Generic / Specialist | 30 / 69 |
-| Evidence / Knowledge / Temporal specialist calls | 60 / 20 / 58 |
-| Total request characters / UTF-8 bytes | 1,100,633 / 1,127,635 |
-| Mean / median / maximum request bytes | 5,695.13 / 5,382 / 8,839 |
-| Rough input-token range | 284,935–569,770 |
+| Generic / Evidence / Knowledge / Temporal calls | 60 / 60 / 20 / 58 |
+| Total request characters / UTF-8 bytes | 1,097,879 / 1,124,881 |
+| Mean / median / maximum request bytes | 5,681.22 / 5,369 / 8,826 |
+| Rough input-token range | 284,242–568,391 |
 | Frozen output-token ceiling | 99,000 |
 | Real provider calls | 0 |
 
-These measurements were derived from routing and locally serialized requests. The token range is a quota-planning heuristic, not a provider token count.
+## Pricing and authorization policy
+
+The Product Owner has separately confirmed sufficient account budget; no personal balance is recorded. Provider prices can change and are not embedded in evaluation metrics. Future cost estimates require exact returned usage plus an explicit reviewed pricing configuration. No pricing configuration is authorized in B0.1.
+
+| Decision field | Value |
+| --- | --- |
+| Required calls | Derived by offline preflight |
+| Actual provider request limits | `TO_BE_FILLED_AFTER_PO_REVIEW` |
+| Actual applicable token limits | `TO_BE_FILLED_AFTER_PO_REVIEW` |
+| Reviewed pricing configuration | `NOT_AUTHORIZED` |
+| Resolved model version | `UNKNOWN UNTIL PROBE` |
+| Decision | `PENDING_SEPARATE_PROBE_AND_RUN_AUTHORIZATION` |
+
+Do not split or switch the official experiment across models, providers, or projects. A failure aborts the run for review.
 
 ## Artifact contract and Git policy
 
-`lib/eval/live/artifacts.ts` defines and validates:
+The prepared artifact contract covers `run-manifest.json`, `raw-results.jsonl`, `metrics.json`, `report.md`, and `execution-summary.json`. Records retain experiment/freeze/model provenance, case/architecture/phase/run/agent, packet hash, parsed result, latency, exact usage when available, provider response ID, completion status, and sanitized errors. No key, Authorization header, or raw sensitive request header is accepted.
 
-- `run-manifest.json`
-- `raw-results.jsonl`, one semantic-request record per line
-- `metrics.json`
-- `report.md`
-- `execution-summary.json`
+Writes use restrictive temporary files and atomic linking or renaming. Existing completed runs are immutable; partial, aborted, and completed states are distinct. `results/live-semantic/` remains Git-ignored, and no real results exist. Schemas and the sanitized example remain tracked. A later Product Owner decision may permit sanitized manifest/metrics/report artifacts while raw provider results remain local.
 
-Each raw record carries experiment/freeze/model provenance, case/architecture/phase/run/agent, packet hash, parsed verdict/reason/evidence IDs, latency, exact usage when available, provider response ID, finish reason, and a sanitized error category. Secrets and provider headers are excluded.
+## B0.1 verification boundary
 
-Files are written through a restrictive temporary file and atomically linked or renamed. Existing completed runs are immutable; partial, aborted, and completed summaries are distinct. Future raw results live under `results/live-semantic/`, which Git ignores. The sanitized schema example remains tracked in `tests/fixtures/`. Whether sanitized manifest/metrics/report artifacts are later committed is Product Owner-owned; raw provider responses remain local by default.
+All provider and probe tests use injected fake responses. Final preparation verification:
 
-## Free tier, quota, and privacy
-
-The [Gemini Developer API pricing page](https://ai.google.dev/gemini-api/docs/pricing) currently lists free-tier access for candidate models and states that free-tier submitted content may be used to improve Google's products. The [rate-limit documentation](https://ai.google.dev/gemini-api/docs/rate-limits) says effective limits depend on model, project/account tier, and current capacity, and directs users to Google AI Studio for active limits. Public documentation does not justify assuming a specific RPD for this project.
-
-Immediately before any future run, the Product Owner must inspect the actual AI Studio RPM, RPD, and token limits. Only synthetic StoryState benchmark content may be submitted. Do not send personal data, private company content, user secrets, or production data.
-
-## Alternatives for fallback research only
-
-- **Groq:** Its official API exposes familiar SDK/OpenAI-compatible integration patterns and model-specific RPM/RPD/TPM/TPD limits. Some models have high RPD, while token-per-day limits may still make the complete run unsuitable. Inspect the account's current limit page before considering it.
-- **OpenRouter:** Its API is OpenAI-compatible. Its official FAQ currently documents low free-model daily limits without purchased credits, so it is not preferred for this 198-call one-session experiment. Automatic model routing would also violate the fixed-model comparison.
-
-No Groq or OpenRouter adapter is implemented in B0.
-
-## B0 verification
-
-- `@google/genai`: `2.22.0` in the lockfile.
-- build and lint: PASS.
-- full suite: 241/241.
-- backend: 62/62; exact benchmark: 11/11; validator: 72/72; Stage 2.2.1A evaluation: 51/51.
-- B0 provider/preflight tests: 20/20, using injected fake transports only.
-- Stage 1.3 regression: 25/25.
-- disabled live command: exits nonzero with `LIVE_RUN_NOT_AUTHORIZED`.
-- real provider calls: **0**.
+- install: PASS, 381 packages audited, 0 vulnerabilities
+- build and lint: PASS
+- full suite: 253/253
+- backend: 62/62; exact benchmark: 11/11; validator: 72/72; evaluation harness: 51/51
+- B0/B0.1 provider, probe, manifest, artifact, freeze, and preflight tests: 32/32
+- offline DeepSeek preflight: PASS with the frozen Git/lock match
+- disabled probe: exits nonzero with `DEEPSEEK_PROBE_NOT_AUTHORIZED`
+- disabled official live runner: exits nonzero with `LIVE_RUN_NOT_AUTHORIZED`
+- `DEEPSEEK_API_KEY` read: NO
+- `REAL_PROVIDER_CALLS`: **0**
 
 ## Methodology boundary
 

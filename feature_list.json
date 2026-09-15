@@ -28,15 +28,14 @@
     "liveAuthorizationBoundary": "reviewed Git commit and committed lock manifest required before any live call"
   },
   "liveSemanticRunPackage": {
-    "stage": "Stage 2.2.1B0",
-    "status": "live run package prepared / awaiting Product Owner review",
-    "providerCandidate": "Google Gemini Developer API",
-    "candidateModels": [
-      "gemini-3.1-flash-lite",
-      "gemini-2.5-flash",
-      "gemini-2.5-flash-lite"
-    ],
-    "officialSelectedModel": null,
+    "stage": "Stage 2.2.1B0.1",
+    "status": "DeepSeek provider prepared / probe not authorized",
+    "officialProvider": "DeepSeek API",
+    "providerId": "deepseek-api",
+    "requestedModelId": "deepseek-flash",
+    "resolvedModelVersion": null,
+    "reasoningEffort": "none",
+    "probeStatus": "not authorized",
     "manifestStatus": "PREPARED_NOT_AUTHORIZED",
     "stage221B": "not started",
     "liveSemanticAccuracy": "not yet validated",
