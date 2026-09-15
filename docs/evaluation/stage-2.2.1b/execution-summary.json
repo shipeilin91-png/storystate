@@ -1,0 +1,20 @@
+{
+  "experimentId": "storystate-stage-2.2.1b-live-semantic",
+  "benchmarkVersion": "stage-2.2.1/v0.1",
+  "datasetHash": "992db12b706414bec4b9dadb2e591e1c220a90af6962853cb5b3d89af6dda53e",
+  "evaluationConfigHash": "f7c3ec971e427cf32a936d8b1f1f5f0ec813afdc60d2329cf261aa7c447c6420",
+  "reviewedFrozenCommit": "fe620a3d8e36cf81d70d39c426a22783c555379a",
+  "provider": "deepseek-api",
+  "requestedModelId": "deepseek-flash",
+  "observedProviderModel": "deepseek-flash",
+  "modelIdentityClass": "PROVIDER_MODEL_ALIAS_ONLY",
+  "liveRunCodeGitSha": "dad2e6477c008f9daa0211439d3261535d2ef63e",
+  "gitWorktreeState": "CLEAN",
+  "runStartedAt": "2026-09-15T13:33:18.293Z",
+  "runFinishedAt": "2026-09-15T13:37:31.872Z",
+  "status": "COMPLETED",
+  "expectedCallCount": 198,
+  "completedCallCount": 198,
+  "failedCallCount": 0,
+  "errorCategory": null
+}

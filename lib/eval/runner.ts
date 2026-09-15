@@ -19,21 +19,23 @@ export const decoding = deepFreeze({ temperature: 0, maxTokens: 500, responses: 
 export type EvalAgent = Specialist | "generic";
 export type ModelIdentity = { provider: string; modelId: string; modelVersion: string };
 export type Usage = { inputTokens: number; outputTokens: number };
-function schemaFor(agent: EvalAgent) { return z.toJSONSchema(agent === "generic" ? genericCheckSchema : semanticCheckSchema); }
+export function responseSchemaFor(agent: EvalAgent) { return z.toJSONSchema(agent === "generic" ? genericCheckSchema : semanticCheckSchema); }
 export function evaluationConfigHash(): string {
-  return digest({ genericPrompt, specialistPrompts, decoding, genericSchema: schemaFor("generic"), specialistSchema: schemaFor("evidence") });
+  return digest({ genericPrompt, specialistPrompts, decoding, genericSchema: responseSchemaFor("generic"), specialistSchema: responseSchemaFor("evidence") });
 }
 export type EvalRequest = {
   agent: EvalAgent; system: string; packet: ValidationPacket; identity: ModelIdentity;
-  decoding: typeof decoding; responseSchema: ReturnType<typeof schemaFor>; signal: AbortSignal;
+  decoding: typeof decoding; responseSchema: ReturnType<typeof responseSchemaFor>; signal: AbortSignal;
 };
+export type ProviderMetadata = { responseId?: string; finishReason?: string };
 export interface EvalModelClient {
   readonly kind: "mock" | "live";
   readonly identity: ModelIdentity;
-  complete(request: EvalRequest): Promise<{ output: unknown; usage?: Usage; resolvedIdentity?: ModelIdentity }>;
+  complete(request: EvalRequest): Promise<{ output: unknown; usage?: Usage | null; resolvedIdentity?: ModelIdentity; providerMetadata?: ProviderMetadata }>;
 }
 export type CallRecord = {
   agent: EvalAgent; latencyMs: number; usage: Usage | null; error: string | null;
+  providerResponseId: string | null; finishReason: string | null;
   check: { agent: EvalAgent; verdict: Verdict; reason: string; evidenceIds: string[] };
 };
 export type CaseResult = {
@@ -106,7 +108,7 @@ export async function runEvaluation(cases: readonly BoundCase[], client: EvalMod
       const request: EvalRequest = {
         agent, system: agent === "generic" ? genericPrompt : specialistPrompts[agent],
         packet: structuredClone(packet), identity: structuredClone(identity), decoding: structuredClone(decoding),
-        responseSchema: schemaFor(agent), signal: controller.signal,
+        responseSchema: responseSchemaFor(agent), signal: controller.signal,
       };
       const timedOut = new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error("TIMEOUT")); }, options.timeoutMs ?? 15000); });
       const response = await Promise.race([client.complete(request), timedOut]);
@@ -114,11 +116,12 @@ export async function runEvaluation(cases: readonly BoundCase[], client: EvalMod
           (client.kind === "live" && !response.resolvedIdentity)) throw new Error("MODEL_IDENTITY_CHANGED");
       if (response.usage) usage = usageSchema.parse(response.usage);
       const check = agent === "generic" ? parseGeneric(response.output, packet) : parseSemanticOutput(response.output, agent, packet);
-      return { agent, check, usage, error: null, latencyMs: Math.max(0, clock() - started) };
+      return { agent, check, usage, error: null, latencyMs: Math.max(0, clock() - started),
+        providerResponseId: response.providerMetadata?.responseId ?? null, finishReason: response.providerMetadata?.finishReason ?? null };
     } catch (error) {
       if (error instanceof Error && error.message === "MODEL_IDENTITY_CHANGED") throw error;
       return { agent, check: { agent, verdict: "UNCERTAIN", reason: "Semantic check unavailable or invalid; review required.", evidenceIds: [] },
-        error: "SEMANTIC_UNAVAILABLE", usage, latencyMs: Math.max(0, clock() - started) };
+        error: "SEMANTIC_UNAVAILABLE", usage, latencyMs: Math.max(0, clock() - started), providerResponseId: null, finishReason: null };
     } finally { clearTimeout(timer); }
   }
   async function evaluate(c: BoundCase, architecture: CaseResult["architecture"], run: number, phase: CaseResult["phase"]) {

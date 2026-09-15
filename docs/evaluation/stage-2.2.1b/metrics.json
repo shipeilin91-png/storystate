@@ -1,0 +1,347 @@
+{
+  "artifactType": "SANITIZED_DERIVED_METRICS",
+  "primaryEvidence": "holdout",
+  "anchorRole": "sanity/regression only",
+  "provenance": {
+    "experimentId": "storystate-stage-2.2.1b-live-semantic",
+    "benchmarkVersion": "stage-2.2.1/v0.1",
+    "datasetHash": "992db12b706414bec4b9dadb2e591e1c220a90af6962853cb5b3d89af6dda53e",
+    "evaluationConfigHash": "f7c3ec971e427cf32a936d8b1f1f5f0ec813afdc60d2329cf261aa7c447c6420",
+    "reviewedFrozenCommit": "fe620a3d8e36cf81d70d39c426a22783c555379a",
+    "liveRunCodeGitSha": "dad2e6477c008f9daa0211439d3261535d2ef63e",
+    "gitWorktreeState": "CLEAN",
+    "provider": "deepseek-api",
+    "requestedModelId": "deepseek-flash",
+    "observedProviderModel": "deepseek-flash",
+    "modelIdentityClass": "PROVIDER_MODEL_ALIAS_ONLY",
+    "runStartedAt": "2026-09-15T13:33:18.293Z",
+    "runFinishedAt": "2026-09-15T13:37:31.872Z",
+    "generatedAt": "2026-09-15T13:37:31.872Z"
+  },
+  "anchor": {
+    "generic": {
+      "cases": 10,
+      "eligible": 10,
+      "ineligible": 0,
+      "semanticAccuracy": {
+        "count": 5,
+        "total": 10,
+        "rate": 0.5
+      },
+      "invalidOrUnavailableResponses": 0,
+      "falseAutoAccept": {
+        "count": 0,
+        "total": 8,
+        "rate": 0
+      },
+      "falseAutoAcceptOverAll": {
+        "count": 0,
+        "total": 10,
+        "rate": 0
+      },
+      "safeAutoCoverage": {
+        "count": 2,
+        "total": 2,
+        "rate": 1
+      },
+      "reviewRate": {
+        "count": 8,
+        "total": 10,
+        "rate": 0.8
+      },
+      "perGroup": {
+        "control": {
+          "count": 0,
+          "total": 0,
+          "rate": null
+        },
+        "evidence": {
+          "count": 1,
+          "total": 2,
+          "rate": 0.5
+        },
+        "knowledge": {
+          "count": 3,
+          "total": 6,
+          "rate": 0.5
+        },
+        "temporal": {
+          "count": 1,
+          "total": 2,
+          "rate": 0.5
+        }
+      },
+      "averageModelCalls": 1,
+      "latencyMs": {
+        "mean": 1240.9770418000005,
+        "median": 1254.8909169999984,
+        "p95": null,
+        "p95Note": "Unavailable: fewer than 20 observations."
+      },
+      "consumption": {
+        "modelCalls": 10,
+        "usageAvailable": true,
+        "inputTokens": 18967,
+        "outputTokens": 1314,
+        "estimatedCost": null,
+        "currency": null,
+        "costStatus": "unavailable: explicit pricing absent"
+      }
+    },
+    "specialist": {
+      "cases": 10,
+      "eligible": 10,
+      "ineligible": 0,
+      "semanticAccuracy": {
+        "count": 8,
+        "total": 10,
+        "rate": 0.8
+      },
+      "invalidOrUnavailableResponses": 0,
+      "falseAutoAccept": {
+        "count": 0,
+        "total": 8,
+        "rate": 0
+      },
+      "falseAutoAcceptOverAll": {
+        "count": 0,
+        "total": 10,
+        "rate": 0
+      },
+      "safeAutoCoverage": {
+        "count": 2,
+        "total": 2,
+        "rate": 1
+      },
+      "reviewRate": {
+        "count": 8,
+        "total": 10,
+        "rate": 0.8
+      },
+      "perGroup": {
+        "control": {
+          "count": 0,
+          "total": 0,
+          "rate": null
+        },
+        "evidence": {
+          "count": 2,
+          "total": 2,
+          "rate": 1
+        },
+        "knowledge": {
+          "count": 4,
+          "total": 6,
+          "rate": 0.6666666666666666
+        },
+        "temporal": {
+          "count": 2,
+          "total": 2,
+          "rate": 1
+        }
+      },
+      "averageModelCalls": 2.6,
+      "latencyMs": {
+        "mean": 3341.6858707000006,
+        "median": 3807.5642500000013,
+        "p95": null,
+        "p95Note": "Unavailable: fewer than 20 observations."
+      },
+      "consumption": {
+        "modelCalls": 26,
+        "usageAvailable": true,
+        "inputTokens": 53552,
+        "outputTokens": 3721,
+        "estimatedCost": null,
+        "currency": null,
+        "costStatus": "unavailable: explicit pricing absent"
+      }
+    }
+  },
+  "holdout": {
+    "generic": {
+      "cases": 20,
+      "eligible": 20,
+      "ineligible": 0,
+      "semanticAccuracy": {
+        "count": 12,
+        "total": 20,
+        "rate": 0.6
+      },
+      "invalidOrUnavailableResponses": 0,
+      "falseAutoAccept": {
+        "count": 0,
+        "total": 15,
+        "rate": 0
+      },
+      "falseAutoAcceptOverAll": {
+        "count": 0,
+        "total": 20,
+        "rate": 0
+      },
+      "safeAutoCoverage": {
+        "count": 4,
+        "total": 5,
+        "rate": 0.8
+      },
+      "reviewRate": {
+        "count": 16,
+        "total": 20,
+        "rate": 0.8
+      },
+      "perGroup": {
+        "control": {
+          "count": 4,
+          "total": 5,
+          "rate": 0.8
+        },
+        "evidence": {
+          "count": 2,
+          "total": 5,
+          "rate": 0.4
+        },
+        "knowledge": {
+          "count": 3,
+          "total": 5,
+          "rate": 0.6
+        },
+        "temporal": {
+          "count": 3,
+          "total": 5,
+          "rate": 0.6
+        }
+      },
+      "averageModelCalls": 1,
+      "latencyMs": {
+        "mean": 1365.7898417499975,
+        "median": 1249.250791499995,
+        "p95": 1662.6313339999906,
+        "p95Note": "Empirical nearest-rank only; not statistical significance."
+      },
+      "consumption": {
+        "modelCalls": 20,
+        "usageAvailable": true,
+        "inputTokens": 31681,
+        "outputTokens": 2255,
+        "estimatedCost": null,
+        "currency": null,
+        "costStatus": "unavailable: explicit pricing absent"
+      }
+    },
+    "specialist": {
+      "cases": 20,
+      "eligible": 20,
+      "ineligible": 0,
+      "semanticAccuracy": {
+        "count": 12,
+        "total": 20,
+        "rate": 0.6
+      },
+      "invalidOrUnavailableResponses": 0,
+      "falseAutoAccept": {
+        "count": 0,
+        "total": 15,
+        "rate": 0
+      },
+      "falseAutoAcceptOverAll": {
+        "count": 0,
+        "total": 20,
+        "rate": 0
+      },
+      "safeAutoCoverage": {
+        "count": 4,
+        "total": 5,
+        "rate": 0.8
+      },
+      "reviewRate": {
+        "count": 16,
+        "total": 20,
+        "rate": 0.8
+      },
+      "perGroup": {
+        "control": {
+          "count": 4,
+          "total": 5,
+          "rate": 0.8
+        },
+        "evidence": {
+          "count": 3,
+          "total": 5,
+          "rate": 0.6
+        },
+        "knowledge": {
+          "count": 3,
+          "total": 5,
+          "rate": 0.6
+        },
+        "temporal": {
+          "count": 2,
+          "total": 5,
+          "rate": 0.4
+        }
+      },
+      "averageModelCalls": 2.15,
+      "latencyMs": {
+        "mean": 2760.908608200002,
+        "median": 2517.638104000005,
+        "p95": 4856.911708,
+        "p95Note": "Empirical nearest-rank only; not statistical significance."
+      },
+      "consumption": {
+        "modelCalls": 43,
+        "usageAvailable": true,
+        "inputTokens": 76969,
+        "outputTokens": 5541,
+        "estimatedCost": null,
+        "currency": null,
+        "costStatus": "unavailable: explicit pricing absent"
+      }
+    }
+  },
+  "stability": {
+    "generic": {
+      "complete": true,
+      "exactAgreement": {
+        "count": 10,
+        "total": 10,
+        "rate": 1
+      },
+      "invalidOrUnavailableResponses": 0
+    },
+    "specialist": {
+      "complete": true,
+      "exactAgreement": {
+        "count": 9,
+        "total": 10,
+        "rate": 0.9
+      },
+      "invalidOrUnavailableResponses": 0,
+      "unstableCases": [
+        {
+          "caseId": "H17",
+          "verdicts": [
+            "UNCERTAIN",
+            "UNSUPPORTED",
+            "UNCERTAIN"
+          ]
+        }
+      ]
+    }
+  },
+  "allRunsConsumption": {
+    "modelCalls": 198,
+    "usageAvailable": true,
+    "inputTokens": 353591,
+    "outputTokens": 25005,
+    "estimatedCost": null,
+    "currency": null,
+    "costStatus": "unavailable: explicit pricing absent"
+  },
+  "architectureDecision": {
+    "rule": "If False AUTO is 0 for both and Holdout correct differs by at most 1/20, prefer Generic for lower complexity, calls, and latency.",
+    "specialistMinusGenericCorrectCases": 0,
+    "specialistMinusGenericFalseAuto": 0,
+    "selectedArchitecture": "SELECT_GENERIC_VALIDATOR"
+  },
+  "interpretationBoundary": "This result answers the frozen StoryState architecture question. It does not establish sufficient semantic accuracy for unrestricted canonical mutation."
+}
