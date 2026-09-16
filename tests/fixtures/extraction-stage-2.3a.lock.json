@@ -1,0 +1,11 @@
+{
+  "version": "stage-2.3a/v0.1",
+  "extractionContractHash": "fdb10c9c9e9c9ee80ac2efa70c267a2399209ac8c3d5c3d4cabc084d332704f4",
+  "compilerSpecHash": "e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202",
+  "developmentDatasetHash": "d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe",
+  "holdoutBlueprintHash": "35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6",
+  "developmentCaseCount": 14,
+  "developmentGoldEffectCount": 14,
+  "actualHoldoutCaseCount": 0,
+  "providerCalls": 0
+}

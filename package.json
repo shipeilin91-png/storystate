@@ -14,6 +14,8 @@
     "test:validator-v0-2": "node --import tsx --test tests/runtime-validator-v0-2.test.ts",
     "test:eval": "node --import tsx --test tests/live-semantic-eval.test.ts",
     "test:live-prep": "node --import tsx --test tests/live-semantic-prep.test.ts",
+    "test:extraction-contract": "node --import tsx --test tests/extraction-contract.test.ts",
+    "test:extraction-eval": "node --import tsx --test tests/extraction-benchmark.test.ts tests/extraction-matching.test.ts tests/extraction-metrics.test.ts",
     "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts",
     "eval:semantic:live:preflight": "node --import tsx scripts/eval-semantic-live-preflight.ts",
     "eval:semantic:deepseek:probe": "node --import tsx scripts/eval-semantic-deepseek-probe-disabled.ts",
