@@ -109,6 +109,26 @@ function hydration() {
 const response = (value: unknown, status = 200) =>
   Response.json(value, { status });
 
+test("default adapter calls browser fetch with the global receiver", async () => {
+  const originalFetch = globalThis.fetch;
+  let usedGlobalReceiver = false;
+  globalThis.fetch = (async function (
+    this: unknown,
+    input: RequestInfo | URL,
+  ) {
+    usedGlobalReceiver = this === globalThis;
+    assert.equal(String(input), `/api/stories/${STORY_UUID}/review`);
+    return response(hydration());
+  }) as typeof fetch;
+  try {
+    const result = await new ApiStoryStateAdapter().hydrateReview(story());
+    assert.equal(usedGlobalReceiver, true);
+    assert.deepEqual(result.story.deltas.map((item) => item.id), [DELTA_UUID]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("real adapter persists source revision, extracts by UUID, then hydrates review", async () => {
   const calls: Array<{ url: string; init?: RequestInit }> = [];
   const fetcher = (async (input: RequestInfo | URL, init?: RequestInit) => {

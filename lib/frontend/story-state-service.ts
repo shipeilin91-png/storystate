@@ -365,7 +365,12 @@ export class StoryStateApiError extends Error {
 type Fetcher = typeof fetch;
 
 export class ApiStoryStateAdapter implements StoryStateAdapter {
-  constructor(private readonly fetcher: Fetcher = fetch) {}
+  private readonly fetcher: Fetcher;
+
+  constructor(fetcher?: Fetcher) {
+    this.fetcher =
+      fetcher ?? ((input, init) => globalThis.fetch(input, init));
+  }
 
   hasBackendStory(story: Story) {
     return backendStoryIdFor(story.id) !== null;
