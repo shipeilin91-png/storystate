@@ -92,10 +92,10 @@ test("strict output parsing rejects unknown citations, wrong agent, confidence, 
   ]) assert.throws(() => parseSemanticOutput(invalid, "evidence", packet));
 });
 
-test("UNSUPPORTED/UNCERTAIN, provider failures and partial failures never become REJECT or false AUTO_ACCEPT", async (t) => {
-  for (const mode of ["unsupported", "uncertain", "failure", "partial", "parse", "timeout"] as const) await t.test(mode, async () => {
+test("Generic UNSUPPORTED/UNCERTAIN and provider failures never become REJECT or false AUTO_ACCEPT", async (t) => {
+  for (const mode of ["unsupported", "uncertain", "failure", "parse", "timeout"] as const) await t.test(mode, async () => {
     const client = new FakeSemanticClient(async request => {
-      if (mode === "failure" || (mode === "partial" && request.agent === "temporal_state")) throw new Error("secret-provider-message");
+      if (mode === "failure") throw new Error("secret-provider-message");
       if (mode === "parse") return { ...supported(request), evidenceIds: [randomUUID()] };
       if (mode === "timeout") return new Promise(() => {});
       return { ...supported(request), verdict: mode === "unsupported" ? "UNSUPPORTED" : mode === "uncertain" ? "UNCERTAIN" : "SUPPORTED" };
@@ -105,7 +105,10 @@ test("UNSUPPORTED/UNCERTAIN, provider failures and partial failures never become
     assert.equal(result.status, "needs_review"); assert.equal(result.recommendation, "NEEDS_REVIEW");
     assert.ok(!JSON.stringify(result).includes("secret-provider-message"));
     assert.deepEqual(withoutValidatorResults(await f.repository.read(f.storyId)), withoutValidatorResults(before));
-    assert.equal(client.requests.length, 2);
+    assert.equal(client.requests.length, 1);
+    assert.equal(client.requests[0].agent, "generic");
+    if (["failure", "parse", "timeout"].includes(mode))
+      assert.equal(result.checks?.find(check => check.agent === "generic")?.code, "SEMANTIC_UNAVAILABLE");
   });
 });
 
@@ -192,14 +195,27 @@ for (const adapter of ["memory", "postgres"] as const) test(`${adapter}: API val
     assert.equal(result.recommendation, "AUTO_ACCEPT_ELIGIBLE");
     const after = await repository.read(f.storyId), saved = after.deltas.find(d => d.id === f.delta.id)!.validatorResult!;
     assert.deepEqual(saved, result);
-    assert.equal(saved.checks?.length, 3);
-    assert.equal(saved.validatorVersion, "runtime-validator/0.1");
+    assert.equal(saved.checks?.length, 2);
+    assert.equal(saved.checks?.[1].agent, "generic");
+    assert.equal(saved.validatorVersion, "runtime-validator/0.2");
     assert.equal(saved.evaluatedAgainstVersion, 1);
     assert.equal(saved.evaluatedAgainstStoryRevision, 1);
     assert.match(saved.packetHash!, /^[a-f0-9]{64}$/);
     assert.deepEqual(withoutValidatorResults(after), withoutValidatorResults(before));
-    await f.service.setValidatorResult(f.storyId, f.delta.id, { status: "passed", risk: "LOW", recommendation: "AUTO_ACCEPT_ELIGIBLE", reason: "Legacy result" });
-    assert.equal((await repository.read(f.storyId)).deltas.find(d => d.id === f.delta.id)?.validatorResult?.checks, undefined);
+    const legacy = {
+      status: "needs_review" as const, risk: "MEDIUM" as const, recommendation: "NEEDS_REVIEW" as const,
+      reason: "Historical specialist result", validatorVersion: "runtime-validator/0.1",
+      checks: [
+        { agent: "deterministic" as const, verdict: "SUPPORTED" as const, reason: "Gate passed.", evidenceIds: [] },
+        ...(["evidence", "knowledge_boundary", "temporal_state"] as const).map(agent => ({
+          agent, verdict: "SUPPORTED" as const, reason: "Historical specialist check.", evidenceIds: [f.evidenceIds[0]],
+        })),
+      ],
+    };
+    await f.service.setValidatorResult(f.storyId, f.delta.id, legacy);
+    assert.deepEqual((await repository.read(f.storyId)).deltas.find(d => d.id === f.delta.id)?.validatorResult, legacy);
+    const apiRead = await respond(() => storyRequest(f.service, "GET", f.storyId, ["deltas"]));
+    assert.deepEqual((await apiRead.json() as StateDelta[]).find(d => d.id === f.delta.id)?.validatorResult, legacy);
     await accept(f.service, f.storyId, f.delta.id);
     await f.service.commitAcceptedDeltas(f.storyId, { deltaIds: [f.delta.id], expectedVersion: 1 });
     await assert.rejects(f.service.validateDelta(f.storyId, f.delta.id, { expectedVersion: 2 }), /immutable/);
@@ -238,7 +254,7 @@ test("retrieval is bounded, deduplicated and future evidence is excluded", async
 
 test("future intent and historical location are semantic review, never hard REJECT", async (t) => {
   for (const text of ["明天去北堤。", "三天前到过 C-19。"]) await t.test(text, async () => {
-    const client = new FakeSemanticClient(request => ({ ...supported(request), verdict: request.agent === "temporal_state" ? "UNSUPPORTED" : "SUPPORTED" }));
+    const client = new FakeSemanticClient(request => ({ ...supported(request), verdict: "UNSUPPORTED" }));
     const f = await runtimeFixture("Ch17-A", undefined, client);
     await f.service.decideDelta(f.storyId, f.delta.id, { decision: "deferred", actor: "test setup", reason: "Isolate the temporal candidate from the unused fixture proposal" });
     const docId = randomUUID(), revisionId = randomUUID(), evidenceId = randomUUID();
@@ -249,7 +265,7 @@ test("future intent and historical location are semantic review, never hard REJE
     const d = await f.service.proposeDelta(f.storyId, { ...f.input, sourceEventId: event.id, evidenceIds: [evidenceId], after: epistemic(text.startsWith("明天") ? "North Embankment" : "C-19") });
     const result = await f.service.validateDelta(f.storyId, d.id, { expectedVersion: 1 });
     assert.equal(result.recommendation, "NEEDS_REVIEW");
-    assert.equal(result.checks!.find(c => c.agent === "temporal_state")?.verdict, "UNSUPPORTED");
+    assert.equal(result.checks!.find(c => c.agent === "generic")?.verdict, "UNSUPPORTED");
     assert.deepEqual((await f.service.getCurrentState(f.storyId)).state.characters.find(c => c.id === f.ids.Father)?.location, epistemic(null));
   });
 });

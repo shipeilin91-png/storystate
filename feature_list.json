@@ -1,7 +1,7 @@
 {
   "project": "StoryState",
-  "stage": "Runtime Validator V0.1 Specialist / Stage 2.2",
-  "stageStatus": "completed / merged / frozen / historical baseline",
+  "stage": "Runtime Validator V0.2 Generic Simplification / Stage 2.2.2",
+  "stageStatus": "implemented on feature branch / awaiting Product Owner review",
   "frontendProductFlow": "completed / frozen",
   "canonicalStateBackendFoundation": "completed / frozen",
   "liveSemanticValidation": "Stage 2.2.1B completed / valid / merged main",
@@ -258,9 +258,13 @@
     },
     {
       "id": "runtime-validator-v0-2",
-      "status": "planned / not started",
+      "status": "implemented on feature branch / awaiting Product Owner review",
       "description": "Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification",
       "architectureDecision": "SELECT_GENERIC_VALIDATOR",
+      "productionArchitecture": "deterministic gate -> bounded validation packet -> exactly one Generic semantic check -> deterministic impact/routing -> human Decision -> commit",
+      "validatorVersion": "runtime-validator/0.2",
+      "productionSemanticCallsPerEligibleValidation": 1,
+      "legacyCompatibility": "V0.1 Specialist results remain readable; historical Specialist evaluation remains runnable; no migration",
       "constraints": "Separate Product Owner review required; retain deterministic gate, conservative routing, high-impact review, human review, and no direct LLM mutation"
     }
   ],
