@@ -285,3 +285,58 @@ test("commit posts accepted IDs then reloads canonical state and versions", asyn
   assert.equal(result.story.loop?.history?.[0].version, 13);
   assert.equal(result.story.deltas.length, 0);
 });
+
+
+test("successive source submissions use monotonic PostgreSQL int4-safe ordering independent of document UUID", async () => {
+  const documents: Array<{ id: string; sourceOrder: number }> = [];
+  const fetcher = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url.endsWith("/source-documents")) {
+      documents.push(JSON.parse(String(init?.body)) as { id: string; sourceOrder: number });
+      return response({});
+    }
+    if (url.endsWith("/source-revisions")) return response({});
+    if (url.endsWith("/extract")) {
+      const body = JSON.parse(String(init?.body)) as { sourceRevisionId: string };
+      return response({
+        status: "completed",
+        sourceRevisionId: body.sourceRevisionId,
+        baseStateVersion: 12,
+        candidateDeltas: [],
+        validatorResults: [],
+        compilerIssues: [],
+        warnings: [],
+        evidence: [],
+        events: [],
+        provider: {},
+        timing: {},
+      });
+    }
+    if (url.endsWith("/review")) {
+      return response({ ...hydration(), candidateDeltas: [] });
+    }
+    throw new Error(`Unexpected URL ${url}`);
+  }) as typeof fetch;
+  const adapter = new ApiStoryStateAdapter(fetcher);
+  const input = {
+    storyId: "fog-harbor",
+    title: "Chapter 13",
+    chapter: 13,
+    expectedStateVersion: 12,
+    content: "林夏推开医院的门。",
+  };
+
+  await adapter.extract(story(), input);
+  await adapter.extract(story(), { ...input, title: "Chapter 14", chapter: 14 });
+
+  assert.equal(documents.length, 2);
+  const [first, second] = documents;
+  assert.ok(second.sourceOrder > first.sourceOrder);
+  for (const document of documents) {
+    assert.ok(Number.isInteger(document.sourceOrder));
+    assert.ok(document.sourceOrder <= 2_147_483_647);
+    const uuidDerivedOrder =
+      Number.parseInt(document.id.slice(0, 8), 16) % 2_147_483_647;
+    assert.notEqual(document.sourceOrder, uuidDerivedOrder);
+  }
+});

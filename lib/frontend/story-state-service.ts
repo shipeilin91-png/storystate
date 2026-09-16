@@ -60,6 +60,17 @@ export interface StoryStateAdapter {
 }
 
 const actor = "shipeilin.1";
+const POSTGRES_INT4_MAX = 2_147_483_647;
+let lastGeneratedSourceOrder = 0;
+
+const nextSourceOrder = (): number => {
+  const now = Math.floor(Date.now() / 1000);
+  lastGeneratedSourceOrder = Math.max(now, lastGeneratedSourceOrder + 1);
+  if (lastGeneratedSourceOrder > POSTGRES_INT4_MAX) {
+    throw new Error("SOURCE_ORDER_EXHAUSTED");
+  }
+  return lastGeneratedSourceOrder;
+};
 
 const stringValue = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
@@ -433,7 +444,7 @@ export class ApiStoryStateAdapter implements StoryStateAdapter {
       );
     const documentId = crypto.randomUUID();
     const sourceRevisionId = crypto.randomUUID();
-    const sourceOrder = Number.parseInt(documentId.slice(0, 8), 16) % 2_147_483_647;
+    const sourceOrder = nextSourceOrder();
     await this.post(story, "source-documents", {
       id: documentId,
       title: input.title.trim() || `Chapter ${input.chapter}`,
