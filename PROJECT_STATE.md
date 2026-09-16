@@ -1,6 +1,6 @@
 # StoryState — Project State
 
-- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2、Stage 2.2.1、Stage 2.2.2、Stage 2.3A — completed / frozen on main**.
+- Current Stage: **Stage 1.3 through Stage 2.3A completed / frozen on main; Stage 2.3B and the final frontend–backend product loop are reviewed and integrated on `integration/final-e2e`, awaiting main integration**.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
@@ -9,7 +9,7 @@
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
 - 已审核工作分支：`ui/stage-1-3-state-diff-review`，审核提交 `1a06ba4a92afba37f4524045c4ca4d0b01333d47`；Product Owner Review PASS，已通过非 squash merge 纳入 main。
-- 架构：Next.js App Router / React / TypeScript / Tailwind；冻结的浏览器 localStorage Mock 与独立 TypeScript State Service / Supabase PostgreSQL schema 分离。前端尚未接后端。
+- 架构：Next.js App Router / React / TypeScript / Tailwind；正式产品路径通过隔离的 frontend adapter 接入 TypeScript State Service / PostgreSQL repository，fixture-only Mock 不在映射 Story 的生产 mutation 路径中。
 
 ## 已完成
 
@@ -32,7 +32,7 @@
 
 State Data Contract v0.2.1、Benchmark Pilot v0.2.2、Validator Rulebook v0.1.1 已从本机原文复制到 `docs/`，未改写。
 
-Stage 1.3 Reasoning checks 仍是预置展示数据。Stage 2.1 提供独立的 typed backend domain、SQL migration、repository、service、API 与 benchmark contract tests；没有 AI extraction、完整 Runtime Validator、Context Compiler、RAG、Embedding、MCP、Auth、真实文件解析、Writer 集成或部署。
+Stage 1.3 Reasoning checks 仍是预置展示数据。Stage 2.1 提供独立的 typed backend domain、SQL migration、repository、service、API 与 benchmark contract tests。Stage 2.3B 增加一次 Extractor 调用、冻结 ExtractionProposal 解析、deterministic Compiler、逐候选 Runtime Validator V0.2 及 Review hydration；仍没有 RAG、Embedding、MCP、Auth、真实文件解析、Writer Connector 或部署。
 
 State Explorer 继续使用既有 Evidence Inspector；字段级 expandable provenance 留待后续评审。不实现 Reasoning Graph / graph database / graph library / infinite canvas。
 
@@ -53,7 +53,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime 为 **PLANNED / NOT STARTED**；RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime 与 Frontend–Backend Integration 已通过聚焦复审并集成于 `integration/final-e2e`，尚未合并 main。RAG/pgvector、Writer Connector、MCP 与 Deployment 仍 planned。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 
@@ -94,3 +94,9 @@ Stage 2.3A 冻结 model-facing `ExtractionProposal` contract、9 种 semantic ef
 冻结 hashes：`extractionContractHash=fdb10c9c9e9c9ee80ac2efa70c267a2399209ac8c3d5c3d4cabc084d332704f4`；`compilerSpecHash=e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202`；`developmentDatasetHash=d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe`；`holdoutBlueprintHash=35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6`。
 
 Stage 2.3A 合并后 main 验证：install/build/lint PASS；全量 299/299、backend 62/62、exact benchmark 11/11、runtime validator 71/71、validator-v0-2 13/13、evaluation 51/51、live-prep 37/37、extraction-contract 9/9、extraction-eval 20/20。Provider/model calls 为 0。本阶段冻结 evaluation method 与 Development benchmark，没有实现 Extraction Runtime、真实 persistence Compiler 或 ExtractionService，也没有测量 live model extraction quality；0.85/0.70 preregistered threshold 未被宣称达成。
+
+## Stage 2.3B + Final E2E Integration
+
+Stage 2.3B 聚焦复审确认三个原 P1 blocker 均已关闭：validator post-persistence failure 逐候选隔离；item holder/owner/custodian reference 编译为 Canonical ID 结构；model-visible packet 使用 opaque aliases 且不泄露 UUID。Malformed JSON 与 schema-invalid output 均 fail closed 为 `EXTRACTION_OUTPUT_INVALID`。Stage 2.3A 四项冻结 hash 与 0 Hidden Holdout 保持不变。
+
+`integration/final-e2e` 保留 backend 与 frozen frontend 两边历史，完成 Workspace → Source Document/Revision → Extract → hydrated Review → Accept/Reject → Commit → State/History reload。Rejected delta 只保留为 audit data，不返回 active Review；`VALIDATOR_UNAVAILABLE` 保持 Needs Review 并在 UI 安全提示；409 mutation 不自动 retry；映射 Story 使用 API adapter，不降级到 localStorage/mock mutation。自动测试使用 deterministic fake provider，本次 provider/model calls 为 0。该分支尚未合并 main，也未部署。

@@ -10,7 +10,10 @@ export type ReviewHydrationDto = {
 };
 
 export function toReviewHydrationDto(aggregate: StoryAggregate): ReviewHydrationDto {
-  const candidateDeltas = aggregate.deltas.filter(delta => delta.committedVersionId === null);
+  const candidateDeltas = aggregate.deltas.filter(delta =>
+    delta.committedVersionId === null &&
+    ["needs_review", "deferred", "accepted"].includes(delta.decision)
+  );
   const evidenceIds = new Set(candidateDeltas.flatMap(delta => delta.evidenceIds));
   const eventIds = new Set(candidateDeltas.map(delta => delta.sourceEventId).filter((id): id is string => id !== null));
   const events = aggregate.events.filter(event => eventIds.has(event.id));

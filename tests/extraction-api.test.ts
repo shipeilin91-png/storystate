@@ -118,6 +118,35 @@ test("validator provider failure after persistence leaves candidates reachable f
   assert.equal(hydrated.candidateDeltas[0].validatorResult?.checks?.some(check => check.code === "SEMANTIC_UNAVAILABLE"), true);
 });
 
+test("review hydration keeps rejected uncommitted deltas as audit data only", async () => {
+  const f = await fixture();
+  const result = await new ExtractionService(
+    f.repository,
+    new FakeExtractorProvider(validProposal()),
+    new SupportedSemanticClient(),
+  ).extractRevision(f.storyId, f.revisionId);
+  const rejectedId = result.deltas[0].id;
+  await f.repository.transaction(f.storyId, aggregate => {
+    const rejected = aggregate.deltas.find(delta => delta.id === rejectedId)!;
+    rejected.decision = "rejected";
+    rejected.decisions.push({
+      decision: "rejected",
+      actor: "integration-test",
+      reason: "Explicit review rejection",
+      createdAt: new Date().toISOString(),
+    });
+  });
+
+  const aggregate = await f.repository.read(f.storyId);
+  assert.equal(aggregate.deltas.some(delta => delta.id === rejectedId), true);
+  assert.equal(
+    toReviewHydrationDto(aggregate).candidateDeltas.some(
+      delta => delta.id === rejectedId,
+    ),
+    false,
+  );
+});
+
 test("unexpected validator failure is isolated per candidate and exposed without orphaning persisted review", async () => {
   const f = await fixture();
   const before = (await f.repository.read(f.storyId)).state;

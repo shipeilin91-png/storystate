@@ -495,6 +495,7 @@ export class ApiStoryStateAdapter implements StoryStateAdapter {
       severity:
         issue.level === "WARNING" ? ("warning" as const) : ("error" as const),
     }));
+    const validationIssues = extraction?.validationIssues ?? [];
     const candidates = active.map((delta) =>
       candidateFor(
         delta,
@@ -530,12 +531,22 @@ export class ApiStoryStateAdapter implements StoryStateAdapter {
       baseStateVersion: extraction?.baseStateVersion,
       candidates,
       compilerIssues: issues,
-      warnings: (extraction?.warnings ?? []).map((issue) => ({
-        code: issue.code,
-        message: issue.message,
-        severity:
-          issue.level === "WARNING" ? ("warning" as const) : ("error" as const),
-      })),
+      warnings: [
+        ...(extraction?.warnings ?? []).map((issue) => ({
+          code: issue.code,
+          message: issue.message,
+          severity:
+            issue.level === "WARNING"
+              ? ("warning" as const)
+              : ("error" as const),
+        })),
+        ...validationIssues.map((issue) => ({
+          code: issue.code,
+          message: `Candidate ${issue.deltaId} requires manual review because validation is unavailable.`,
+          severity: "warning" as const,
+        })),
+      ],
+      validationIssues,
       provider: extraction?.provider ?? {
         modelId: "persisted-review",
         calls: 0,
@@ -792,6 +803,7 @@ class LocalDevelopmentAdapter implements StoryStateAdapter {
       candidates,
       compilerIssues: [],
       warnings: [],
+      validationIssues: [],
       provider: {
         modelId: "frontend-development-fallback",
         calls: 0,

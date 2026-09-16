@@ -60,6 +60,7 @@ export type ExtractionRunResultDTO = {
   candidates: ReviewCandidateDTO[];
   compilerIssues: ReviewCandidateDTO["compilerIssues"];
   warnings: ReviewCandidateDTO["compilerIssues"];
+  validationIssues: BackendValidationIssue[];
   provider: { modelId: string; calls: number; packetHash: string | null };
   timing: { startedAt: string; completedAt: string; durationMs: number };
   message?: string;
@@ -228,8 +229,14 @@ export type BackendExtractionResult = {
     effectIndex?: number;
     eventKey?: string;
   }>;
+  validationIssues?: BackendValidationIssue[];
   evidence: BackendEvidence[];
   events: BackendEvent[];
   provider: { modelId: string; calls: number; packetHash: string | null };
   timing: { startedAt: string; completedAt: string; durationMs: number };
+};
+
+export type BackendValidationIssue = {
+  deltaId: string;
+  code: "VALIDATOR_UNAVAILABLE";
 };

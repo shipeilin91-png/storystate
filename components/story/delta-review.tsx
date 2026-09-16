@@ -142,6 +142,13 @@ export function DeltaReview({
           <Icon name="warning" size={16} /> {error}
         </p>
       )}
+      {!!story.loop?.activeRun?.validationIssues.length && (
+        <p className="notice warn" role="status">
+          <Icon name="warning" size={16} /> Validator unavailable for{" "}
+          {story.loop.activeRun.validationIssues.length} candidate(s). They remain
+          in Needs Review and were not auto-accepted.
+        </p>
+      )}
       {!story.deltas.length ? (
         <Empty title="没有待审核的变更">
           <p>当前变化已处理或恢复已清空候选。审核记录保留在版本快照中。</p>

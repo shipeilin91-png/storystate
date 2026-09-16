@@ -4,6 +4,7 @@ import { initialStories } from "../lib/mock-story";
 import {
   ApiStoryStateAdapter,
   StoryStateApiError,
+  storyStateService,
 } from "../lib/frontend/story-state-service";
 import {
   backendStoryIdFor,
@@ -40,7 +41,10 @@ const validatorResult = {
     },
   ],
 };
-const delta = (id: string, decision: "needs_review" | "rejected") => ({
+const delta = (
+  id: string,
+  decision: "needs_review" | "accepted" | "rejected",
+) => ({
   id,
   operation: "UPDATE" as const,
   targetType: "characters",
@@ -339,4 +343,270 @@ test("successive source submissions use monotonic PostgreSQL int4-safe ordering 
       Number.parseInt(document.id.slice(0, 8), 16) % 2_147_483_647;
     assert.notEqual(document.sourceOrder, uuidDerivedOrder);
   }
+});
+
+test("validator unavailable is projected as Needs Review without an automatic decision", async () => {
+  const unavailable = {
+    ...delta(DELTA_UUID, "needs_review"),
+    validatorResult: null,
+  };
+  const fetcher = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url.endsWith("/source-documents") || url.endsWith("/source-revisions"))
+      return response({});
+    if (url.endsWith("/extract")) {
+      const body = JSON.parse(String(init?.body)) as { sourceRevisionId: string };
+      return response({
+        status: "completed",
+        sourceRevisionId: body.sourceRevisionId,
+        baseStateVersion: 12,
+        candidateDeltas: [unavailable],
+        validatorResults: [null],
+        compilerIssues: [],
+        warnings: [],
+        validationIssues: [
+          { deltaId: DELTA_UUID, code: "VALIDATOR_UNAVAILABLE" },
+        ],
+        evidence: hydration().evidence,
+        events: hydration().events,
+        provider: { modelId: "fake-extractor", calls: 1, packetHash: "packet" },
+        timing: {
+          startedAt: "2026-09-15T00:00:00.000Z",
+          completedAt: "2026-09-15T00:00:01.000Z",
+          durationMs: 1000,
+        },
+      });
+    }
+    if (url.endsWith("/review")) {
+      return response({ ...hydration(), candidateDeltas: [unavailable] });
+    }
+    throw new Error(`Unexpected URL ${url}`);
+  }) as typeof fetch;
+  const result = await new ApiStoryStateAdapter(fetcher).extract(story(), {
+    storyId: "fog-harbor",
+    title: "Chapter 13",
+    chapter: 13,
+    expectedStateVersion: 12,
+    content: "林夏推开医院的门。",
+  });
+
+  assert.deepEqual(result.run?.validationIssues, [
+    { deltaId: DELTA_UUID, code: "VALIDATOR_UNAVAILABLE" },
+  ]);
+  assert.equal(result.run?.warnings[0]?.code, "VALIDATOR_UNAVAILABLE");
+  assert.equal(result.run?.candidates[0].recommendation, "NEEDS_REVIEW");
+  assert.equal(result.story.deltas[0].decision, "pending");
+});
+
+test("the production story service uses the API adapter without mock fallback", () => {
+  assert.ok(storyStateService instanceof ApiStoryStateAdapter);
+});
+
+test("fake-provider E2E commits only the accepted location and reloads state and history", async () => {
+  const characterId = "2c600001-0000-4000-8000-000000000020";
+  const itemId = "2c600001-0000-4000-8000-000000000021";
+  const holderDeltaId = "2c600001-0000-4000-8000-000000000012";
+  const evidenceId = "2c600001-0000-4000-8000-000000000040";
+  const eventId = "2c600001-0000-4000-8000-000000000030";
+  const epistemic = (value: string) => ({
+    value,
+    status: "resolved",
+    lastConfirmedValue: value,
+  });
+  let document: Record<string, unknown> | undefined;
+  let revision: Record<string, unknown> | undefined;
+  let currentVersion = 12;
+  let location = epistemic("Maintenance Room");
+  const holder = epistemic(characterId);
+  const decisions = new Map<string, "needs_review" | "accepted" | "rejected">([
+    [DELTA_UUID, "needs_review"],
+    [holderDeltaId, "needs_review"],
+  ]);
+  const backendDelta = (
+    id: string,
+    targetType: "characters" | "items",
+    targetId: string,
+    fieldPath: "location" | "holder",
+    before: unknown,
+    after: unknown,
+  ) => ({
+    ...delta(id, decisions.get(id) ?? "needs_review"),
+    targetType,
+    targetId,
+    fieldPath,
+    before,
+    after,
+    sourceEventId: eventId,
+    evidenceIds: [evidenceId],
+  });
+  const candidates = () => [
+    backendDelta(
+      DELTA_UUID,
+      "characters",
+      characterId,
+      "location",
+      epistemic("Maintenance Room"),
+      epistemic("Control Room"),
+    ),
+    backendDelta(
+      holderDeltaId,
+      "items",
+      itemId,
+      "holder",
+      holder,
+      epistemic("2c600001-0000-4000-8000-000000000022"),
+    ),
+  ];
+  const reviewDto = () => ({
+    ...hydration(),
+    story: { ...backendStory, currentVersion, currentChapter: 13 },
+    candidateDeltas: candidates().filter(
+      (candidate) => candidate.decision !== "rejected",
+    ),
+    evidence: [
+      {
+        ...hydration().evidence[0],
+        id: evidenceId,
+        quote: "纪川明确到达控制室，并将记录器交给同伴临时保管。",
+      },
+    ],
+    events: [{ ...hydration().events[0], id: eventId }],
+  });
+  const versions: Array<Record<string, unknown>> = [];
+  const calls: string[] = [];
+  const fetcher = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    calls.push(`${init?.method ?? "GET"} ${url}`);
+    if (url.endsWith("/source-documents")) {
+      document = JSON.parse(String(init?.body));
+      return response(document);
+    }
+    if (url.endsWith("/source-revisions")) {
+      revision = JSON.parse(String(init?.body));
+      return response(revision);
+    }
+    if (url.endsWith("/extract")) {
+      const body = JSON.parse(String(init?.body)) as { sourceRevisionId: string };
+      assert.equal(body.sourceRevisionId, revision?.id);
+      return response({
+        status: "completed",
+        sourceRevisionId: body.sourceRevisionId,
+        baseStateVersion: currentVersion,
+        candidateDeltas: candidates(),
+        validatorResults: candidates().map((candidate) => candidate.validatorResult),
+        compilerIssues: [],
+        warnings: [],
+        validationIssues: [],
+        evidence: reviewDto().evidence,
+        events: reviewDto().events,
+        provider: { modelId: "deterministic-fake", calls: 1, packetHash: "packet" },
+        timing: {
+          startedAt: "2026-09-15T00:00:00.000Z",
+          completedAt: "2026-09-15T00:00:01.000Z",
+          durationMs: 1000,
+        },
+      });
+    }
+    if (url.endsWith("/review")) return response(reviewDto());
+    const decisionMatch = url.match(/\/deltas\/([^/]+)\/decision$/);
+    if (decisionMatch) {
+      const body = JSON.parse(String(init?.body)) as {
+        decision: "accepted" | "rejected";
+      };
+      decisions.set(decisionMatch[1], body.decision);
+      return response({});
+    }
+    if (url.endsWith("/commit")) {
+      const body = JSON.parse(String(init?.body)) as {
+        deltaIds: string[];
+        expectedVersion: number;
+      };
+      assert.deepEqual(body, { deltaIds: [DELTA_UUID], expectedVersion: 12 });
+      assert.equal(decisions.get(holderDeltaId), "rejected");
+      location = epistemic("Control Room");
+      currentVersion = 13;
+      const version = {
+        id: "2c600001-0000-4000-8000-000000000050",
+        versionNumber: 13,
+        parentVersionId: null,
+        commitKind: "delta_commit",
+        createdAt: "2026-09-15T00:00:02.000Z",
+        deltaIds: [DELTA_UUID],
+        snapshot: canonicalState(),
+        restoredFromVersionId: null,
+        chapter: 13,
+        storyRevision: 1,
+      };
+      versions.push(version);
+      return response(version);
+    }
+    if (url.endsWith("/state")) {
+      return response({
+        story: { ...backendStory, currentVersion, currentChapter: 13 },
+        state: canonicalState(),
+      });
+    }
+    if (url.endsWith("/versions")) return response(versions);
+    throw new Error(`Unexpected URL ${url}`);
+  }) as typeof fetch;
+  const canonicalState = () => ({
+    characters: [
+      {
+        id: characterId,
+        active: true,
+        name: "纪川",
+        role: "engineer",
+        location,
+      },
+    ],
+    items: [
+      {
+        id: itemId,
+        active: true,
+        name: "Recorder",
+        owner: holder,
+        holder,
+        custodian: null,
+        condition: "operational",
+      },
+    ],
+    plotThreads: [],
+    propositions: [],
+    worldTruth: [],
+    knowledge: [],
+    relationships: [],
+  });
+  const adapter = new ApiStoryStateAdapter(fetcher);
+  const extracted = await adapter.extract(story(), {
+    storyId: "fog-harbor",
+    title: "Chapter 13",
+    chapter: 13,
+    expectedStateVersion: 12,
+    content: "纪川明确到达控制室，并将记录器交给同伴临时保管。",
+  });
+  assert.ok(document && revision);
+  assert.equal(location.value, "Maintenance Room");
+  assert.equal(holder.value, characterId);
+
+  const accepted = await adapter.decide(extracted.story, DELTA_UUID, "accepted");
+  const rejected = await adapter.decide(
+    accepted.story,
+    holderDeltaId,
+    "rejected",
+  );
+  assert.deepEqual(rejected.story.deltas.map((value) => value.id), [DELTA_UUID]);
+  assert.equal(location.value, "Maintenance Room");
+
+  const committed = await adapter.commit(rejected.story);
+  assert.equal(committed.story.currentStateVersion, 13);
+  assert.equal(committed.story.loop?.history?.length, 1);
+  assert.deepEqual(committed.story.loop?.history?.[0].changes, [
+    `Committed delta ${DELTA_UUID}`,
+  ]);
+  assert.equal(location.value, "Control Room");
+  assert.equal(holder.value, characterId);
+  assert.equal(
+    calls.filter((call) => call.includes("/commit")).length,
+    1,
+  );
 });
