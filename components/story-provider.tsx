@@ -12,7 +12,8 @@ import {
   updateStoryInCollection,
 } from "@/lib/story-store";
 import { withReviewExamples } from "@/lib/review-fixtures";
-const KEY = "storystate.foundation.v1";
+import { storyPersistence } from "@/lib/frontend/story-state-service";
+import { backendStoryIdFor } from "@/lib/frontend/story-api-identity";
 type Store = { stories: Story[]; ready: boolean; storageWarning: boolean };
 type Action =
   | { type: "storage-error" }
@@ -45,24 +46,27 @@ export function StoryProvider({ children }: { children: ReactNode }) {
     storageWarning: false,
   });
   useEffect(() => {
-    let stories = initialStories;
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) {
-        stories = restoreStoredStories(JSON.parse(raw)) ?? initialStories;
-      }
-    } catch {
-      /* A corrupt or inaccessible cache falls back to fixtures. */
-    }
-    dispatch({ type: "hydrate", stories: withReviewExamples(stories) });
+    const stored = storyPersistence.load();
+    const stories = stored
+      ? (restoreStoredStories(stored) ?? initialStories)
+      : initialStories;
+    const hydrated = withReviewExamples(stories).map((story) => {
+      if (!backendStoryIdFor(story.id)) return story;
+      // Backend-mapped stories must hydrate Review from GET /review. Browser
+      // persistence may retain editor preferences, but never active candidates.
+      return {
+        ...story,
+        deltas: [],
+        loop: story.loop
+          ? { ...story.loop, activeRun: undefined }
+          : story.loop,
+      };
+    });
+    dispatch({ type: "hydrate", stories: hydrated });
   }, []);
   useEffect(() => {
-    if (state.ready) {
-      try {
-        localStorage.setItem(KEY, JSON.stringify(state.stories));
-      } catch {
-        dispatch({ type: "storage-error" });
-      }
+    if (state.ready && !storyPersistence.save(state.stories)) {
+      dispatch({ type: "storage-error" });
     }
   }, [state.ready, state.stories]);
   return (

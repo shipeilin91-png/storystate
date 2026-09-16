@@ -84,7 +84,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
             <br />
             留在可追溯的上下文里。
           </p>
-          <span>本地 Mock · 无 AI 连接</span>
+          <span>API-first · Local fallback</span>
         </div>
         <div className="profile">
           <span>创</span>
@@ -113,7 +113,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
           </div>
           <div className="topbar-right">
             <span className="text-muted">STATEFUL CONTEXT INFRASTRUCTURE</span>
-            <StatusPill tone="good">● &nbsp; Mock mode</StatusPill>
+            <StatusPill tone="good">● &nbsp; Adapter ready</StatusPill>
           </div>
         </header>
         <main id="main">

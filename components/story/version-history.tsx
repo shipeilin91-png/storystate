@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { rollbackMock, type Story, type Version } from "@/lib/mock-story";
+import { type Story, type Version } from "@/lib/mock-story";
+import { storyStateService } from "@/lib/frontend/story-state-service";
 import type { Update } from "./types";
 import { Icon, PageIntro, StatusPill } from "../product-ui";
 export function History({ story, update }: { story: Story; update: Update }) {
@@ -9,6 +10,8 @@ export function History({ story, update }: { story: Story; update: Update }) {
   );
   const [rollback, setRollback] = useState<Version | null>(null);
   const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const selected =
     story.versions.find((v) => v.id === selectedId) ?? story.versions[0];
   return (
@@ -19,13 +22,18 @@ export function History({ story, update }: { story: Story; update: Update }) {
         description="沿着版本回看故事如何变化，检查每一次已确认的 State Delta。"
         action={
           <StatusPill tone="good">
-            {story.versions.length} 个本地版本
+            {story.versions.length} 个后端版本
           </StatusPill>
         }
       />
       {notice && (
         <p className="notice" role="status">
           {notice}
+        </p>
+      )}
+      {error && (
+        <p className="notice warn" role="alert">
+          {error}
         </p>
       )}
       <div className="history-grid">
@@ -124,7 +132,7 @@ export function History({ story, update }: { story: Story; update: Update }) {
               <div className="rollback-area">
                 <h3>回到这个故事状态</h3>
                 <p className="description">
-                  模拟恢复会新建一条本地版本，保留历史记录，并清除当前待审核变化。
+                  恢复由后端 Version API 创建新版本并保留完整历史。
                 </p>
                 {selected.id !== story.versions[0].id ? (
                   <button
@@ -151,18 +159,33 @@ export function History({ story, update }: { story: Story; update: Update }) {
                     <div className="actions">
                       <button
                         className="button primary small"
-                        onClick={() => {
-                          update((s) =>
-                            rollbackMock(s, rollback, new Date().toISOString()),
-                          );
-                          setRollback(null);
-                          setSelectedId(undefined);
-                          setNotice(
-                            "已模拟恢复状态并保留原历史。此操作仅影响当前浏览器。",
-                          );
+                        disabled={busy}
+                        onClick={async () => {
+                          setBusy(true);
+                          setError("");
+                          try {
+                            const result = await storyStateService.restore(
+                              story,
+                              rollback.id,
+                            );
+                            update(() => result.story);
+                            setRollback(null);
+                            setSelectedId(undefined);
+                            setNotice(
+                              "已由后端恢复状态并刷新 Version History。",
+                            );
+                          } catch (cause) {
+                            setError(
+                              cause instanceof Error
+                                ? cause.message
+                                : "恢复失败，请刷新后重试。",
+                            );
+                          } finally {
+                            setBusy(false);
+                          }
                         }}
                       >
-                        确认模拟恢复
+                        {busy ? "Restoring…" : "确认恢复"}
                       </button>
                       <button
                         className="button secondary small"

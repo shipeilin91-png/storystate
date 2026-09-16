@@ -1,11 +1,19 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { writerOutput, type Story } from "@/lib/mock-story";
+import type { Story } from "@/lib/mock-story";
+import {
+  StoryStateApiError,
+  storyStateService,
+} from "@/lib/frontend/story-state-service";
 import type { Update } from "./types";
 import { Empty, Icon, PageIntro, StatusPill } from "../product-ui";
 import { StoryMeta } from "./story-meta";
 import { ContextInspector } from "./context-inspector";
+
+type ExtractionView =
+  "idle" | "loading" | "review_required" | "no_changes" | "error";
+
 export function WritingWorkspace({
   story,
   update,
@@ -14,11 +22,51 @@ export function WritingWorkspace({
   update: Update;
 }) {
   const [preview, setPreview] = useState(true);
+  const [content, setContent] = useState(
+    story.loop?.sourceContent ?? story.reviewSource?.output ?? "",
+  );
+  const [status, setStatus] = useState<ExtractionView>(
+    story.loop?.activeRun?.status === "failed"
+      ? "error"
+      : (story.loop?.activeRun?.status ?? "idle"),
+  );
+  const [error, setError] = useState("");
+  const [retryAllowed, setRetryAllowed] = useState(true);
   const source = story.reviewSource ?? {
-    chapter: 13,
-    title: "急诊室的交接",
-    output: writerOutput,
+    chapter: story.chapter + 1,
+    title: "新增 Story Content",
+    output: content,
   };
+
+  const extract = async () => {
+    setStatus("loading");
+    setError("");
+    setRetryAllowed(true);
+    try {
+      const result = await storyStateService.extract(story, {
+        storyId: story.id,
+        title: `Chapter ${story.chapter + 1} · Story Content`,
+        chapter: story.chapter + 1,
+        expectedStateVersion: story.currentStateVersion,
+        content,
+      });
+      update(() => result.story);
+      setStatus(
+        result.run?.status === "failed"
+          ? "error"
+          : (result.run?.status ?? "error"),
+      );
+    } catch (cause) {
+      setStatus("error");
+      setRetryAllowed(
+        !(cause instanceof StoryStateApiError && cause.status === 409),
+      );
+      setError(
+        cause instanceof Error ? cause.message : "抽取失败，请稍后重试。",
+      );
+    }
+  };
+
   return (
     <>
       <PageIntro
@@ -26,11 +74,10 @@ export function WritingWorkspace({
         title={story.title}
         description={`Chapter ${story.chapter + 1} · Current State v${story.currentStateVersion} · 从准确的上下文继续写作。`}
       />
-      {story.versions.length > 1 && story.currentStateVersion > 12 && (
+      {story.loop?.lastCommit && (
         <p className="notice state-updated" role="status">
           <Icon name="check" size={16} />
-          State updated · v{story.versions[1].stateVersion} → v
-          {story.currentStateVersion}
+          State 与 History 已刷新至 v{story.currentStateVersion}
         </p>
       )}
       <StoryMeta story={story} />
@@ -48,7 +95,9 @@ export function WritingWorkspace({
             className="prompt"
             rows={5}
             value={story.prompt}
-            onChange={(e) => update((s) => ({ ...s, prompt: e.target.value }))}
+            onChange={(event) =>
+              update((current) => ({ ...current, prompt: event.target.value }))
+            }
           />
           <div className="prompt-footer">
             <span>本地自动保存 · {story.prompt.length} 字</span>
@@ -56,50 +105,130 @@ export function WritingWorkspace({
               className="text-button"
               onClick={() => setPreview(!preview)}
             >
-              {preview ? "收起示例输出" : "查看示例输出"}
+              {preview ? "收起 Story Content" : "展开 Story Content"}
               <Icon name="chevron" size={13} />
             </button>
           </div>
           <div className="writer-document">
             <header>
-              <span className="eyebrow">EXISTING WRITER / OUTPUT PREVIEW</span>
-              <StatusPill>固定示例</StatusPill>
+              <span className="eyebrow">STORY CONTENT / SOURCE REVISION</span>
+              <StatusPill tone={story.loop?.activeRun ? "good" : "neutral"}>
+                {story.loop?.activeRun
+                  ? `Revision ${story.loop.activeRun.sourceRevision.revisionNumber}`
+                  : "Draft"}
+              </StatusPill>
             </header>
             {preview ? (
-              <>
+              <div className="story-content-editor">
                 <div className="chapter-title">
-                  <small>CHAPTER {source.chapter}</small>
+                  <small>CHAPTER {story.chapter + 1}</small>
                   <h2>{source.title}</h2>
                   <div />
                 </div>
-                <div className="prose">
-                  {source.output.split("\n\n").map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-                </div>
-                <div className="document-end">◇</div>
-                <p className="writer-note">
-                  这段固定示例用于审核演示，不随 Prompt 生成。Writer Output
-                  不会直接修改 Current State。
-                </p>
-                <div className="proposed-change-bar">
+                <label htmlFor="story-content" className="text-muted">
+                  新增 Story Content
+                </label>
+                <textarea
+                  id="story-content"
+                  rows={13}
+                  value={content}
+                  onChange={(event) => {
+                    setContent(event.target.value);
+                    setStatus("idle");
+                    setError("");
+                  }}
+                  placeholder="粘贴或输入本章新增内容。抽取只产生审核候选，不会自动 Commit。"
+                />
+                <div className="extraction-actions">
                   <div>
-                    <strong>
-                      StoryState detected {story.deltas.length} proposed changes
-                    </strong>
-                    <p>Review 与 Commit 后才会写入 Canonical State。</p>
+                    <strong>{content.trim().length} 字</strong>
+                    <p>
+                      Extract → Review → Decision →
+                      Commit，推荐不会自动成为决定。
+                    </p>
                   </div>
-                  <Link
+                  <button
                     className="button primary"
-                    href={`/stories/${story.id}/review`}
+                    disabled={status === "loading" || !content.trim()}
+                    onClick={extract}
                   >
-                    Review {story.deltas.length} changes{" "}
+                    {status === "loading"
+                      ? "Extracting…"
+                      : "Extract State Changes"}
                     <Icon name="arrow" size={15} />
-                  </Link>
+                  </button>
                 </div>
-              </>
+                {status === "loading" && (
+                  <p className="notice" role="status">
+                    正在编译候选并运行校验… Canonical State 尚未改变。
+                  </p>
+                )}
+                {status === "error" && (
+                  <div className="notice warn" role="alert">
+                    <Icon name="warning" size={16} />
+                    <span>{error || "抽取失败，请重试。"}</span>
+                    {retryAllowed ? (
+                      <button
+                        className="button secondary small"
+                        onClick={extract}
+                      >
+                        重试
+                      </button>
+                    ) : (
+                      <span>请先刷新 Review，不会自动重试。</span>
+                    )}
+                  </div>
+                )}
+                {status === "no_changes" && (
+                  <Empty title="No state changes">
+                    当前内容没有形成可审核的 Canonical State
+                    变化。可继续补充内容后再次抽取。
+                  </Empty>
+                )}
+                {status === "idle" && story.deltas.length > 0 && (
+                  <div className="proposed-change-bar">
+                    <div>
+                      <strong>
+                        StoryState detected {story.deltas.length} proposed
+                        changes
+                      </strong>
+                      <p>已有候选等待决定；重新 Extract 会开启新的审核轮次。</p>
+                    </div>
+                    <Link
+                      className="button secondary"
+                      href={`/stories/${story.id}/review`}
+                    >
+                      Review {story.deltas.length} changes{" "}
+                      <Icon name="arrow" size={15} />
+                    </Link>
+                  </div>
+                )}
+                {status === "review_required" && story.loop?.activeRun && (
+                  <div className="proposed-change-bar" role="status">
+                    <div>
+                      <strong>
+                        Review required ·{" "}
+                        {story.loop.activeRun.candidates.length} proposed
+                        changes
+                      </strong>
+                      <p>
+                        Extraction 已完成，尚未 Commit；请逐条 Accept 或
+                        Reject。
+                      </p>
+                    </div>
+                    <Link
+                      className="button primary"
+                      href={`/stories/${story.id}/review`}
+                    >
+                      Review State Diff <Icon name="arrow" size={15} />
+                    </Link>
+                  </div>
+                )}
+              </div>
             ) : (
-              <Empty title="示例输出已收起">点击“查看示例输出”重新展开。</Empty>
+              <Empty title="Story Content 已收起">
+                点击“展开 Story Content”继续编辑。
+              </Empty>
             )}
           </div>
         </section>
