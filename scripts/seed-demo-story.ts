@@ -1,6 +1,7 @@
 import { StateService } from "../lib/server/state-service";
 import { productionRepository } from "../lib/server/api";
 import type { CanonicalRow, DeltaInput, TargetType } from "../lib/domain/state";
+import { DomainError } from "../lib/domain/errors";
 
 export const demoStory = {
   storyId: "2c600001-0000-4000-8000-000000000001",
@@ -27,7 +28,20 @@ function createRecord(targetType: TargetType, row: CanonicalRow): DeltaInput {
 }
 
 async function main() {
-  const service = new StateService(productionRepository());
+  const repository = productionRepository();
+  const service = new StateService(repository);
+  try {
+    const existing = await repository.read(demoStory.storyId);
+    verifyDemo(existing);
+    console.log(JSON.stringify({
+      storyId: demoStory.storyId,
+      sourceRevisionId: demoStory.sourceRevisionId,
+      status: "verified_existing",
+    }));
+    return;
+  } catch (error) {
+    if (!(error instanceof DomainError && error.code === "NOT_FOUND")) throw error;
+  }
   await service.createStory({ id: demoStory.storyId, title: "Final Extraction Demo" });
   const records: Array<[TargetType, CanonicalRow]> = [
     ["characters", { id: demoStory.jiChuanId, active: true, name: "纪川", role: "engineer", location: resolved("Maintenance Room") }],
@@ -48,7 +62,32 @@ async function main() {
     id: demoStory.sourceRevisionId, documentId: demoStory.documentId, revisionNumber: 1,
     content: "纪川把 Recorder 交给林夏，并说：“里面有停机序列。”", visibility: "canonical",
   });
-  console.log(JSON.stringify({ storyId: demoStory.storyId, sourceRevisionId: demoStory.sourceRevisionId }));
+  const created = await repository.read(demoStory.storyId);
+  verifyDemo(created);
+  console.log(JSON.stringify({
+    storyId: demoStory.storyId,
+    sourceRevisionId: demoStory.sourceRevisionId,
+    status: "created",
+  }));
+}
+
+function verifyDemo(aggregate: Awaited<ReturnType<ReturnType<typeof productionRepository>["read"]>>) {
+  const requiredStateIds = [
+    demoStory.jiChuanId,
+    demoStory.linXiaId,
+    demoStory.recorderId,
+    demoStory.propositionId,
+    demoStory.threadId,
+    demoStory.relationshipId,
+  ];
+  const stateIds = new Set(Object.values(aggregate.state).flat().map(row => row.id));
+  const complete =
+    aggregate.story.id === demoStory.storyId &&
+    aggregate.story.currentVersion >= 1 &&
+    requiredStateIds.every(id => stateIds.has(id)) &&
+    aggregate.documents.some(document => document.id === demoStory.documentId) &&
+    aggregate.revisions.some(revision => revision.id === demoStory.sourceRevisionId);
+  if (!complete) throw new Error("DEMO_STORY_INCOMPLETE");
 }
 
 void main();

@@ -1,8 +1,8 @@
 {
   "project": "StoryState",
-  "stage": "Final E2E Integration / Stage 2.3B",
-  "stageStatus": "reviewed / integrated on integration/final-e2e / awaiting main integration",
-  "frontendProductFlow": "completed / frozen / connected through frontend API adapter on integration branch",
+  "stage": "StoryState MVP Final Release",
+  "stageStatus": "complete / frozen on release/final-demo / deployment environment blocked",
+  "frontendProductFlow": "complete / frozen / real frontend-backend adapter integrated",
   "canonicalStateBackendFoundation": "completed / frozen",
   "extractionContractBenchmark": {
     "stage": "Stage 2.3A",
@@ -22,7 +22,7 @@
   },
   "extractionRuntime": {
     "stage": "Stage 2.3B",
-    "status": "reviewed / integrated on integration/final-e2e / awaiting main integration",
+    "status": "complete / frozen",
     "extractorCallsPerRun": 1,
     "directCanonicalMutation": false,
     "automaticDecision": false,
@@ -31,9 +31,20 @@
     "frontendBackendLoop": "Workspace -> Source Revision -> Extract -> Review -> Decision -> Commit -> State/History reload",
     "providerCallsDuringIntegration": 0
   },
+  "release": {
+    "mvp": "complete",
+    "stage23B": "complete / frozen",
+    "finalFrontend": "complete / frozen",
+    "finalE2E": "complete / frozen",
+    "deployment": "blocked: production credentials unavailable",
+    "runtimeSmoke": "blocked: deployment environment unavailable",
+    "mainIntegration": "held by runtime release gate",
+    "providerCallsDuringReleaseVerification": 0,
+    "verification": "npm install PASS; build/lint PASS; full 331/331; backend 62/62; validator-v0-2 13/13; extraction contract/eval/runtime/API 9/9, 20/20, 10/10, 9/9"
+  },
   "nextStage": {
-    "stage": "Final main integration and deterministic demo deployment",
-    "status": "planned / not started"
+    "stage": "Operational deployment and real runtime smoke",
+    "status": "blocked pending production credentials"
   },
   "liveSemanticValidation": "Stage 2.2.1 Architecture Experiment completed / valid / merged / frozen",
   "liveSemanticEvaluationHarness": {
@@ -279,7 +290,7 @@
     },
     {
       "id": "frontend-backend-integration",
-      "status": "reviewed / integrated on integration/final-e2e / awaiting main integration",
+      "status": "complete / frozen",
       "description": "冻结的 Stage 1.3 前端经 isolated adapter 接入正式 API；mapped Story 不使用 mock mutation",
       "verification": "13/13 focused frontend boundary tests；deterministic fake-provider E2E 覆盖 Source Revision、Extract、Review、Decision、Commit、State 与 History reload"
     },
@@ -320,7 +331,7 @@
     },
     {
       "id": "ai-extraction-runtime",
-      "status": "reviewed / integrated on integration/final-e2e / awaiting main integration",
+      "status": "complete / frozen",
       "description": "Stage 2.3B one-call Extractor、strict frozen proposal、deterministic Compiler、persistence 与 Runtime Validator V0.2 loop",
       "directCanonicalMutation": false,
       "automaticDecision": false,

@@ -1,6 +1,6 @@
 # StoryState — Project State
 
-- Current Stage: **Stage 1.3 through Stage 2.3A completed / frozen on main; Stage 2.3B and the final frontend–backend product loop are reviewed and integrated on `integration/final-e2e`, awaiting main integration**.
+- Current Stage: **StoryState MVP engineering complete / frozen on `release/final-demo`**. Stage 2.3B, Final Frontend, and Final E2E are complete; deployment and real runtime smoke are blocked only by unavailable production credentials, and main integration is held by that release gate.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
@@ -53,7 +53,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime 与 Frontend–Backend Integration 已通过聚焦复审并集成于 `integration/final-e2e`，尚未合并 main。RAG/pgvector、Writer Connector、MCP 与 Deployment 仍 planned。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime、Final Frontend 与 Final E2E 已 **COMPLETE / FROZEN** 于 release branch。MVP 工程实现完成；RAG/pgvector、Writer Connector、MCP 与 hosted Deployment 仍未实现。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 
@@ -99,4 +99,8 @@ Stage 2.3A 合并后 main 验证：install/build/lint PASS；全量 299/299、ba
 
 Stage 2.3B 聚焦复审确认三个原 P1 blocker 均已关闭：validator post-persistence failure 逐候选隔离；item holder/owner/custodian reference 编译为 Canonical ID 结构；model-visible packet 使用 opaque aliases 且不泄露 UUID。Malformed JSON 与 schema-invalid output 均 fail closed 为 `EXTRACTION_OUTPUT_INVALID`。Stage 2.3A 四项冻结 hash 与 0 Hidden Holdout 保持不变。
 
-`integration/final-e2e` 保留 backend 与 frozen frontend 两边历史，完成 Workspace → Source Document/Revision → Extract → hydrated Review → Accept/Reject → Commit → State/History reload。Rejected delta 只保留为 audit data，不返回 active Review；`VALIDATOR_UNAVAILABLE` 保持 Needs Review 并在 UI 安全提示；409 mutation 不自动 retry；映射 Story 使用 API adapter，不降级到 localStorage/mock mutation。自动测试使用 deterministic fake provider，本次 provider/model calls 为 0。该分支尚未合并 main，也未部署。
+`integration/final-e2e` 保留 backend 与 frozen frontend 两边历史，完成 Workspace → Source Document/Revision → Extract → hydrated Review → Accept/Reject → Commit → State/History reload。Rejected delta 只保留为 audit data，不返回 active Review；`VALIDATOR_UNAVAILABLE` 保持 Needs Review 并在 UI 安全提示；409 mutation 不自动 retry；映射 Story 使用 API adapter，不降级到 localStorage/mock mutation。自动测试使用 deterministic fake provider，本次 provider/model calls 为 0。
+
+## Final MVP Release
+
+Stage 2.3B、Final Frontend 和 Final E2E 已 **COMPLETE / FROZEN**，MVP engineering status 为 **COMPLETE**。最终架构见 `docs/FINAL_ARCHITECTURE.md`；README 已重写为 portfolio-facing product summary。Release verification：install、build、lint PASS；全量 331/331；backend 62/62；validator-v0-2 13/13；extraction contract/eval/runtime/API 分别 9/9、20/20、10/10、9/9。Release 环境未提供 `STORYSTATE_DATABASE_URL`、Extractor/Validator provider variables 或 Vercel authentication，因此 migration、deterministic seed、deployment 与 real runtime smoke 未执行，状态为 **TECHNICALLY_COMPLETE / DEPLOYMENT_ENV_BLOCKED**。自动验证不产生 external provider calls；未凭空创建凭据，也未将历史 `DEEPSEEK_API_KEY` 当作生产 contract。由于真实 smoke 是 main release gate，main integration 保持 held。
