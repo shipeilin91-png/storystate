@@ -433,7 +433,7 @@ export class ApiStoryStateAdapter implements StoryStateAdapter {
       );
     const documentId = crypto.randomUUID();
     const sourceRevisionId = crypto.randomUUID();
-    const sourceOrder = Date.now();
+    const sourceOrder = Number.parseInt(documentId.slice(0, 8), 16) % 2_147_483_647;
     await this.post(story, "source-documents", {
       id: documentId,
       title: input.title.trim() || `Chapter ${input.chapter}`,
