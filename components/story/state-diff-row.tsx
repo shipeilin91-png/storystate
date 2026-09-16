@@ -20,6 +20,9 @@ export function StateDiffRow({
 }) {
   const detail = reasoningFor(story, d),
     kind = reviewKind(d);
+  const candidate = story.loop?.activeRun?.candidates.find(
+    (item) => item.id === d.id,
+  );
   const entity = story.entities.find((e) => e.id === d.entityId);
   return (
     <article
@@ -34,6 +37,12 @@ export function StateDiffRow({
             {d.field}
             {d.additionalFields ? " + believed_value" : ""}
           </span>
+          {candidate && (
+            <small>
+              Source r{candidate.sourceRevision.revisionNumber} ·{" "}
+              {candidate.validatorResult.status}
+            </small>
+          )}
           {kind !== "canonical" && (
             <small>
               {kind === "soft"
@@ -131,7 +140,7 @@ export function StateDiffRow({
         <summary>
           查看原因 <span>Why?</span>
         </summary>
-        <ReasoningDetail story={story} delta={d} />
+        <ReasoningDetail story={story} delta={d} candidate={candidate} />
       </details>
     </article>
   );

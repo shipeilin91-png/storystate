@@ -1,4 +1,5 @@
 import type { Delta, Story } from "@/lib/mock-story";
+import type { ReviewCandidateDTO } from "@/lib/frontend/story-state-dtos";
 import {
   changeFields,
   reasoningFor,
@@ -8,38 +9,60 @@ import {
 export function ReasoningDetail({
   story,
   delta,
+  candidate,
 }: {
   story: Story;
   delta: Delta;
+  candidate?: ReviewCandidateDTO;
 }) {
   const detail = reasoningFor(story, delta);
+  const evidence =
+    candidate?.evidence.map((item) => item.quote) ??
+    delta.evidence.split("\n").filter(Boolean);
+  const checks = candidate?.validatorResult.checks ?? detail.checks;
   return (
     <div className="reasoning-detail">
       <section>
         <h4>
-          Evidence <span>Chapter {detail.chapter} · 固定示例</span>
+          Evidence{" "}
+          <span>
+            Chapter {candidate?.sourceRevision.chapter ?? detail.chapter}
+          </span>
         </h4>
         <blockquote>
-          {delta.evidence
-            .split("\n")
-            .filter(Boolean)
-            .map((quote, i) => (
-              <p key={i}>{quote.startsWith("“") ? quote : `“${quote}”`}</p>
-            ))}
+          {evidence.map((quote, index) => (
+            <p key={index}>{quote.startsWith("“") ? quote : `“${quote}”`}</p>
+          ))}
         </blockquote>
+        {candidate && (
+          <p className="evidence-source">
+            Source revision {candidate.sourceRevision.revisionNumber} ·{" "}
+            {candidate.sourceRevision.id}
+          </p>
+        )}
       </section>
       <section>
-        <h4>Why this change</h4>
-        <p>{detail.why}</p>
-        {detail.context && <p>{detail.context}</p>}
+        <h4>Event</h4>
+        <p>{candidate?.event?.summary ?? "No linked source event"}</p>
+        {candidate?.event && <code>{candidate.event.id}</code>}
       </section>
       <section>
         <h4>
-          Validator checks <span>示例检查</span>
+          Validator checks / result{" "}
+          <span>
+            {candidate?.validatorResult.validatorVersion ?? "review checks"}
+          </span>
         </h4>
+        <p>
+          <strong>{candidate?.validatorResult.status ?? "reviewed"}</strong> ·{" "}
+          {candidate?.validatorResult.reason ?? detail.reason}
+        </p>
         <ul>
-          {detail.checks.map((check, i) => (
-            <li key={i} className={check.passed ? "check-pass" : "check-fail"}>
+          {checks.map((check, index) => (
+            <li
+              key={index}
+              className={check.passed ? "check-pass" : "check-fail"}
+            >
               <span aria-label={check.passed ? "通过" : "未通过"}>
                 {check.passed ? "✓" : "✕"}
               </span>{" "}
@@ -49,21 +72,49 @@ export function ReasoningDetail({
         </ul>
       </section>
       <section>
-        <h4>Recommendation · {detail.risk}</h4>
+        <h4>Compiler issues</h4>
+        {candidate?.compilerIssues.length ? (
+          <ul>
+            {candidate.compilerIssues.map((issue) => (
+              <li className="check-fail" key={issue.code}>
+                <code>{issue.code}</code> · {issue.message}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No compiler issues</p>
+        )}
+      </section>
+      <section>
+        <h4>Recommendation · {candidate?.risk ?? detail.risk}</h4>
         <p>
-          <strong>{recommendationLabels[detail.recommendation]}</strong> ·{" "}
-          <code>{detail.recommendation}</code>
+          <strong>
+            {
+              recommendationLabels[
+                candidate?.recommendation ?? detail.recommendation
+              ]
+            }
+          </strong>{" "}
+          · <code>{candidate?.recommendation ?? detail.recommendation}</code>
         </p>
-        <p>{detail.reason}</p>
+        <p>{candidate?.validatorResult.reason ?? detail.reason}</p>
         {detail.rule && <p className="reasoning-rule">{detail.rule}</p>}
+      </section>
+      <section>
+        <h4>Reasoning & provenance</h4>
+        <p>{candidate?.reasoning ?? detail.why}</p>
+        {detail.context && <p>{detail.context}</p>}
+        {candidate?.provenance.map((item) => (
+          <p key={item}>↳ {item}</p>
+        ))}
       </section>
       {delta.additionalFields && (
         <section>
           <h4>Formal transition</h4>
-          {changeFields(delta).map((f) => (
-            <p key={f.field}>
+          {changeFields(delta).map((field) => (
+            <p key={field.field}>
               <code>
-                {f.field}: {f.before} → {f.after}
+                {field.field}: {field.before} → {field.after}
               </code>
             </p>
           ))}

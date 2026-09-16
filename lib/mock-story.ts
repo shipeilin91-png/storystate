@@ -4,6 +4,13 @@ import {
   reviewKind,
   type ReasoningDetail,
 } from "./review-contract";
+import type {
+  CanonicalStateSnapshotDTO,
+  CommitResultDTO,
+  ExtractionRunResultDTO,
+  HistoryEntryDTO,
+  ReviewDecisionDTO,
+} from "./frontend/story-state-dtos";
 export const categories = [
   "Characters",
   "Knowledge",
@@ -64,6 +71,14 @@ export type Story = {
   versions: Version[];
   prompt: string;
   reviewSource?: { chapter: number; title: string; output: string };
+  loop?: {
+    sourceContent: string;
+    activeRun?: ExtractionRunResultDTO;
+    decisions?: ReviewDecisionDTO[];
+    lastCommit?: CommitResultDTO;
+    stateSnapshot?: CanonicalStateSnapshotDTO;
+    history?: HistoryEntryDTO[];
+  };
 };
 export const importOptions = [
   "已有章节 · 第 01–12 章",
