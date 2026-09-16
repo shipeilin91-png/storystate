@@ -19,14 +19,19 @@ const filters = [
 ] as const;
 type Filter = (typeof filters)[number];
 export function matchesReviewFilter(story: Story, d: Delta, filter: Filter) {
+  const candidate = story.loop?.activeRun?.candidates.find(
+    (item) => item.id === d.id,
+  );
   const detail = reasoningFor(story, d);
+  const recommendation = candidate?.recommendation ?? detail.recommendation;
+  const kind = candidate?.kind ?? reviewKind(d);
   if (filter === "All") return true;
-  if (filter === "Soft") return reviewKind(d) === "soft";
-  if (reviewKind(d) !== "canonical") return false;
+  if (filter === "Soft") return kind === "soft";
+  if (kind !== "canonical") return false;
   if (filter === "Rejected")
-    return d.decision === "rejected" || detail.recommendation === "REJECT";
+    return d.decision === "rejected" || recommendation === "REJECT";
   return (
-    detail.recommendation ===
+    recommendation ===
     (
       {
         Recommended: "AUTO_ACCEPT_ELIGIBLE",
@@ -67,8 +72,7 @@ export function DeltaReview({
     setError("");
     try {
       const committed = await storyStateService.commit(story);
-      const refreshed = await storyStateService.refresh(committed.story);
-      update(() => refreshed.story);
+      update(() => committed.story);
       setMessage("提交完成。Canonical State 与 Version History 已刷新。");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "提交失败，请重试。");
@@ -76,7 +80,12 @@ export function DeltaReview({
       setBusy("");
     }
   };
-  const canonical = story.deltas.filter((d) => reviewKind(d) === "canonical");
+  const candidateKind = (delta: Delta) =>
+    story.loop?.activeRun?.candidates.find((item) => item.id === delta.id)
+      ?.kind ?? reviewKind(delta);
+  const canonical = story.deltas.filter(
+    (d) => candidateKind(d) === "canonical",
+  );
   const pending = canonical.filter((d) => d.decision === "pending").length;
   const filtered = story.deltas.filter((d) =>
     matchesReviewFilter(story, d, filter),
@@ -106,6 +115,11 @@ export function DeltaReview({
         ))}
         <small>独立故事 · 精选变化</small>
       </div>
+      {busy === "hydrate" && (
+        <p className="notice" role="status">
+          正在从后端恢复 Review…
+        </p>
+      )}
       {message && (
         <div className="notice" role="status">
           <span>{message}</span>
@@ -158,6 +172,15 @@ export function DeltaReview({
             Chapter {story.reviewSource?.chapter ?? 13} · {canonical.length}{" "}
             Canonical 候选 · {pending} 等待决定 · Source revision{" "}
             {story.loop?.activeRun?.sourceRevision.revisionNumber ?? "fixture"}
+            {story.loop?.activeRun && (
+              <>
+                {" "}
+                · {story.loop.activeRun.provider.modelId} ·{" "}
+                {story.loop.activeRun.timing.durationMs}ms ·{" "}
+                {story.loop.activeRun.compilerIssues.length} compiler issues ·{" "}
+                {story.loop.activeRun.warnings.length} warnings
+              </>
+            )}
           </p>
           <div className="toolbar review-filters">
             <div className="tabs" aria-label="筛选状态变化">

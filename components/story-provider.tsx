@@ -13,6 +13,7 @@ import {
 } from "@/lib/story-store";
 import { withReviewExamples } from "@/lib/review-fixtures";
 import { storyPersistence } from "@/lib/frontend/story-state-service";
+import { backendStoryIdFor } from "@/lib/frontend/story-api-identity";
 type Store = { stories: Story[]; ready: boolean; storageWarning: boolean };
 type Action =
   | { type: "storage-error" }
@@ -49,7 +50,19 @@ export function StoryProvider({ children }: { children: ReactNode }) {
     const stories = stored
       ? (restoreStoredStories(stored) ?? initialStories)
       : initialStories;
-    dispatch({ type: "hydrate", stories: withReviewExamples(stories) });
+    const hydrated = withReviewExamples(stories).map((story) => {
+      if (!backendStoryIdFor(story.id)) return story;
+      // Backend-mapped stories must hydrate Review from GET /review. Browser
+      // persistence may retain editor preferences, but never active candidates.
+      return {
+        ...story,
+        deltas: [],
+        loop: story.loop
+          ? { ...story.loop, activeRun: undefined }
+          : story.loop,
+      };
+    });
+    dispatch({ type: "hydrate", stories: hydrated });
   }, []);
   useEffect(() => {
     if (state.ready && !storyPersistence.save(state.stories)) {

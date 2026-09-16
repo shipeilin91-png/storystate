@@ -2,7 +2,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { Story } from "@/lib/mock-story";
-import { storyStateService } from "@/lib/frontend/story-state-service";
+import {
+  StoryStateApiError,
+  storyStateService,
+} from "@/lib/frontend/story-state-service";
 import type { Update } from "./types";
 import { Empty, Icon, PageIntro, StatusPill } from "../product-ui";
 import { StoryMeta } from "./story-meta";
@@ -28,6 +31,7 @@ export function WritingWorkspace({
       : (story.loop?.activeRun?.status ?? "idle"),
   );
   const [error, setError] = useState("");
+  const [retryAllowed, setRetryAllowed] = useState(true);
   const source = story.reviewSource ?? {
     chapter: story.chapter + 1,
     title: "新增 Story Content",
@@ -37,6 +41,7 @@ export function WritingWorkspace({
   const extract = async () => {
     setStatus("loading");
     setError("");
+    setRetryAllowed(true);
     try {
       const result = await storyStateService.extract(story, {
         storyId: story.id,
@@ -53,6 +58,9 @@ export function WritingWorkspace({
       );
     } catch (cause) {
       setStatus("error");
+      setRetryAllowed(
+        !(cause instanceof StoryStateApiError && cause.status === 409),
+      );
       setError(
         cause instanceof Error ? cause.message : "抽取失败，请稍后重试。",
       );
@@ -159,12 +167,16 @@ export function WritingWorkspace({
                   <div className="notice warn" role="alert">
                     <Icon name="warning" size={16} />
                     <span>{error || "抽取失败，请重试。"}</span>
-                    <button
-                      className="button secondary small"
-                      onClick={extract}
-                    >
-                      重试
-                    </button>
+                    {retryAllowed ? (
+                      <button
+                        className="button secondary small"
+                        onClick={extract}
+                      >
+                        重试
+                      </button>
+                    ) : (
+                      <span>请先刷新 Review，不会自动重试。</span>
+                    )}
                   </div>
                 )}
                 {status === "no_changes" && (

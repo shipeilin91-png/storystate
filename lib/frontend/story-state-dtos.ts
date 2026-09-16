@@ -1,6 +1,7 @@
 export type ExtractionStatus = "review_required" | "no_changes" | "failed";
-
 export type ReviewDecisionValue = "accepted" | "rejected";
+export type BackendDecisionValue =
+  ReviewDecisionValue | "needs_review" | "deferred";
 export type ReviewRecommendation =
   "AUTO_ACCEPT_ELIGIBLE" | "NEEDS_REVIEW" | "REJECT" | "CONFLICT";
 export type ReviewRisk = "LOW" | "MEDIUM" | "HIGH" | "CONFLICT";
@@ -47,6 +48,7 @@ export type ReviewCandidateDTO = {
   reasoning: string;
   provenance: string[];
   decision: "needs_review" | ReviewDecisionValue;
+  acceptAllowed: boolean;
 };
 
 export type ExtractionRunResultDTO = {
@@ -54,8 +56,12 @@ export type ExtractionRunResultDTO = {
   status: ExtractionStatus;
   createdAt: string;
   sourceRevision: SourceRevisionDTO;
+  baseStateVersion?: number;
   candidates: ReviewCandidateDTO[];
   compilerIssues: ReviewCandidateDTO["compilerIssues"];
+  warnings: ReviewCandidateDTO["compilerIssues"];
+  provider: { modelId: string; calls: number; packetHash: string | null };
+  timing: { startedAt: string; completedAt: string; durationMs: number };
   message?: string;
 };
 
@@ -105,4 +111,125 @@ export type ExtractStateChangesInputDTO = {
   chapter: number;
   expectedStateVersion: number;
   content: string;
+};
+
+export type BackendStory = {
+  id: string;
+  title: string;
+  currentVersion: number;
+  currentChapter: number | null;
+  storyRevision: number;
+  createdAt: string;
+};
+export type BackendValidatorResult = Omit<ValidatorResultDTO, "checks"> & {
+  checks?: Array<{
+    agent:
+      | "deterministic"
+      | "context"
+      | "generic"
+      | "evidence"
+      | "knowledge_boundary"
+      | "temporal_state";
+    verdict: "SUPPORTED" | "UNCERTAIN" | "UNSUPPORTED";
+    reason: string;
+    evidenceIds: string[];
+    code?: string;
+  }>;
+};
+export type BackendDelta = {
+  id: string;
+  operation:
+    "CREATE" | "UPDATE" | "CLOSE" | "RESOLVE" | "INVALIDATE" | "NO_CHANGE";
+  targetType: string;
+  targetId: string;
+  fieldPath: string;
+  before: unknown;
+  after: unknown;
+  sourceEventId: string | null;
+  evidenceIds: string[];
+  reason: string;
+  confidence: number;
+  risk: string[];
+  decision: BackendDecisionValue;
+  validatorResult: BackendValidatorResult | null;
+  committedVersionId: string | null;
+  createdAt: string;
+};
+export type BackendEvidence = {
+  id: string;
+  sourceRevisionId: string;
+  quote: string;
+  start: number;
+  end: number;
+};
+export type BackendEvent = {
+  id: string;
+  sourceRevisionId: string;
+  summary: string;
+  createdAt: string;
+};
+export type BackendSourceRevision = {
+  id: string;
+  documentId: string;
+  revisionNumber: number;
+  visibility: "canonical" | "author_only";
+};
+export type BackendSourceDocument = {
+  id: string;
+  title: string;
+  sourceOrder: number;
+  chapter: number | null;
+};
+export type BackendReviewHydration = {
+  story: BackendStory;
+  candidateDeltas: BackendDelta[];
+  evidence: BackendEvidence[];
+  events: BackendEvent[];
+  sourceRevisions: BackendSourceRevision[];
+  sourceDocuments: BackendSourceDocument[];
+};
+export type BackendCanonicalState = Record<
+  string,
+  Array<Record<string, unknown> & { id: string; active: boolean }>
+>;
+export type BackendStateResponse = {
+  story: BackendStory;
+  state: BackendCanonicalState;
+};
+export type BackendVersion = {
+  id: string;
+  versionNumber: number;
+  parentVersionId: string | null;
+  commitKind: "delta_commit" | "restore";
+  createdAt: string;
+  deltaIds: string[];
+  snapshot: BackendCanonicalState;
+  restoredFromVersionId: string | null;
+  chapter: number | null;
+  storyRevision: number;
+};
+export type BackendExtractionResult = {
+  status: "completed" | "failed";
+  sourceRevisionId: string;
+  baseStateVersion: number;
+  candidateDeltas: BackendDelta[];
+  validatorResults: Array<BackendValidatorResult | null>;
+  compilerIssues: Array<{
+    code: string;
+    level: "RUN_FATAL" | "EFFECT_REJECTED" | "WARNING";
+    message: string;
+    effectIndex?: number;
+    eventKey?: string;
+  }>;
+  warnings: Array<{
+    code: string;
+    level: "RUN_FATAL" | "EFFECT_REJECTED" | "WARNING";
+    message: string;
+    effectIndex?: number;
+    eventKey?: string;
+  }>;
+  evidence: BackendEvidence[];
+  events: BackendEvent[];
+  provider: { modelId: string; calls: number; packetHash: string | null };
+  timing: { startedAt: string; completedAt: string; durationMs: number };
 };
