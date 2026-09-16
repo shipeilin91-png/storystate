@@ -1,12 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  canCommit,
-  commitMock,
-  type Story,
-  type Delta,
-} from "@/lib/mock-story";
+import type { Story, Delta } from "@/lib/mock-story";
+import { storyStateService } from "@/lib/frontend/story-state-service";
 import { reasoningFor, reviewKind } from "@/lib/review-contract";
 import { reviewExamples } from "@/lib/review-fixtures";
 import type { Update } from "./types";
@@ -23,14 +19,19 @@ const filters = [
 ] as const;
 type Filter = (typeof filters)[number];
 export function matchesReviewFilter(story: Story, d: Delta, filter: Filter) {
+  const candidate = story.loop?.activeRun?.candidates.find(
+    (item) => item.id === d.id,
+  );
   const detail = reasoningFor(story, d);
+  const recommendation = candidate?.recommendation ?? detail.recommendation;
+  const kind = candidate?.kind ?? reviewKind(d);
   if (filter === "All") return true;
-  if (filter === "Soft") return reviewKind(d) === "soft";
-  if (reviewKind(d) !== "canonical") return false;
+  if (filter === "Soft") return kind === "soft";
+  if (kind !== "canonical") return false;
   if (filter === "Rejected")
-    return d.decision === "rejected" || detail.recommendation === "REJECT";
+    return d.decision === "rejected" || recommendation === "REJECT";
   return (
-    detail.recommendation ===
+    recommendation ===
     (
       {
         Recommended: "AUTO_ACCEPT_ELIGIBLE",
@@ -49,12 +50,42 @@ export function DeltaReview({
 }) {
   const [filter, setFilter] = useState<Filter>("All");
   const [message, setMessage] = useState("");
-  const decision = (id: string, next: Delta["decision"]) =>
-    update((s) => ({
-      ...s,
-      deltas: s.deltas.map((d) => (d.id === id ? { ...d, decision: next } : d)),
-    }));
-  const canonical = story.deltas.filter((d) => reviewKind(d) === "canonical");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState("");
+  const decision = async (id: string, next: Delta["decision"]) => {
+    if (next === "pending") return;
+    setBusy(id);
+    setError("");
+    try {
+      const result = await storyStateService.decide(story, id, next);
+      update(() => result.story);
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "保存决定失败，请重试。",
+      );
+    } finally {
+      setBusy("");
+    }
+  };
+  const commit = async () => {
+    setBusy("commit");
+    setError("");
+    try {
+      const committed = await storyStateService.commit(story);
+      update(() => committed.story);
+      setMessage("提交完成。Canonical State 与 Version History 已刷新。");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "提交失败，请重试。");
+    } finally {
+      setBusy("");
+    }
+  };
+  const candidateKind = (delta: Delta) =>
+    story.loop?.activeRun?.candidates.find((item) => item.id === delta.id)
+      ?.kind ?? reviewKind(delta);
+  const canonical = story.deltas.filter(
+    (d) => candidateKind(d) === "canonical",
+  );
   const pending = canonical.filter((d) => d.decision === "pending").length;
   const filtered = story.deltas.filter((d) =>
     matchesReviewFilter(story, d, filter),
@@ -84,9 +115,38 @@ export function DeltaReview({
         ))}
         <small>独立故事 · 精选变化</small>
       </div>
-      {message && (
+      {busy === "hydrate" && (
         <p className="notice" role="status">
-          {message}
+          正在从后端恢复 Review…
+        </p>
+      )}
+      {message && (
+        <div className="notice" role="status">
+          <span>{message}</span>
+          <Link
+            className="button secondary small"
+            href={`/stories/${story.id}/state`}
+          >
+            查看 State
+          </Link>
+          <Link
+            className="button secondary small"
+            href={`/stories/${story.id}/history`}
+          >
+            查看 History
+          </Link>
+        </div>
+      )}
+      {error && (
+        <p className="notice warn" role="alert">
+          <Icon name="warning" size={16} /> {error}
+        </p>
+      )}
+      {!!story.loop?.activeRun?.validationIssues.length && (
+        <p className="notice warn" role="status">
+          <Icon name="warning" size={16} /> Validator unavailable for{" "}
+          {story.loop.activeRun.validationIssues.length} candidate(s). They remain
+          in Needs Review and were not auto-accepted.
         </p>
       )}
       {!story.deltas.length ? (
@@ -117,7 +177,17 @@ export function DeltaReview({
         <>
           <p className="review-run-summary">
             Chapter {story.reviewSource?.chapter ?? 13} · {canonical.length}{" "}
-            Canonical 候选 · {pending} 等待决定 · 固定示例检查
+            Canonical 候选 · {pending} 等待决定 · Source revision{" "}
+            {story.loop?.activeRun?.sourceRevision.revisionNumber ?? "fixture"}
+            {story.loop?.activeRun && (
+              <>
+                {" "}
+                · {story.loop.activeRun.provider.modelId} ·{" "}
+                {story.loop.activeRun.timing.durationMs}ms ·{" "}
+                {story.loop.activeRun.compilerIssues.length} compiler issues ·{" "}
+                {story.loop.activeRun.warnings.length} warnings
+              </>
+            )}
           </p>
           <div className="toolbar review-filters">
             <div className="tabs" aria-label="筛选状态变化">
@@ -211,13 +281,14 @@ export function DeltaReview({
             </div>
             <button
               className="button primary"
-              disabled={!canCommit(story)}
-              onClick={() => {
-                update((s) => commitMock(s, new Date().toISOString()));
-                setMessage("模拟提交已完成。Current State 与版本历史已同步。");
-              }}
+              disabled={
+                !storyStateService.canCommit(story) || busy === "commit"
+              }
+              onClick={commit}
             >
-              Commit accepted changes
+              {busy === "commit"
+                ? "Committing & refreshing…"
+                : "Commit accepted changes"}
               <Icon name="arrow" size={15} />
             </button>
           </div>

@@ -1,8 +1,8 @@
 {
   "project": "StoryState",
-  "stage": "Extraction Contract + Development Benchmark / Stage 2.3A",
-  "stageStatus": "completed / reviewed / merged / frozen",
-  "frontendProductFlow": "completed / frozen",
+  "stage": "StoryState MVP Final Release",
+  "stageStatus": "complete / frozen on release/final-demo / deployment environment blocked",
+  "frontendProductFlow": "complete / frozen / real frontend-backend adapter integrated",
   "canonicalStateBackendFoundation": "completed / frozen",
   "extractionContractBenchmark": {
     "stage": "Stage 2.3A",
@@ -20,9 +20,31 @@
     "developmentDatasetHash": "d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe",
     "holdoutBlueprintHash": "35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6"
   },
+  "extractionRuntime": {
+    "stage": "Stage 2.3B",
+    "status": "complete / frozen",
+    "extractorCallsPerRun": 1,
+    "directCanonicalMutation": false,
+    "automaticDecision": false,
+    "automaticCommit": false,
+    "runtimeValidator": "V0.2 reused per candidate; unexpected failures isolated as VALIDATOR_UNAVAILABLE",
+    "frontendBackendLoop": "Workspace -> Source Revision -> Extract -> Review -> Decision -> Commit -> State/History reload",
+    "providerCallsDuringIntegration": 0
+  },
+  "release": {
+    "mvp": "complete",
+    "stage23B": "complete / frozen",
+    "finalFrontend": "complete / frozen",
+    "finalE2E": "complete / frozen",
+    "deployment": "blocked: production credentials unavailable",
+    "runtimeSmoke": "blocked: deployment environment unavailable",
+    "mainIntegration": "held by runtime release gate",
+    "providerCallsDuringReleaseVerification": 0,
+    "verification": "npm install PASS; build/lint PASS; full 331/331; backend 62/62; validator-v0-2 13/13; extraction contract/eval/runtime/API 9/9, 20/20, 10/10, 9/9"
+  },
   "nextStage": {
-    "stage": "Stage 2.3B AI Extraction + Deterministic Compiler Runtime",
-    "status": "planned / not started"
+    "stage": "Operational deployment and real runtime smoke",
+    "status": "blocked pending production credentials"
   },
   "liveSemanticValidation": "Stage 2.2.1 Architecture Experiment completed / valid / merged / frozen",
   "liveSemanticEvaluationHarness": {
@@ -268,8 +290,9 @@
     },
     {
       "id": "frontend-backend-integration",
-      "status": "planned",
-      "description": "冻结的 Stage 1.3 前端接入正式 API"
+      "status": "complete / frozen",
+      "description": "冻结的 Stage 1.3 前端经 isolated adapter 接入正式 API；mapped Story 不使用 mock mutation",
+      "verification": "13/13 focused frontend boundary tests；deterministic fake-provider E2E 覆盖 Source Revision、Extract、Review、Decision、Commit、State 与 History reload"
     },
     {
       "id": "writer-connector",
@@ -305,6 +328,16 @@
       "runtimeImplemented": false,
       "providerCalls": 0,
       "verification": "extraction-contract 9/9；extraction-eval 20/20；没有 live model extraction quality 或 threshold achievement 结论"
+    },
+    {
+      "id": "ai-extraction-runtime",
+      "status": "complete / frozen",
+      "description": "Stage 2.3B one-call Extractor、strict frozen proposal、deterministic Compiler、persistence 与 Runtime Validator V0.2 loop",
+      "directCanonicalMutation": false,
+      "automaticDecision": false,
+      "automaticCommit": false,
+      "hiddenHoldoutCases": 0,
+      "providerCallsDuringReviewAndIntegration": 0
     }
   ],
   "contract": "Frontend Mock Contract ≠ Backend State Schema; Frontend Review Contract ≠ Backend State Schema"

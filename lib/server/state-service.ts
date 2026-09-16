@@ -6,6 +6,7 @@ import { annotationSchema, commitInputSchema, decisionInputSchema, deltaInputSch
 import type { StateRepository } from "../repositories/state-repository";
 import { RuntimeValidator } from "./validator/runtime-validator";
 import { productionSemanticClient, type SemanticModelClient } from "./validator/semantic";
+import { toReviewHydrationDto } from "./review-hydration";
 const now = () => new Date().toISOString();
 export class StateService {
   constructor(private repository: StateRepository, private semanticClient?: SemanticModelClient) {}
@@ -19,6 +20,7 @@ export class StateService {
   async getDeltas(id: string) { return (await this.repository.read(idSchema.parse(id))).deltas; }
   async getVersions(id: string) { return (await this.repository.read(idSchema.parse(id))).versions; }
   async getAnnotations(id: string) { return (await this.repository.read(idSchema.parse(id))).annotations; }
+  async getReviewHydration(id: string) { return toReviewHydrationDto(await this.repository.read(idSchema.parse(id))); }
   addSourceDocument(id: string, input: unknown) {
     const doc = sourceDocumentSchema.parse(input);
     return this.repository.transaction(idSchema.parse(id), a => { invariant(!a.documents.some(d=>d.id===doc.id || d.sourceOrder===doc.sourceOrder), "DUPLICATE_SOURCE", "Source id/order already exists", 409); a.documents.push(doc); return doc; });

@@ -2096,3 +2096,46 @@ blockquote {
 .state-diff-review .commit-bar {
   position: static;
 }
+
+/* Final product loop: reuse the writer document and review language. */
+.story-content-editor {
+  padding: 0 22px 22px;
+}
+.story-content-editor > label {
+  margin-bottom: 8px;
+}
+.story-content-editor textarea {
+  min-height: 250px;
+  background: #fffef9;
+  font-family: "Songti SC", Georgia, serif;
+  font-size: 13px;
+  line-height: 2;
+}
+.extraction-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 0 0;
+}
+.extraction-actions p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.story-content-editor .empty-state {
+  padding: 30px 20px;
+  margin-top: 16px;
+}
+.story-content-editor .proposed-change-bar {
+  margin: 16px -22px -22px;
+}
+.reasoning-detail code {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 680px) {
+  .extraction-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

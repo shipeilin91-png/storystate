@@ -18,8 +18,13 @@ export function StateDiffRow({
   delta: Delta;
   onDecision: (id: string, decision: Delta["decision"]) => void;
 }) {
-  const detail = reasoningFor(story, d),
-    kind = reviewKind(d);
+  const detail = reasoningFor(story, d);
+  const candidate = story.loop?.activeRun?.candidates.find(
+    (item) => item.id === d.id,
+  );
+  const kind = candidate?.kind ?? reviewKind(d);
+  const recommendation = candidate?.recommendation ?? detail.recommendation;
+  const risk = candidate?.risk ?? detail.risk;
   const entity = story.entities.find((e) => e.id === d.entityId);
   return (
     <article
@@ -34,6 +39,12 @@ export function StateDiffRow({
             {d.field}
             {d.additionalFields ? " + believed_value" : ""}
           </span>
+          {candidate && (
+            <small>
+              Source r{candidate.sourceRevision.revisionNumber} ·{" "}
+              {candidate.validatorResult.status}
+            </small>
+          )}
           {kind !== "canonical" && (
             <small>
               {kind === "soft"
@@ -80,18 +91,14 @@ export function StateDiffRow({
               ? "Soft only"
               : kind === "no_change"
                 ? "保持原状态"
-                : recommendationLabels[detail.recommendation]}
+                : recommendationLabels[recommendation]}
           </strong>
           <StatusPill
             tone={
-              detail.risk === "CONFLICT"
-                ? "bad"
-                : detail.risk === "HIGH"
-                  ? "warn"
-                  : "neutral"
+              risk === "CONFLICT" ? "bad" : risk === "HIGH" ? "warn" : "neutral"
             }
           >
-            {detail.risk}
+            {risk}
           </StatusPill>
         </div>
         <div className="diff-decision">
@@ -110,7 +117,9 @@ export function StateDiffRow({
               <button
                 className="button secondary small"
                 disabled={
-                  !canAcceptChange(story, d) || d.decision === "accepted"
+                  !(candidate
+                    ? candidate.acceptAllowed
+                    : canAcceptChange(story, d)) || d.decision === "accepted"
                 }
                 onClick={() => onDecision(d.id, "accepted")}
               >
@@ -131,7 +140,7 @@ export function StateDiffRow({
         <summary>
           查看原因 <span>Why?</span>
         </summary>
-        <ReasoningDetail story={story} delta={d} />
+        <ReasoningDetail story={story} delta={d} candidate={candidate} />
       </details>
     </article>
   );
