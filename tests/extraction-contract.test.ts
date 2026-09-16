@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { EFFECT_KINDS, extractionContractHash, extractionProposalSchema, type ExtractionEffect } from "../lib/extraction/contract";
-import { compilerBasisRules, compilerCreatePolicy, compilerRiskRules, compilerSafetyTransitions, compilerSpecHash, compilerSlotMapping, effectSlotIdentity, extractionIssueRegistry, extractionRunPolicy, inspectSameSlotEffects } from "../lib/extraction/compiler-spec";
+import { compilerBasisRules, compilerCreatePolicy, compilerEffectValueSemantics, compilerRiskRules, compilerSafetyTransitions, compilerSpecHash, compilerSlotMapping, effectSlotIdentity, extractionIssueRegistry, extractionRunPolicy, inspectSameSlotEffects } from "../lib/extraction/compiler-spec";
+import { forbiddenEffectSchema, goldEffectSchema } from "../lib/eval/extraction/contract";
 
 const common = { eventKey: "EV", evidenceKeys: ["E"], supportKinds: ["direct_observation"] as ExtractionEffect["supportKinds"], supportSummary: "Direct fixture support.", confidence: 0.5 };
 const effects: ExtractionEffect[] = [
@@ -52,6 +53,34 @@ test("epistemic, knowledge, plot, condition, support-kind and local reference co
   assert.throws(() => extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[0], evidenceKeys: ["MISSING"] }] }));
 });
 
+test("effects may cite only unique evidence owned by their referenced EventGroup", () => {
+  const twoEvidence = [
+    { key: "E1", quote: "first", occurrence: 0, speakerRef: null },
+    { key: "E2", quote: "second", occurrence: 0, speakerRef: null },
+  ];
+  const event = { key: "EV1", kind: "observation" as const, participantRefs: ["CHAR_JI"], evidenceKeys: ["E1"] };
+  const mismatched = { ...effects[0], eventKey: "EV1", evidenceKeys: ["E2"] };
+  assert.throws(() => extractionProposalSchema.parse({ evidence: twoEvidence, events: [event], effects: [mismatched], unresolvedMentions: [] }));
+  assert.throws(() => extractionProposalSchema.parse({ ...proposal, events: [{ ...proposal.events[0], evidenceKeys: ["E", "E"] }] }));
+  assert.throws(() => extractionProposalSchema.parse({ ...proposal, events: [{ ...proposal.events[0], participantRefs: ["CHAR_JI", "CHAR_JI"] }] }));
+  assert.throws(() => extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[0], evidenceKeys: ["E", "E"] }] }));
+});
+
+test("item custodian distinguishes clearing the assertion from an unresolved assertion", () => {
+  const cleared = extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[3], after: null }] }).effects[0];
+  const unresolved = extractionProposalSchema.parse({ ...proposal, effects: [effects[3]] }).effects[0];
+  assert.equal(cleared.kind, "item_custodian");
+  assert.equal(unresolved.kind, "item_custodian");
+  if (cleared.kind !== "item_custodian" || unresolved.kind !== "item_custodian") throw new Error("custodian contract drift");
+  assert.equal(cleared.after, null);
+  assert.deepEqual(unresolved.after, { valueRef: null, status: "unresolved", lastConfirmedValueRef: "CHAR_JI" });
+  assert.notDeepEqual(cleared.after, unresolved.after);
+  const goldCommon = { effectId: "G-D01-1", kind: "item_custodian", semanticTarget: { itemRef: "ITEM_RECORDER" }, requiredEvidence: [{ quote: "cleared", occurrence: 0 }], evidenceRequirement: "any", impactClass: "low", compilerExpectation: "compile" };
+  assert.equal(goldEffectSchema.parse({ ...goldCommon, expectedAfter: null }).expectedAfter, null);
+  assert.deepEqual(goldEffectSchema.parse({ ...goldCommon, expectedAfter: unresolved.after }).expectedAfter, unresolved.after);
+  assert.equal(forbiddenEffectSchema.parse({ forbiddenId: "F-D01-1", kind: "item_custodian", semanticTarget: { itemRef: "ITEM_RECORDER" }, forbiddenAfter: null, boundary: "unknown_entity_hallucination" }).forbiddenAfter, null);
+});
+
 test("Compiler specification is declarative, complete and preserves CREATE boundaries", () => {
   assert.deepEqual(Object.keys(compilerSlotMapping), [...EFFECT_KINDS]);
   assert.deepEqual(compilerCreatePolicy.canonicalEntities, { Character: false, Item: false, Proposition: false, PlotThread: false, Relationship: false });
@@ -69,6 +98,8 @@ test("Compiler specification is declarative, complete and preserves CREATE bound
   assert.equal(compilerSafetyTransitions.plot.insufficientIssue, "PLOT_RESOLUTION_INSUFFICIENT");
   assert.equal(extractionRunPolicy.partialPersistenceAllowed, false);
   assert.equal(extractionRunPolicy.persistEventWithoutCompiledEffects, false);
+  assert.equal(compilerEffectValueSemantics.item_custodian.null, "NO_CURRENT_CUSTODIAN_ASSERTION");
+  assert.equal(compilerEffectValueSemantics.item_custodian.epistemic_unresolved, "CUSTODIAN_ASSERTION_PRESENT_WITH_UNRESOLVED_CURRENT_VALUE");
   assert.match(extractionContractHash, /^[a-f0-9]{64}$/);
   assert.match(compilerSpecHash, /^[a-f0-9]{64}$/);
 });

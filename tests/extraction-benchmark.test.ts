@@ -47,6 +47,22 @@ test("every Gold-required evidence span resolves exactly inside its passage", ()
       assert.ok(resolveEvidenceSpan(benchmarkCase.passage, { key: "GOLD", speakerRef: null, ...required }), `${benchmarkCase.caseId}/${gold.effectId}`);
 });
 
+test("knowledge and relationship Gold evidence preserves actor and access context", () => {
+  const byId = (caseId: string) => extractionDevelopmentDataset.cases.find(value => value.caseId === caseId)!;
+  const d06 = byId("D06").goldEffects[0], d07 = byId("D07").goldEffects[0];
+  assert.equal(d06.evidenceRequirement, "all");
+  assert.deepEqual(d06.requiredEvidence.map(value => value.quote), ["程雾对唐岚说", "顾屿说停电是备用线圈短路造成的"]);
+  assert.equal(d07.evidenceRequirement, "all");
+  assert.deepEqual(d07.requiredEvidence.map(value => value.quote), ["程雾把检修报告递给唐岚", "备用线圈短路导致了停电"]);
+  assert.match(byId("D01").goldEffects[0].requiredEvidence[0].quote, /^纪川/);
+  assert.match(byId("D08").goldEffects[0].requiredEvidence[0].quote, /^纪川/);
+  for (const caseId of ["D12", "D13"]) {
+    const gold = byId(caseId).goldEffects[0];
+    assert.equal(gold.evidenceRequirement, "all");
+    assert.equal(gold.requiredEvidence[0].quote, "程雾对纪川说");
+  }
+});
+
 test("development fixture is deterministic, deeply frozen and contains no random/time construction", async () => {
   const rebuilt = buildExtractionDevelopmentDataset();
   assert.equal(digest(rebuilt), developmentDatasetHash);

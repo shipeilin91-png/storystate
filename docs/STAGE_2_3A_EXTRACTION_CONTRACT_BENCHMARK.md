@@ -35,7 +35,9 @@ The strict Zod contract contains four top-level arrays: `evidence`, `events`, `e
 8. `plot_thread_status`
 9. `relationship_value`
 
-Holder, owner, and custodian remain independent. Confidence is telemetry only. AI support kinds exclude `human_confirmation` and `restore`. Unresolved mentions record ambiguity and never create canonical entities.
+Holder, owner, and custodian remain independent. A custodian `after: null` clears the current custodian assertion; an epistemic unresolved value preserves an assertion whose current value is unknown, so the two forms are not interchangeable. Confidence is telemetry only. AI support kinds exclude `human_confirmation` and `restore`. Unresolved mentions record ambiguity and never create canonical entities.
+
+Each Effect may cite only Evidence owned by its referenced EventGroup. Event and Effect evidence-key lists are unique, as are Event participant references. This preserves the local provenance chain Evidence → Event → Effect before deterministic compilation.
 
 ## Compiler specification
 
@@ -49,21 +51,21 @@ The visible Development Set uses the deterministic 北岬站 universe. It contai
 
 Gold and Forbidden effects are semantic contracts rather than DeltaInput objects. Matching uses exact aliases and one-to-one deterministic semantic keys. Duplicate predictions are extra false positives. Text normalization is `extraction-text-normalization/v0.1`: Unicode NFKC, trim, whitespace collapse, and terminal punctuation removal. It performs no paraphrase matching, fuzzy entity mapping, embeddings, or LLM judging.
 
-Evidence Resolution and Evidence Semantic Support are separate. Resolution maps `quote + occurrence` to an exact source span. Support verifies that evidence attached to a matched proposal equals a Gold-allowed exact span. A resolvable quote alone does not prove semantic support.
+Evidence Resolution and Evidence Semantic Support are separate. Resolution maps `quote + occurrence` to an exact source span. Support verifies that evidence attached to a matched proposal equals a Gold-allowed exact span. Gold effects may require `any` registered span or `all` registered spans; knowledge and relationship cases use `all` where access, direction, and claim content are jointly necessary. A resolvable quote alone does not prove semantic support.
 
 ## Metrics and preregistered decisions
 
-Proposal precision/recall/F1 and compiled precision/recall/F1 are reported independently. Compiler filtering may improve compiled precision, but that value must never be presented as model precision. The harness also measures evidence resolution, evidence support, negative-case false positives, boundary violations, high-impact false proposals and compiled effects, Compiler rejections, correctly and incorrectly rejected effects, and explicit harness-supplied persistence counters.
+Proposal precision/recall/F1 and compiled precision/recall/F1 are reported independently. Compiler filtering may improve compiled precision, but that value must never be presented as model precision. Proposal and compiled layers each report negative-case false positives and boundary violations. The harness also measures evidence resolution, evidence support, high-impact false proposals and compiled effects, Compiler rejections, correctly and incorrectly rejected effects, and explicit harness-supplied persistence counters.
 
-No Stage 2.3A result claims extraction performance. A future official evaluation may pass to a runtime pilot only with compiled precision ≥ 0.85, compiled recall ≥ 0.70, zero high-impact false compiled effects, zero invalid persisted Deltas, 100% exact persisted evidence spans, and zero direct AI Canonical mutations. The conservative and failure thresholds are frozen in `lib/eval/extraction/metrics.ts`.
+No Stage 2.3A result claims extraction performance. A future official evaluation may pass to a runtime pilot only with compiled precision ≥ 0.85, compiled recall ≥ 0.70, zero high-impact false compiled effects, zero invalid persisted Deltas, 100% exact persisted evidence spans, and zero direct AI Canonical mutations. Conservative review requires precision ≥ 0.85 and `0.55 ≤ recall < 0.70`, with zero high-impact false compiled effects. Manual architecture review covers `0.80 ≤ precision < 0.85`. Failure includes precision `< 0.80` or any registered safety failure. These explicit comparisons avoid inclusive-range overlap and are frozen in `lib/eval/extraction/metrics.ts`.
 
 ## Freeze hashes
 
 | Contract | SHA-256 |
 |---|---|
-| extractionContractHash | `8baed445cec92206eaba09e2c77e7d903100079cab0861b2ad18ec57c3bc3c8d` |
-| compilerSpecHash | `bf9a830f463ff839295b966d6198a15ef1880dd9fa3903eea7359a89885cc7bc` |
-| developmentDatasetHash | `259c46ad936c45ef2571b31b574efe532661606e8ba49547b629b99387f33df4` |
+| extractionContractHash | `bf36b6e13fd98e292ee0e29813198a7d15c93fa0b1534b73d6a6ba5a938ebd61` |
+| compilerSpecHash | `e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202` |
+| developmentDatasetHash | `2da4010147d5ad8b9ba53edbf7a1e0e24ec0b40a97155585542229fbbf375d11` |
 | holdoutBlueprintHash | `35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6` |
 
 No extractor configuration hash exists because no Extractor prompt or runtime exists. No Holdout dataset hash exists because no actual Holdout cases exist.

@@ -48,6 +48,11 @@ export const eventGroupSchema = z.strictObject({
   ]),
   participantRefs: z.array(entityRefSchema).max(24),
   evidenceKeys: z.array(localKeySchema).min(1).max(24),
+}).superRefine((event, context) => {
+  if (new Set(event.participantRefs).size !== event.participantRefs.length)
+    context.addIssue({ code: "custom", path: ["participantRefs"], message: "Event participantRefs must be unique" });
+  if (new Set(event.evidenceKeys).size !== event.evidenceKeys.length)
+    context.addIssue({ code: "custom", path: ["evidenceKeys"], message: "Event evidenceKeys must be unique" });
 });
 export const unresolvedMentionSchema = z.strictObject({
   mention: z.string().trim().min(1).max(200),
@@ -111,7 +116,9 @@ export const characterLocationEffectSchema = z.strictObject({
 const itemReferenceEffect = { ...commonEffect, itemRef: entityRefSchema, after: epistemicRefSchema };
 export const itemHolderEffectSchema = z.strictObject({ ...itemReferenceEffect, kind: z.literal("item_holder") });
 export const itemOwnerEffectSchema = z.strictObject({ ...itemReferenceEffect, kind: z.literal("item_owner") });
-export const itemCustodianEffectSchema = z.strictObject({ ...itemReferenceEffect, kind: z.literal("item_custodian") });
+export const itemCustodianEffectSchema = z.strictObject({
+  ...commonEffect, kind: z.literal("item_custodian"), itemRef: entityRefSchema, after: epistemicRefSchema.nullable(),
+});
 export const itemConditionEffectSchema = z.strictObject({
   ...commonEffect,
   kind: z.literal("item_condition"),
@@ -153,7 +160,10 @@ export const extractionEffectSchema = z.discriminatedUnion("kind", [
   worldTruthStatusEffectSchema,
   plotThreadStatusEffectSchema,
   relationshipValueEffectSchema,
-]);
+]).superRefine((effect, context) => {
+  if (new Set(effect.evidenceKeys).size !== effect.evidenceKeys.length)
+    context.addIssue({ code: "custom", path: ["evidenceKeys"], message: "Effect evidenceKeys must be unique" });
+});
 
 export const extractionProposalSchema = z.strictObject({
   evidence: z.array(evidenceProposalSchema).max(64),
@@ -167,14 +177,17 @@ export const extractionProposalSchema = z.strictObject({
   unique(proposal.evidence.map(value => value.key), "evidence");
   unique(proposal.events.map(value => value.key), "events");
   const evidence = new Set(proposal.evidence.map(value => value.key));
-  const events = new Set(proposal.events.map(value => value.key));
+  const events = new Map(proposal.events.map(value => [value.key, value]));
   proposal.events.forEach((event, index) => event.evidenceKeys.forEach(key => {
     if (!evidence.has(key)) context.addIssue({ code: "custom", path: ["events", index, "evidenceKeys"], message: "Unknown evidence key" });
   }));
   proposal.effects.forEach((effect, index) => {
-    if (!events.has(effect.eventKey)) context.addIssue({ code: "custom", path: ["effects", index, "eventKey"], message: "Unknown event key" });
+    const event = events.get(effect.eventKey);
+    if (!event) context.addIssue({ code: "custom", path: ["effects", index, "eventKey"], message: "Unknown event key" });
     effect.evidenceKeys.forEach(key => {
       if (!evidence.has(key)) context.addIssue({ code: "custom", path: ["effects", index, "evidenceKeys"], message: "Unknown evidence key" });
+      else if (event && !event.evidenceKeys.includes(key))
+        context.addIssue({ code: "custom", path: ["effects", index, "evidenceKeys"], message: "Effect evidence must belong to its referenced event" });
     });
   });
 });

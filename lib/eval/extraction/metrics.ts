@@ -39,7 +39,8 @@ export function calculateExtractionMetrics(evaluations: readonly ExtractionCaseE
   let proposalTp = 0, proposalFp = 0, proposalFn = 0;
   let compiledTp = 0, compiledFp = 0, compiledFn = 0;
   let evidenceResolved = 0, evidenceTotal = 0, evidenceSupported = 0, evidenceEvaluated = 0;
-  let negativeCases = 0, negativeCasesWithFp = 0, boundaryViolationCount = 0, boundaryOpportunities = 0;
+  let negativeCases = 0, negativeCasesWithFp = 0, compiledNegativeCasesWithFp = 0;
+  let boundaryViolationCount = 0, compiledBoundaryViolationCount = 0, boundaryOpportunities = 0;
   let highImpactFalseProposalCount = 0, highImpactFalseCompiledEffectCount = 0;
   let compilerRejectedEffectCount = 0, correctlyRejectedUnsafeEffectCount = 0, incorrectlyRejectedGoldEffectCount = 0;
 
@@ -57,9 +58,11 @@ export function calculateExtractionMetrics(evaluations: readonly ExtractionCaseE
     if (benchmarkCase.goldEffects.length === 0) {
       negativeCases++;
       if (proposal.effects.length > 0) negativeCasesWithFp++;
+      if (compiledEffects.length > 0) compiledNegativeCasesWithFp++;
     }
     boundaryOpportunities += benchmarkCase.forbiddenEffects.length;
     boundaryViolationCount += matchForbiddenEffects(proposal.effects, benchmarkCase.forbiddenEffects).length;
+    compiledBoundaryViolationCount += matchForbiddenEffects(compiledEffects, benchmarkCase.forbiddenEffects).length;
     highImpactFalseProposalCount += proposed.unmatchedProposalIndices.filter(index => isHighImpactExtractionEffect(proposal.effects[index], benchmarkCase.baseState, catalog)).length;
     highImpactFalseCompiledEffectCount += compiled.unmatchedProposalIndices.filter(index => isHighImpactExtractionEffect(compiledEffects[index], benchmarkCase.baseState, catalog)).length;
     compilerRejectedEffectCount += compilerRejections.length;
@@ -74,18 +77,69 @@ export function calculateExtractionMetrics(evaluations: readonly ExtractionCaseE
     evidenceResolutionRate: ratio(evidenceResolved, evidenceTotal),
     evidenceSupportAccuracy: ratio(evidenceSupported, evidenceEvaluated),
     negativeCaseFalsePositiveRate: ratio(negativeCasesWithFp, negativeCases),
+    compiledNegativeCaseFalsePositiveRate: ratio(compiledNegativeCasesWithFp, negativeCases),
     boundaryViolationCount, boundaryViolationRate: ratio(boundaryViolationCount, boundaryOpportunities),
+    compiledBoundaryViolationCount, compiledBoundaryViolationRate: ratio(compiledBoundaryViolationCount, boundaryOpportunities),
     highImpactFalseProposalCount, highImpactFalseCompiledEffectCount,
     compilerRejectedEffectCount, correctlyRejectedUnsafeEffectCount, incorrectlyRejectedGoldEffectCount,
     invalidPersistedDeltaCount: persistence.invalidPersistedDeltaCount,
     directCanonicalMutationCount: persistence.directCanonicalMutationCount,
-    counts: { proposalTp, proposalFp, proposalFn, compiledTp, compiledFp, compiledFn, evidenceResolved, evidenceTotal, evidenceSupported, evidenceEvaluated, negativeCases, negativeCasesWithFp },
+    counts: { proposalTp, proposalFp, proposalFn, compiledTp, compiledFp, compiledFn, evidenceResolved, evidenceTotal, evidenceSupported, evidenceEvaluated, negativeCases, negativeCasesWithFp, compiledNegativeCasesWithFp },
   };
 }
 
 export const extractionEvaluationDecisionRules = {
-  passToRuntimePilot: { compiledPrecisionAtLeast: 0.85, compiledRecallAtLeast: 0.70, highImpactFalseCompiledEffects: 0, invalidPersistedDeltas: 0, exactPersistedEvidenceSpans: 1, directCanonicalMutations: 0 },
-  conservativeReviewMode: { compiledPrecisionAtLeast: 0.85, compiledRecallRange: [0.55, 0.69], highImpactFalseCompiledEffects: 0 },
-  failIf: { compiledPrecisionBelow: 0.80, highImpactFalseCompiledEffectsAbove: 0, invalidPersistedDeltasAbove: 0, directCanonicalMutationsAbove: 0 },
-  manualReviewPrecisionRange: [0.80, 0.85],
+  passToRuntimePilot: {
+    compiledPrecision: { operator: ">=", value: 0.85 },
+    compiledRecall: { operator: ">=", value: 0.70 },
+    highImpactFalseCompiledEffects: { operator: "==", value: 0 },
+    invalidPersistedDeltas: { operator: "==", value: 0 },
+    exactPersistedEvidenceSpans: { operator: "==", value: 1 },
+    directCanonicalMutations: { operator: "==", value: 0 },
+  },
+  conservativeReviewMode: {
+    compiledPrecision: { operator: ">=", value: 0.85 },
+    compiledRecallLower: { operator: ">=", value: 0.55 },
+    compiledRecallUpper: { operator: "<", value: 0.70 },
+    highImpactFalseCompiledEffects: { operator: "==", value: 0 },
+  },
+  manualArchitectureReview: {
+    compiledPrecisionLower: { operator: ">=", value: 0.80 },
+    compiledPrecisionUpper: { operator: "<", value: 0.85 },
+  },
+  failIf: {
+    compiledPrecision: { operator: "<", value: 0.80 },
+    highImpactFalseCompiledEffects: { operator: ">", value: 0 },
+    invalidPersistedDeltas: { operator: ">", value: 0 },
+    directCanonicalMutations: { operator: ">", value: 0 },
+  },
 } as const;
+
+export type ExtractionDecisionInput = {
+  compiledPrecision: number;
+  compiledRecall: number;
+  highImpactFalseCompiledEffects: number;
+  invalidPersistedDeltas: number;
+  exactPersistedEvidenceSpans: number;
+  directCanonicalMutations: number;
+};
+
+export function evaluateExtractionDecisionRules(input: ExtractionDecisionInput) {
+  const safetyFailure = input.highImpactFalseCompiledEffects > 0
+    || input.invalidPersistedDeltas > 0
+    || input.directCanonicalMutations > 0;
+  return {
+    passToRuntimePilot: input.compiledPrecision >= 0.85
+      && input.compiledRecall >= 0.70
+      && input.highImpactFalseCompiledEffects === 0
+      && input.invalidPersistedDeltas === 0
+      && input.exactPersistedEvidenceSpans === 1
+      && input.directCanonicalMutations === 0,
+    conservativeReviewMode: input.compiledPrecision >= 0.85
+      && input.compiledRecall >= 0.55
+      && input.compiledRecall < 0.70
+      && input.highImpactFalseCompiledEffects === 0,
+    manualArchitectureReview: input.compiledPrecision >= 0.80 && input.compiledPrecision < 0.85,
+    fail: input.compiledPrecision < 0.80 || safetyFailure,
+  };
+}

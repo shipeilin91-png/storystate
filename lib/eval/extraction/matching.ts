@@ -13,8 +13,10 @@ function semanticParts(effect: ExtractionEffect): unknown[] {
   switch (effect.kind) {
     case "character_location": return [effect.kind, effect.characterRef, effect.after.status, normalizeExtractionText(effect.after.value), normalizeExtractionText(effect.after.lastConfirmedValue)];
     case "item_holder":
-    case "item_owner":
-    case "item_custodian": return [effect.kind, effect.itemRef, effect.after.status, effect.after.valueRef, effect.after.lastConfirmedValueRef];
+    case "item_owner": return [effect.kind, effect.itemRef, effect.after.status, effect.after.valueRef, effect.after.lastConfirmedValueRef];
+    case "item_custodian": return effect.after === null
+      ? [effect.kind, effect.itemRef, null]
+      : [effect.kind, effect.itemRef, effect.after.status, effect.after.valueRef, effect.after.lastConfirmedValueRef];
     case "item_condition": return [effect.kind, effect.itemRef, normalizeExtractionText(effect.condition)];
     case "knowledge_state": return [effect.kind, effect.characterRef, effect.propositionRef, effect.stance, effect.believedValue];
     case "world_truth_status": return [effect.kind, effect.propositionRef, effect.status];
@@ -27,8 +29,10 @@ function goldParts(gold: GoldEffect): unknown[] {
   switch (gold.kind) {
     case "character_location": return [gold.kind, gold.semanticTarget.characterRef, gold.expectedAfter.status, normalizeExtractionText(gold.expectedAfter.value), normalizeExtractionText(gold.expectedAfter.lastConfirmedValue)];
     case "item_holder":
-    case "item_owner":
-    case "item_custodian": return [gold.kind, gold.semanticTarget.itemRef, gold.expectedAfter.status, gold.expectedAfter.valueRef, gold.expectedAfter.lastConfirmedValueRef];
+    case "item_owner": return [gold.kind, gold.semanticTarget.itemRef, gold.expectedAfter.status, gold.expectedAfter.valueRef, gold.expectedAfter.lastConfirmedValueRef];
+    case "item_custodian": return gold.expectedAfter === null
+      ? [gold.kind, gold.semanticTarget.itemRef, null]
+      : [gold.kind, gold.semanticTarget.itemRef, gold.expectedAfter.status, gold.expectedAfter.valueRef, gold.expectedAfter.lastConfirmedValueRef];
     case "item_condition": return [gold.kind, gold.semanticTarget.itemRef, normalizeExtractionText(gold.expectedAfter.condition)];
     case "knowledge_state": return [gold.kind, gold.semanticTarget.characterRef, gold.semanticTarget.propositionRef, gold.expectedAfter.stance, gold.expectedAfter.believedValue];
     case "world_truth_status": return [gold.kind, gold.semanticTarget.propositionRef, gold.expectedAfter.status];
@@ -41,8 +45,10 @@ function forbiddenParts(forbidden: ForbiddenEffect): unknown[] {
   switch (forbidden.kind) {
     case "character_location": return [forbidden.kind, forbidden.semanticTarget.characterRef, forbidden.forbiddenAfter.status, normalizeExtractionText(forbidden.forbiddenAfter.value), normalizeExtractionText(forbidden.forbiddenAfter.lastConfirmedValue)];
     case "item_holder":
-    case "item_owner":
-    case "item_custodian": return [forbidden.kind, forbidden.semanticTarget.itemRef, forbidden.forbiddenAfter.status, forbidden.forbiddenAfter.valueRef, forbidden.forbiddenAfter.lastConfirmedValueRef];
+    case "item_owner": return [forbidden.kind, forbidden.semanticTarget.itemRef, forbidden.forbiddenAfter.status, forbidden.forbiddenAfter.valueRef, forbidden.forbiddenAfter.lastConfirmedValueRef];
+    case "item_custodian": return forbidden.forbiddenAfter === null
+      ? [forbidden.kind, forbidden.semanticTarget.itemRef, null]
+      : [forbidden.kind, forbidden.semanticTarget.itemRef, forbidden.forbiddenAfter.status, forbidden.forbiddenAfter.valueRef, forbidden.forbiddenAfter.lastConfirmedValueRef];
     case "item_condition": return [forbidden.kind, forbidden.semanticTarget.itemRef, normalizeExtractionText(forbidden.forbiddenAfter.condition)];
     case "knowledge_state": return [forbidden.kind, forbidden.semanticTarget.characterRef, forbidden.semanticTarget.propositionRef, forbidden.forbiddenAfter.stance, forbidden.forbiddenAfter.believedValue];
     case "world_truth_status": return [forbidden.kind, forbidden.semanticTarget.propositionRef, forbidden.forbiddenAfter.status];

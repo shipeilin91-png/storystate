@@ -89,7 +89,7 @@ export function buildExtractionDevelopmentDataset() {
   const rawCases = [
     {
       caseId: "D01", title: "ARRIVAL", passage: "纪川穿过气闸，推开控制室的门，把工具箱放在桌边。",
-      goldEffects: [{ ...goldBase("G-D01-1", "推开控制室的门"), kind: "character_location", semanticTarget: { characterRef: "CHAR_JI" }, expectedAfter: { value: "Control Room", status: "resolved", lastConfirmedValue: "Control Room" } }],
+      goldEffects: [{ ...goldBase("G-D01-1", "纪川穿过气闸，推开控制室的门，把工具箱放在桌边"), kind: "character_location", semanticTarget: { characterRef: "CHAR_JI" }, expectedAfter: { value: "Control Room", status: "resolved", lastConfirmedValue: "Control Room" } }],
       forbiddenEffects: [], metadata: { negative: false, boundaryTags: ["direction_vs_arrival", "historical_vs_current"], minimalPairIds: ["MP01", "MP02"] },
     },
     {
@@ -118,7 +118,11 @@ export function buildExtractionDevelopmentDataset() {
     },
     {
       caseId: "D06", title: "REPORTED PROPOSITION", passage: "程雾对唐岚说：“顾屿说停电是备用线圈短路造成的。”",
-      goldEffects: [{ ...goldBase("G-D06-1", "顾屿说停电是备用线圈短路造成的", "high"), kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_REPORT_SHORT" }, expectedAfter: { stance: "knows", believedValue: true } }],
+      goldEffects: [{
+        ...goldBase("G-D06-1", "程雾对唐岚说", "high"),
+        requiredEvidence: evidence("程雾对唐岚说").concat(evidence("顾屿说停电是备用线圈短路造成的")), evidenceRequirement: "all",
+        kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_REPORT_SHORT" }, expectedAfter: { stance: "knows", believedValue: true },
+      }],
       forbiddenEffects: [
         { forbiddenId: "F-D06-1", kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_SHORT" }, forbiddenAfter: { stance: "knows", believedValue: true }, boundary: "reported_vs_underlying" },
         { forbiddenId: "F-D06-2", kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_SHORT" }, forbiddenAfter: { stance: "believes", believedValue: true }, boundary: "reported_vs_underlying" },
@@ -127,12 +131,16 @@ export function buildExtractionDevelopmentDataset() {
     },
     {
       caseId: "D07", title: "DIRECT DOCUMENTARY KNOWLEDGE", passage: "程雾把检修报告递给唐岚。报告结论写着：“备用线圈短路导致了停电。”",
-      goldEffects: [{ ...goldBase("G-D07-1", "备用线圈短路导致了停电", "high"), kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_SHORT" }, expectedAfter: { stance: "knows", believedValue: true } }],
+      goldEffects: [{
+        ...goldBase("G-D07-1", "程雾把检修报告递给唐岚", "high"),
+        requiredEvidence: evidence("程雾把检修报告递给唐岚").concat(evidence("备用线圈短路导致了停电")), evidenceRequirement: "all",
+        kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_TANG", propositionRef: "PROP_SHORT" }, expectedAfter: { stance: "knows", believedValue: true },
+      }],
       forbiddenEffects: [], metadata: { negative: false, boundaryTags: ["reported_vs_underlying"], minimalPairIds: ["MP04"] },
     },
     {
       caseId: "D08", title: "SUSPICION", passage: "纪川看见程雾藏起一枚总部内审徽章，第一次怀疑她可能正在执行秘密审查。",
-      goldEffects: [{ ...goldBase("G-D08-1", "第一次怀疑她可能正在执行秘密审查"), kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_JI", propositionRef: "PROP_AUDITOR" }, expectedAfter: { stance: "suspects", believedValue: null } }],
+      goldEffects: [{ ...goldBase("G-D08-1", "纪川看见程雾藏起一枚总部内审徽章，第一次怀疑她可能正在执行秘密审查"), kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_JI", propositionRef: "PROP_AUDITOR" }, expectedAfter: { stance: "suspects", believedValue: null } }],
       forbiddenEffects: [
         { forbiddenId: "F-D08-1", kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_JI", propositionRef: "PROP_AUDITOR" }, forbiddenAfter: { stance: "believes", believedValue: true }, boundary: "suspicion_vs_belief" },
         { forbiddenId: "F-D08-2", kind: "knowledge_state", semanticTarget: { characterRef: "CHAR_JI", propositionRef: "PROP_AUDITOR" }, forbiddenAfter: { stance: "knows", believedValue: true }, boundary: "belief_vs_knowledge" },
@@ -158,7 +166,11 @@ export function buildExtractionDevelopmentDataset() {
     },
     {
       caseId: "D12", title: "BOUNDED COOPERATION", passage: "程雾对纪川说：“这次我跟你合作，只为了先把唐岚救出来。之后我们各走各的。”",
-      goldEffects: [{ ...goldBase("G-D12-1", "这次我跟你合作，只为了先把唐岚救出来"), kind: "relationship_value", semanticTarget: { relationshipRef: "REL_COOP" }, expectedAfter: { value: "active", scope: "current rescue" } }],
+      goldEffects: [{
+        ...goldBase("G-D12-1", "程雾对纪川说"),
+        requiredEvidence: evidence("程雾对纪川说").concat(evidence("这次我跟你合作，只为了先把唐岚救出来")), evidenceRequirement: "all",
+        kind: "relationship_value", semanticTarget: { relationshipRef: "REL_COOP" }, expectedAfter: { value: "active", scope: "current rescue" },
+      }],
       forbiddenEffects: [
         { forbiddenId: "F-D12-1", kind: "relationship_value", semanticTarget: { relationshipRef: "REL_COOP" }, forbiddenAfter: { value: "active", scope: "ongoing cooperation" }, boundary: "bounded_cooperation_vs_trust" },
         { forbiddenId: "F-D12-2", kind: "relationship_value", semanticTarget: { relationshipRef: "REL_TRUST" }, forbiddenAfter: { value: "trust", scope: "continuing" }, boundary: "bounded_cooperation_vs_trust" },
@@ -166,7 +178,11 @@ export function buildExtractionDevelopmentDataset() {
     },
     {
       caseId: "D13", title: "GENERAL OPERATIONAL COOPERATION", passage: "程雾对纪川说：“在查清停电真相之前，我们一直合作。”",
-      goldEffects: [{ ...goldBase("G-D13-1", "在查清停电真相之前，我们一直合作"), kind: "relationship_value", semanticTarget: { relationshipRef: "REL_COOP" }, expectedAfter: { value: "active", scope: "investigation until power-cut truth is resolved" } }],
+      goldEffects: [{
+        ...goldBase("G-D13-1", "程雾对纪川说"),
+        requiredEvidence: evidence("程雾对纪川说").concat(evidence("在查清停电真相之前，我们一直合作")), evidenceRequirement: "all",
+        kind: "relationship_value", semanticTarget: { relationshipRef: "REL_COOP" }, expectedAfter: { value: "active", scope: "investigation until power-cut truth is resolved" },
+      }],
       forbiddenEffects: [], metadata: { negative: false, boundaryTags: ["bounded_cooperation_vs_trust"], minimalPairIds: ["MP06"] },
     },
     {

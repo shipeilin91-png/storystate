@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import type { ExtractionEffect } from "../lib/extraction/contract";
-import { evidenceSupportForMatch, matchEffects, matchForbiddenEffects, normalizeExtractionText, resolveEvidenceSpan } from "../lib/eval/extraction/matching";
+import { extractionProposalSchema, type ExtractionEffect } from "../lib/extraction/contract";
+import type { GoldEffect } from "../lib/eval/extraction/contract";
+import { effectComparisonKey, evidenceSupportForMatch, matchEffects, matchForbiddenEffects, normalizeExtractionText, resolveEvidenceSpan } from "../lib/eval/extraction/matching";
 import { extractionDevelopmentDataset } from "./fixtures/extraction-development";
 import { effectFromGold, proposalFor } from "./helpers/extraction";
 
@@ -51,4 +52,30 @@ test("exact Evidence Resolution and semantic Evidence Support remain separate", 
   assert.ok(resolveEvidenceSpan(d11.passage, merelyResolvable.evidence[0]));
   assert.equal(evidenceSupportForMatch(merelyResolvable, effect, d11.goldEffects[0]), false);
   assert.equal(resolveEvidenceSpan(d11.passage, { ...supported.evidence[0], occurrence: 1 }), null);
+});
+
+test("Evidence Support enforces all required spans while preserving any semantics", () => {
+  const d06 = byId("D06"), gold = d06.goldEffects[0], baseEffect = effectFromGold(gold);
+  assert.equal(gold.evidenceRequirement, "all");
+  assert.equal(gold.requiredEvidence.length, 2);
+  const oneSpan = proposalFor(gold, baseEffect, gold.requiredEvidence[0].quote);
+  assert.equal(evidenceSupportForMatch(oneSpan, baseEffect, gold), false);
+
+  const bothEffect = { ...baseEffect, evidenceKeys: ["E1", "E2"] } as ExtractionEffect;
+  const bothSpans = extractionProposalSchema.parse({
+    evidence: gold.requiredEvidence.map((required, index) => ({ key: `E${index + 1}`, speakerRef: null, ...required })),
+    events: [{ key: "EV", kind: "disclosure", participantRefs: ["CHAR_CHENG", "CHAR_TANG"], evidenceKeys: ["E1", "E2"] }],
+    effects: [bothEffect], unresolvedMentions: [],
+  });
+  assert.equal(evidenceSupportForMatch(bothSpans, bothEffect, gold), true);
+
+  const anyGold: GoldEffect = { ...gold, evidenceRequirement: "any" };
+  assert.equal(evidenceSupportForMatch(oneSpan, baseEffect, anyGold), true);
+});
+
+test("custodian null and epistemic unresolved remain distinct deterministic values", () => {
+  const common = { kind: "item_custodian" as const, itemRef: "ITEM_RECORDER", eventKey: "EV", evidenceKeys: ["E"], supportKinds: ["direct_observation" as const], supportSummary: "Custodian state changed.", confidence: 0.5 };
+  const cleared: ExtractionEffect = { ...common, after: null };
+  const unresolved: ExtractionEffect = { ...common, after: { valueRef: null, status: "unresolved", lastConfirmedValueRef: "CHAR_JI" } };
+  assert.notEqual(effectComparisonKey(cleared), effectComparisonKey(unresolved));
 });

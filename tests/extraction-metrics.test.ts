@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { extractionProposalSchema, type ExtractionEffect } from "../lib/extraction/contract";
-import { calculateExtractionMetrics, isHighImpactExtractionEffect } from "../lib/eval/extraction/metrics";
+import { calculateExtractionMetrics, evaluateExtractionDecisionRules, extractionEvaluationDecisionRules, isHighImpactExtractionEffect } from "../lib/eval/extraction/metrics";
 import { extractionDevelopmentDataset } from "./fixtures/extraction-development";
 import { effectFromGold, proposalFor } from "./helpers/extraction";
 
@@ -32,13 +32,34 @@ test("proposal and compiled metrics remain distinct while compiler rejection sta
   assert.equal(metrics.compiledEffectPrecision, 1);
   assert.equal(metrics.compiledEffectRecall, 1);
   assert.equal(metrics.boundaryViolationCount, 2);
+  assert.equal(metrics.compiledBoundaryViolationCount, 0);
+  assert.equal(metrics.compiledBoundaryViolationRate, 0);
   assert.equal(metrics.negativeCaseFalsePositiveRate, 1);
+  assert.equal(metrics.compiledNegativeCaseFalsePositiveRate, 0);
   assert.equal(metrics.highImpactFalseProposalCount, 1);
   assert.equal(metrics.compilerRejectedEffectCount, 2);
   assert.equal(metrics.correctlyRejectedUnsafeEffectCount, 2);
   assert.equal(metrics.incorrectlyRejectedGoldEffectCount, 0);
   assert.equal(metrics.evidenceResolutionRate, 1);
   assert.equal(metrics.evidenceSupportAccuracy, 1);
+});
+
+test("decision rule boundaries use explicit non-overlapping precision and recall comparisons", () => {
+  const evaluate = (compiledPrecision: number, compiledRecall: number) => evaluateExtractionDecisionRules({
+    compiledPrecision, compiledRecall, highImpactFalseCompiledEffects: 0,
+    invalidPersistedDeltas: 0, exactPersistedEvidenceSpans: 1, directCanonicalMutations: 0,
+  });
+  assert.deepEqual([evaluate(0.7999, 0.70).fail, evaluate(0.7999, 0.70).manualArchitectureReview], [true, false]);
+  assert.deepEqual([evaluate(0.80, 0.70).fail, evaluate(0.80, 0.70).manualArchitectureReview], [false, true]);
+  assert.equal(evaluate(0.8499, 0.70).manualArchitectureReview, true);
+  assert.deepEqual([evaluate(0.85, 0.70).manualArchitectureReview, evaluate(0.85, 0.70).passToRuntimePilot], [false, true]);
+
+  assert.deepEqual([evaluate(0.85, 0.5499).conservativeReviewMode, evaluate(0.85, 0.5499).passToRuntimePilot], [false, false]);
+  assert.deepEqual([evaluate(0.85, 0.55).conservativeReviewMode, evaluate(0.85, 0.55).passToRuntimePilot], [true, false]);
+  assert.deepEqual([evaluate(0.85, 0.6999).conservativeReviewMode, evaluate(0.85, 0.6999).passToRuntimePilot], [true, false]);
+  assert.deepEqual([evaluate(0.85, 0.70).conservativeReviewMode, evaluate(0.85, 0.70).passToRuntimePilot], [false, true]);
+  assert.equal(extractionEvaluationDecisionRules.manualArchitectureReview.compiledPrecisionUpper.operator, "<");
+  assert.equal(extractionEvaluationDecisionRules.conservativeReviewMode.compiledRecallUpper.operator, "<");
 });
 
 test("high-impact classifier covers owner, knowledge/reversal, truth, resolved plot and psychological relationship", () => {

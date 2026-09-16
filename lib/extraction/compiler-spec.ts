@@ -30,6 +30,13 @@ export const compilerCreatePolicy = deepFreeze({
   assertionRowsOverKnownEntities: { Knowledge: true, WorldTruth: true },
 });
 
+export const compilerEffectValueSemantics = deepFreeze({
+  item_custodian: {
+    null: "NO_CURRENT_CUSTODIAN_ASSERTION",
+    epistemic_unresolved: "CUSTODIAN_ASSERTION_PRESENT_WITH_UNRESOLVED_CURRENT_VALUE",
+  },
+});
+
 export const compilerRiskRules = deepFreeze({
   item_owner: ["ownership_uncertain"],
   knowledge_knows: ["conflict_prone"],
@@ -142,6 +149,7 @@ export const compilerSpecHash = digest({
   effectKinds: EFFECT_KINDS,
   slotMapping: compilerSlotMapping,
   createPolicy: compilerCreatePolicy,
+  effectValueSemantics: compilerEffectValueSemantics,
   riskRules: compilerRiskRules,
   basisRules: compilerBasisRules,
   issueRegistry: extractionIssueRegistry,

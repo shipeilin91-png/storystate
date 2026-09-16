@@ -1,8 +1,8 @@
 {
   "version": "stage-2.3a/v0.1",
-  "extractionContractHash": "8baed445cec92206eaba09e2c77e7d903100079cab0861b2ad18ec57c3bc3c8d",
-  "compilerSpecHash": "bf9a830f463ff839295b966d6198a15ef1880dd9fa3903eea7359a89885cc7bc",
-  "developmentDatasetHash": "259c46ad936c45ef2571b31b574efe532661606e8ba49547b629b99387f33df4",
+  "extractionContractHash": "bf36b6e13fd98e292ee0e29813198a7d15c93fa0b1534b73d6a6ba5a938ebd61",
+  "compilerSpecHash": "e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202",
+  "developmentDatasetHash": "2da4010147d5ad8b9ba53edbf7a1e0e24ec0b40a97155585542229fbbf375d11",
   "holdoutBlueprintHash": "35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6",
   "developmentCaseCount": 14,
   "developmentGoldEffectCount": 14,
