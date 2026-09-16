@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EFFECT_KINDS, extractionContractHash, extractionProposalSchema, type ExtractionEffect } from "../lib/extraction/contract";
+import { createHash } from "node:crypto";
+import { EFFECT_KINDS, extractionContractFingerprint, extractionContractHash, extractionContractSemanticInvariants, extractionProposalSchema, type ExtractionEffect } from "../lib/extraction/contract";
 import { compilerBasisRules, compilerCreatePolicy, compilerEffectValueSemantics, compilerRiskRules, compilerSafetyTransitions, compilerSpecHash, compilerSlotMapping, effectSlotIdentity, extractionIssueRegistry, extractionRunPolicy, inspectSameSlotEffects } from "../lib/extraction/compiler-spec";
 import { forbiddenEffectSchema, goldEffectSchema } from "../lib/eval/extraction/contract";
 
@@ -112,4 +113,14 @@ test("same-slot helper warns on exact duplicates and rejects conflicting effects
   assert.deepEqual(inspectSameSlotEffects([holder, duplicate, conflict]).map(value => [value.level, value.code]), [
     ["WARNING", "DUPLICATE_EFFECT"], ["EFFECT_REJECTED", "CONFLICTING_EFFECTS_SAME_SLOT"],
   ]);
+});
+
+test("contract hash explicitly fingerprints frozen cross-field semantic invariants", () => {
+  assert.ok(Object.isFrozen(extractionContractSemanticInvariants));
+  assert.ok(Object.isFrozen(extractionContractSemanticInvariants.referenceIntegrity));
+  assert.equal(extractionContractFingerprint.semanticInvariants, extractionContractSemanticInvariants);
+  assert.equal(extractionContractSemanticInvariants.referenceIntegrity.effectEvidenceOwnership, "MUST_BE_SUBSET_OF_REFERENCED_EVENT_GROUP_EVIDENCE_KEYS");
+  assert.equal(extractionContractSemanticInvariants.crossFieldSemantics.itemCustodianNull, "NO_CURRENT_ASSERTION_DISTINCT_FROM_EPISTEMIC_UNRESOLVED");
+  const fingerprintHash = createHash("sha256").update(JSON.stringify(extractionContractFingerprint)).digest("hex");
+  assert.equal(extractionContractHash, fingerprintHash);
 });

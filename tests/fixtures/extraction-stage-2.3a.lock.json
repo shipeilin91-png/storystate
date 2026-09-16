@@ -1,6 +1,6 @@
 {
   "version": "stage-2.3a/v0.1",
-  "extractionContractHash": "bf36b6e13fd98e292ee0e29813198a7d15c93fa0b1534b73d6a6ba5a938ebd61",
+  "extractionContractHash": "37b9e48646905c7b714867a7709096eca3e441c7247978f6ad7f9ed15bca0392",
   "compilerSpecHash": "e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202",
   "developmentDatasetHash": "2da4010147d5ad8b9ba53edbf7a1e0e24ec0b40a97155585542229fbbf375d11",
   "holdoutBlueprintHash": "35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6",

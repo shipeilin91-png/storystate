@@ -62,6 +62,29 @@ test("decision rule boundaries use explicit non-overlapping precision and recall
   assert.equal(extractionEvaluationDecisionRules.conservativeReviewMode.compiledRecallUpper.operator, "<");
 });
 
+test("safety failures dominate conservative and manual classifications", () => {
+  const base = {
+    compiledPrecision: 0.90, compiledRecall: 0.60,
+    highImpactFalseCompiledEffects: 0, invalidPersistedDeltas: 0,
+    exactPersistedEvidenceSpans: 1, directCanonicalMutations: 0,
+  };
+  const cases = [
+    { ...base, invalidPersistedDeltas: 1 },
+    { ...base, compiledPrecision: 0.82, compiledRecall: 0.70, highImpactFalseCompiledEffects: 1 },
+    { ...base, directCanonicalMutations: 1 },
+  ];
+  for (const input of cases) {
+    const classification = evaluateExtractionDecisionRules(input);
+    assert.deepEqual(classification, {
+      passToRuntimePilot: false,
+      conservativeReviewMode: false,
+      manualArchitectureReview: false,
+      fail: true,
+    });
+    assert.equal(Object.values(classification).filter(Boolean).length, 1);
+  }
+});
+
 test("high-impact classifier covers owner, knowledge/reversal, truth, resolved plot and psychological relationship", () => {
   const catalog = extractionDevelopmentDataset.catalog, base = byId("D09").baseState;
   const owner = effectFromGold(byId("D05").goldEffects.find(value => value.kind === "item_owner")!);

@@ -128,18 +128,20 @@ export function evaluateExtractionDecisionRules(input: ExtractionDecisionInput) 
   const safetyFailure = input.highImpactFalseCompiledEffects > 0
     || input.invalidPersistedDeltas > 0
     || input.directCanonicalMutations > 0;
+  if (safetyFailure) return {
+    passToRuntimePilot: false,
+    conservativeReviewMode: false,
+    manualArchitectureReview: false,
+    fail: true,
+  };
   return {
     passToRuntimePilot: input.compiledPrecision >= 0.85
       && input.compiledRecall >= 0.70
-      && input.highImpactFalseCompiledEffects === 0
-      && input.invalidPersistedDeltas === 0
-      && input.exactPersistedEvidenceSpans === 1
-      && input.directCanonicalMutations === 0,
+      && input.exactPersistedEvidenceSpans === 1,
     conservativeReviewMode: input.compiledPrecision >= 0.85
       && input.compiledRecall >= 0.55
-      && input.compiledRecall < 0.70
-      && input.highImpactFalseCompiledEffects === 0,
+      && input.compiledRecall < 0.70,
     manualArchitectureReview: input.compiledPrecision >= 0.80 && input.compiledPrecision < 0.85,
-    fail: input.compiledPrecision < 0.80 || safetyFailure,
+    fail: input.compiledPrecision < 0.80,
   };
 }

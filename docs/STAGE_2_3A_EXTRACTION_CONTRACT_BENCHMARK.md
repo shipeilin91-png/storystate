@@ -39,6 +39,8 @@ Holder, owner, and custodian remain independent. A custodian `after: null` clear
 
 Each Effect may cite only Evidence owned by its referenced EventGroup. Event and Effect evidence-key lists are unique, as are Event participant references. This preserves the local provenance chain Evidence → Event → Effect before deterministic compilation.
 
+Cross-field rules that Zod enforces through refinements are also recorded in the frozen `extractionContractSemanticInvariants` metadata and included in the contract fingerprint. The hash therefore covers provenance ownership, reference integrity, uniqueness, epistemic consistency, plot consistency, and custodian-null semantics rather than relying on JSON Schema fields alone.
+
 ## Compiler specification
 
 The declarative specification freezes effect-to-slot and future Delta mappings, known-entity CREATE policy, risk rules, basis rules, issue codes, transition safety, normalization, same-slot handling, and run atomicity. It is executable as constants and pure specification helpers; it does not persist anything.
@@ -63,7 +65,7 @@ No Stage 2.3A result claims extraction performance. A future official evaluation
 
 | Contract | SHA-256 |
 |---|---|
-| extractionContractHash | `bf36b6e13fd98e292ee0e29813198a7d15c93fa0b1534b73d6a6ba5a938ebd61` |
+| extractionContractHash | `37b9e48646905c7b714867a7709096eca3e441c7247978f6ad7f9ed15bca0392` |
 | compilerSpecHash | `e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202` |
 | developmentDatasetHash | `2da4010147d5ad8b9ba53edbf7a1e0e24ec0b40a97155585542229fbbf375d11` |
 | holdoutBlueprintHash | `35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6` |

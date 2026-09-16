@@ -2,6 +2,13 @@ import { z } from "zod";
 import { createHash } from "node:crypto";
 
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
+}
 
 const localKeySchema = z.string().trim().min(1).max(80).regex(/^[A-Za-z][A-Za-z0-9_-]*$/);
 export const entityRefSchema = z.string().trim().min(1).max(120);
@@ -197,11 +204,43 @@ export type EventGroup = z.infer<typeof eventGroupSchema>;
 export type ExtractionEffect = z.infer<typeof extractionEffectSchema>;
 export type ExtractionProposal = z.infer<typeof extractionProposalSchema>;
 
-export const extractionContractHash = digest({
+export const extractionContractSemanticInvariants = deepFreeze({
+  version: "extraction-contract-semantic-invariants/v0.1",
+  uniqueness: {
+    evidenceProposalKeys: "UNIQUE_WITHIN_PROPOSAL",
+    eventKeys: "UNIQUE_WITHIN_PROPOSAL",
+    eventParticipantRefs: "UNIQUE_WITHIN_EVENT_GROUP",
+    eventEvidenceKeys: "UNIQUE_WITHIN_EVENT_GROUP",
+    effectEvidenceKeys: "UNIQUE_WITHIN_EFFECT",
+  },
+  referenceIntegrity: {
+    eventEvidenceKeys: "MUST_REFERENCE_DECLARED_EVIDENCE",
+    effectEventKey: "MUST_REFERENCE_DECLARED_EVENT_GROUP",
+    effectEvidenceKeys: "MUST_REFERENCE_DECLARED_EVIDENCE",
+    effectEvidenceOwnership: "MUST_BE_SUBSET_OF_REFERENCED_EVENT_GROUP_EVIDENCE_KEYS",
+  },
+  crossFieldSemantics: {
+    resolvedLocation: "VALUE_REQUIRED_AND_LAST_CONFIRMED_VALUE_MUST_MATCH",
+    unresolvedLocation: "VALUE_MUST_BE_NULL",
+    resolvedEpistemicRef: "VALUE_REF_REQUIRED_AND_LAST_CONFIRMED_VALUE_REF_MUST_MATCH",
+    unresolvedEpistemicRef: "VALUE_REF_MUST_BE_NULL",
+    unaware: "BELIEVED_VALUE_MUST_BE_NULL",
+    suspects: "BELIEVED_VALUE_MUST_BE_NULL_IN_EXTRACTION_V0_1",
+    believesAndKnows: "BELIEVED_VALUE_MUST_BE_BOOLEAN",
+    resolvedPlot: "RESOLUTION_AND_ASSESSMENT_REQUIRED",
+    nonResolvedPlot: "RESOLUTION_AND_ASSESSMENT_MUST_BE_NULL",
+    itemCustodianNull: "NO_CURRENT_ASSERTION_DISTINCT_FROM_EPISTEMIC_UNRESOLVED",
+  },
+});
+
+export const extractionContractFingerprint = deepFreeze({
   proposal: z.toJSONSchema(extractionProposalSchema),
   effects: z.toJSONSchema(extractionEffectSchema),
   evidence: z.toJSONSchema(evidenceProposalSchema),
   events: z.toJSONSchema(eventGroupSchema),
   unresolvedMentions: z.toJSONSchema(unresolvedMentionSchema),
-  supportKinds: supportKindSchema.options,
+  supportKinds: [...supportKindSchema.options],
+  semanticInvariants: extractionContractSemanticInvariants,
 });
+
+export const extractionContractHash = digest(extractionContractFingerprint);
