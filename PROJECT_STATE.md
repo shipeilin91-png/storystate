@@ -1,9 +1,10 @@
 # StoryState — Project State
 
-- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2、Stage 2.2.1、Stage 2.2.2 — completed / frozen on main**.
+- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2、Stage 2.2.1、Stage 2.2.2、Stage 2.3A — completed / frozen on main**.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
+- Stage 2.3A Extraction Contract + Development Benchmark: **completed / reviewed / merged / frozen**。冻结 9 种 semantic Extraction effects、deterministic Compiler specification、14 Development cases / 14 Gold Effects 与 0 Hidden Holdout；没有 Extraction Runtime 或 provider/model execution。
 - Stage 2.1.2 Contract Hardening: **completed / merged main**. Product Owner 与 Codex 独立审核 PASS；已审核分支 `hardening/stage-2-1-2-contract` 提交 `c1c84e8002bd0fecd808b282c483cda54e961384` 从 `753ca6a0cc0f7625898ae8839f8bc461788d502e` 非 squash 合并。
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
@@ -52,7 +53,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 已 completed / reviewed / merged / frozen；AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime 为 **PLANNED / NOT STARTED**；RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 
@@ -85,3 +86,11 @@ Stage 2.2.1B 官方 run 已 **COMPLETED / VALID / MERGED / FROZEN**，通过非 
 生产 Runtime Validator V0.2 对每个 deterministic gate 通过且 context 可用的候选只发出一次 Generic semantic request，使用与 Stage 2.2.1B eval 完全相同的冻结 prompt 与严格 Generic schema。非 `SUPPORTED`、provider/parse/timeout failure、context unavailable、retrieval truncated 与既有 high-impact policy 均保持 `NEEDS_REVIEW`；deterministic failed/conflict 继续分别为 `REJECT` / `CONFLICT` 且零 semantic calls。V0.1 Specialist checks 继续可由 domain schema、Memory/PostgreSQL repository 与 API 读取，无需 migration；历史 Specialist eval runner 保留。详见 `docs/STAGE_2_2_2_GENERIC_VALIDATOR.md`。
 
 Stage 2.2.2 合并后 main 验证：install/build/lint PASS；全量 270/270、backend 62/62、exact benchmark 11/11、runtime validator 71/71、validator-v0-2 13/13、evaluation 51/51、live-prep 37/37。生产路径对 eligible validation 恰好一次 Generic semantic call，deterministic gate、impact policy、human Decision、V0.1 Specialist ValidatorResult 兼容与 historical Specialist evaluation 均保留。独立审核发现部分 high-impact full-runtime 类别存在非阻塞测试覆盖缺口；独立 probe 未发现生产缺陷。
+
+## Stage 2.3A 已完成 / 已审核 / 已合并 / 已冻结
+
+Stage 2.3A 冻结 model-facing `ExtractionProposal` contract、9 种 semantic effect、declarative deterministic Compiler specification、deterministic Gold / Forbidden matching、proposal 与 compiled 分层 metrics、14-case / 14-Gold Development benchmark，以及只含分布与 authoring protocol 的 Holdout blueprint。Hidden Holdout cases 为 0；`extractorConfigHash` 未定义。
+
+冻结 hashes：`extractionContractHash=fdb10c9c9e9c9ee80ac2efa70c267a2399209ac8c3d5c3d4cabc084d332704f4`；`compilerSpecHash=e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202`；`developmentDatasetHash=d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe`；`holdoutBlueprintHash=35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6`。
+
+Stage 2.3A 合并后 main 验证：install/build/lint PASS；全量 299/299、backend 62/62、exact benchmark 11/11、runtime validator 71/71、validator-v0-2 13/13、evaluation 51/51、live-prep 37/37、extraction-contract 9/9、extraction-eval 20/20。Provider/model calls 为 0。本阶段冻结 evaluation method 与 Development benchmark，没有实现 Extraction Runtime、真实 persistence Compiler 或 ExtractionService，也没有测量 live model extraction quality；0.85/0.70 preregistered threshold 未被宣称达成。

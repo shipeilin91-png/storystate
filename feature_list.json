@@ -1,9 +1,29 @@
 {
   "project": "StoryState",
-  "stage": "Runtime Validator V0.2 Generic Simplification / Stage 2.2.2",
+  "stage": "Extraction Contract + Development Benchmark / Stage 2.3A",
   "stageStatus": "completed / reviewed / merged / frozen",
   "frontendProductFlow": "completed / frozen",
   "canonicalStateBackendFoundation": "completed / frozen",
+  "extractionContractBenchmark": {
+    "stage": "Stage 2.3A",
+    "status": "completed / reviewed / merged / frozen",
+    "effectKindCount": 9,
+    "compilerSpecification": "deterministic declarative specification only; runtime not implemented",
+    "developmentCaseCount": 14,
+    "developmentGoldEffectCount": 14,
+    "hiddenHoldoutCaseCount": 0,
+    "extractorConfigHashDefined": false,
+    "providerCalls": 0,
+    "liveModelExtractionQualityMeasured": false,
+    "extractionContractHash": "fdb10c9c9e9c9ee80ac2efa70c267a2399209ac8c3d5c3d4cabc084d332704f4",
+    "compilerSpecHash": "e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202",
+    "developmentDatasetHash": "d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe",
+    "holdoutBlueprintHash": "35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6"
+  },
+  "nextStage": {
+    "stage": "Stage 2.3B AI Extraction + Deterministic Compiler Runtime",
+    "status": "planned / not started"
+  },
   "liveSemanticValidation": "Stage 2.2.1 Architecture Experiment completed / valid / merged / frozen",
   "liveSemanticEvaluationHarness": {
     "stage": "Stage 2.2.1A",
@@ -146,7 +166,7 @@
       "id": "state-extraction",
       "status": "planned",
       "description": "从正文抽取状态变化",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "verification": "Stage 2.3A contract 与 Development benchmark 已冻结；Stage 2.3B runtime 为 planned / not started"
     },
     {
       "id": "context-compiler",
@@ -274,6 +294,17 @@
       "independentEngineeringReview": "PASS_WITH_NON_BLOCKING_FINDINGS",
       "nonBlockingFinding": "Some high-impact full-runtime categories have a test coverage gap; an independent probe did not reveal a production defect.",
       "constraints": "Retain deterministic gate, conservative routing, high-impact review, human review, and no direct LLM mutation"
+    },
+    {
+      "id": "extraction-contract-benchmark",
+      "status": "completed / reviewed / merged / frozen",
+      "description": "Stage 2.3A model-facing ExtractionProposal contract、9 种 semantic effects、deterministic Compiler specification 与 Development evaluation harness",
+      "developmentCases": 14,
+      "developmentGoldEffects": 14,
+      "hiddenHoldoutCases": 0,
+      "runtimeImplemented": false,
+      "providerCalls": 0,
+      "verification": "extraction-contract 9/9；extraction-eval 20/20；没有 live model extraction quality 或 threshold achievement 结论"
     }
   ],
   "contract": "Frontend Mock Contract ≠ Backend State Schema; Frontend Review Contract ≠ Backend State Schema"
