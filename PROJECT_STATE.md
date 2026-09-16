@@ -1,9 +1,9 @@
 # StoryState — Project State
 
-- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2 — completed / frozen on main**.
+- Current Stage: **Stage 1.3、Stage 2.1、Stage 2.1.2、Stage 2.2、Stage 2.2.1、Stage 2.2.2 — completed / frozen on main**.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
-- Stage 2.2.1B: **completed / valid / merged main**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
-- Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **implemented on feature branch / awaiting Product Owner Review**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
+- Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
+- Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
 - Stage 2.1.2 Contract Hardening: **completed / merged main**. Product Owner 与 Codex 独立审核 PASS；已审核分支 `hardening/stage-2-1-2-contract` 提交 `c1c84e8002bd0fecd808b282c483cda54e961384` 从 `753ca6a0cc0f7625898ae8839f8bc461788d502e` 非 squash 合并。
 - 定位：Stateful Context Infrastructure，增强已有 Writer，不是 AI Writer。
 - Stage 2.1 开发基线：`c54adce496851bc30c254201b9a7a5d8d19f5b1d`；已审核分支 `backend/stage-2-1` 的最终提交 `3c438cedfe66ee58dda12997a7c2a975d0d30533` 已非 squash 合并至 main。
@@ -52,7 +52,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 已在 feature branch 实现、等待 Product Owner Review；AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 已 completed / reviewed / merged / frozen；AI Extraction、RAG/pgvector、Context Compiler、Frontend–Backend Integration、Writer Connector、MCP、Deployment 仍 planned。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 
@@ -64,7 +64,7 @@ Stage 2.2.1A Benchmark + Eval Harness 已非 squash 合并 main，状态为 **CO
 
 Stage 2.2.1B0 已准备 live-run package；B0.1 当时状态为 **DEEPSEEK PROVIDER PREPARED / PROBE NOT AUTHORIZED**。官方 provider 为 `deepseek-api`，requested model 为 `deepseek-flash`；B0.1 尚未观察 provider 返回的 model identity，故当时保持 unknown/null。Gemini 仅保留为文档备选研究，相关 runtime adapter 与依赖已移除。DeepSeek evaluation-only adapter 显式发送 `reasoning.effort=none`，拒绝 reasoning 输出或非零 reasoning tokens，并保持既有 model identity drift、parser 与冻结评测语义。
 
-离线 preflight、未授权 manifest、synthetic probe package、结果 schemas 与 completed-run 覆盖保护均已准备；B0.1 的 probe CLI 固定返回 `DEEPSEEK_PROBE_NOT_AUTHORIZED`，live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`。测试或 preflight 不读取 `DEEPSEEK_API_KEY`；B0.1 自身真实 provider 调用为 **0**。后续单次授权 probe 的清洗后证明与当前 runner 状态见下方 B0.3；Stage 2.2.1B 未开始，Live Semantic Accuracy 未验证。
+离线 preflight、未授权 manifest、synthetic probe package、结果 schemas 与 completed-run 覆盖保护均已准备；B0.1 的 probe CLI 固定返回 `DEEPSEEK_PROBE_NOT_AUTHORIZED`，live entrypoint 固定返回 `LIVE_RUN_NOT_AUTHORIZED`。测试或 preflight 不读取 `DEEPSEEK_API_KEY`；B0.1 自身真实 provider 调用为 **0**。后续单次授权 probe 的清洗后证明与当前 runner 状态见下方 B0.3；B0.1 当时 Stage 2.2.1B 尚未开始，Live Semantic Accuracy 尚未验证。
 
 ## Stage 2.2.1B0.3 DeepSeek Live Runner Freeze
 
@@ -74,12 +74,14 @@ B0.3 已准备 fail-closed official runner 与 execution provenance：prepared m
 
 ## Stage 2.2.1B Live Semantic Architecture Experiment
 
-Stage 2.2.1B 官方 run 已 **COMPLETED / VALID / MERGED MAIN**，通过非 squash merge commit `42aee56acded28efdc15a2bd27bca6a59c352921` 保留完整准备、probe、freeze 与 finalization 历史：198/198 calls，0 failures；总 usage 为 353,591 input tokens / 25,005 output tokens。provider/requested/observed identity 为 `deepseek-api` / `deepseek-flash` / `deepseek-flash`，identity class 为 `PROVIDER_MODEL_ALIAS_ONLY`。
+Stage 2.2.1B 官方 run 已 **COMPLETED / VALID / MERGED / FROZEN**，通过非 squash merge commit `42aee56acded28efdc15a2bd27bca6a59c352921` 保留完整准备、probe、freeze 与 finalization 历史：198/198 calls，0 failures；总 usage 为 353,591 input tokens / 25,005 output tokens。provider/requested/observed identity 为 `deepseek-api` / `deepseek-flash` / `deepseek-flash`，identity class 为 `PROVIDER_MODEL_ALIAS_ONLY`。
 
 20-case Holdout 是主要证据。Generic 与 Specialist semantic accuracy 均为 12/20，False AUTO 均为 0/15，Safe AUTO 均为 4/5，Review Rate 均为 16/20。Generic stability 为 10/10，Specialist 为 9/10；Specialist 平均 calls 为 2.15 对 Generic 1.0，mean/median latency 约为两倍，P95 约为 2.9 倍。依预注册 simplification rule，Architecture Decision 为 **SELECT_GENERIC_VALIDATOR**。
 
-这一结果仅证明 Specialist decomposition 未提供足以抵偿复杂度的增量价值。12/20 不足以宣称 Generic semantic performance 强，也不授权扩大 AUTO acceptance。deterministic gate、conservative routing、high-impact review、human review 与 no direct LLM mutation 继续保留。Stage 2.2 V0.1 Specialist 仍是冻结历史基线；Stage 2.2.2 Runtime Validator V0.2 Generic Semantic Simplification 已 **IMPLEMENTED ON FEATURE BRANCH / AWAITING PRODUCT OWNER REVIEW**，尚未合并或冻结。Sanitized artifacts 见 `docs/evaluation/stage-2.2.1b/`；raw provider results 保持本地 Git-ignored。
+这一结果仅证明 Specialist decomposition 未提供足以抵偿复杂度的增量价值。12/20 不足以宣称 Generic semantic performance 强，也不授权扩大 AUTO acceptance。deterministic gate、conservative routing、high-impact review、human review 与 no direct LLM mutation 继续保留。Stage 2.2 V0.1 Specialist 仍是冻结历史基线；Stage 2.2.2 Runtime Validator V0.2 Generic Semantic Simplification 已 **COMPLETED / REVIEWED / MERGED / FROZEN**。Sanitized artifacts 见 `docs/evaluation/stage-2.2.1b/`；raw provider results 保持本地 Git-ignored。
 
-## Stage 2.2.2 Feature Branch Implementation
+## Stage 2.2.2 已完成 / 已审核 / 已合并 / 已冻结
 
 生产 Runtime Validator V0.2 对每个 deterministic gate 通过且 context 可用的候选只发出一次 Generic semantic request，使用与 Stage 2.2.1B eval 完全相同的冻结 prompt 与严格 Generic schema。非 `SUPPORTED`、provider/parse/timeout failure、context unavailable、retrieval truncated 与既有 high-impact policy 均保持 `NEEDS_REVIEW`；deterministic failed/conflict 继续分别为 `REJECT` / `CONFLICT` 且零 semantic calls。V0.1 Specialist checks 继续可由 domain schema、Memory/PostgreSQL repository 与 API 读取，无需 migration；历史 Specialist eval runner 保留。详见 `docs/STAGE_2_2_2_GENERIC_VALIDATOR.md`。
+
+Stage 2.2.2 合并后 main 验证：install/build/lint PASS；全量 270/270、backend 62/62、exact benchmark 11/11、runtime validator 71/71、validator-v0-2 13/13、evaluation 51/51、live-prep 37/37。生产路径对 eligible validation 恰好一次 Generic semantic call，deterministic gate、impact policy、human Decision、V0.1 Specialist ValidatorResult 兼容与 historical Specialist evaluation 均保留。独立审核发现部分 high-impact full-runtime 类别存在非阻塞测试覆盖缺口；独立 probe 未发现生产缺陷。

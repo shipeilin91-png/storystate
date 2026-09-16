@@ -1,10 +1,10 @@
 {
   "project": "StoryState",
   "stage": "Runtime Validator V0.2 Generic Simplification / Stage 2.2.2",
-  "stageStatus": "implemented on feature branch / awaiting Product Owner review",
+  "stageStatus": "completed / reviewed / merged / frozen",
   "frontendProductFlow": "completed / frozen",
   "canonicalStateBackendFoundation": "completed / frozen",
-  "liveSemanticValidation": "Stage 2.2.1B completed / valid / merged main",
+  "liveSemanticValidation": "Stage 2.2.1 Architecture Experiment completed / valid / merged / frozen",
   "liveSemanticEvaluationHarness": {
     "stage": "Stage 2.2.1A",
     "status": "completed / merged / frozen",
@@ -21,7 +21,7 @@
     "productOwnerFinalReview": "PASS",
     "astraFreezeCommit": "ddfb19260853b441b11934420ec5bce4feab76dd",
     "reviewedPreLiveFrozenCommit": "fe620a3d8e36cf81d70d39c426a22783c555379a",
-    "stage221B": "completed / valid / merged main",
+    "stage221B": "completed / valid / merged / frozen",
     "liveSemanticAccuracy": "architecture comparison measured at 12/20 for both; not sufficient for unrestricted canonical mutation",
     "mockOutput": "HARNESS TEST ONLY",
     "methodologyBoundary": "20-case preregistered internal StoryState challenge set from Ch13-17; supports the current-domain architecture decision, not universal long-horizon AIGC superiority",
@@ -33,7 +33,7 @@
   },
   "liveSemanticRunPackage": {
     "stage": "Stage 2.2.1B",
-    "status": "completed / valid / merged main",
+    "status": "completed / valid / merged / frozen",
     "officialProvider": "DeepSeek API",
     "providerId": "deepseek-api",
     "requestedModelId": "deepseek-flash",
@@ -50,7 +50,7 @@
     "liveRunnerStatus": "fail closed",
     "singleSessionRequired": true,
     "cleanWorktreeRequired": true,
-    "stage221B": "completed / merged main",
+    "stage221B": "completed / valid / merged / frozen",
     "liveSemanticAccuracy": "architecture evidence valid; Generic 12/20 and Specialist 12/20; no unrestricted mutation claim",
     "realProviderCalls": 199,
     "officialExecutionStatus": "COMPLETED",
@@ -243,7 +243,7 @@
       "description": "Runtime Validator V0.1 Specialist historical baseline; deterministic gate、bounded context、三个 semantic specialist、确定性聚合；不自动 Decision/Commit",
       "branch": "validator/stage-2-2-runtime",
       "verification": "Codex independent review: runtime 72/72; full 170/170; backend 62/62; exact contract 11/11; PGlite checks/audit and query-order regression PASS; complete DeltaInput fingerprint concurrency regression PASS",
-      "modelEvaluation": "Stage 2.2.1B valid architecture experiment: Generic 12/20, Specialist 12/20, False AUTO 0/15 each; SELECT_GENERIC_VALIDATOR for planned V0.2 only",
+      "modelEvaluation": "Stage 2.2.1B valid frozen architecture experiment: Generic 12/20, Specialist 12/20, False AUTO 0/15 each; SELECT_GENERIC_VALIDATOR implemented by frozen V0.2",
       "confidence": "NOT IMPLEMENTED"
     },
     {
@@ -258,14 +258,22 @@
     },
     {
       "id": "runtime-validator-v0-2",
-      "status": "implemented on feature branch / awaiting Product Owner review",
+      "status": "completed / reviewed / merged / frozen",
       "description": "Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification",
       "architectureDecision": "SELECT_GENERIC_VALIDATOR",
       "productionArchitecture": "deterministic gate -> bounded validation packet -> exactly one Generic semantic check -> deterministic impact/routing -> human Decision -> commit",
       "validatorVersion": "runtime-validator/0.2",
       "productionSemanticCallsPerEligibleValidation": 1,
+      "productionSpecialistRouting": false,
+      "deterministicGate": "preserved",
+      "impactPolicy": "preserved",
+      "humanDecision": "preserved",
       "legacyCompatibility": "V0.1 Specialist results remain readable; historical Specialist evaluation remains runnable; no migration",
-      "constraints": "Separate Product Owner review required; retain deterministic gate, conservative routing, high-impact review, human review, and no direct LLM mutation"
+      "historicalSpecialistEvaluation": "preserved",
+      "productOwnerReview": "PASS",
+      "independentEngineeringReview": "PASS_WITH_NON_BLOCKING_FINDINGS",
+      "nonBlockingFinding": "Some high-impact full-runtime categories have a test coverage gap; an independent probe did not reveal a production defect.",
+      "constraints": "Retain deterministic gate, conservative routing, high-impact review, human review, and no direct LLM mutation"
     }
   ],
   "contract": "Frontend Mock Contract ≠ Backend State Schema; Frontend Review Contract ≠ Backend State Schema"
