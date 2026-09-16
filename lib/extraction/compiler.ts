@@ -43,6 +43,23 @@ function aliasId(packet: ExtractionPacket, alias: string, kind: string): string 
   return packet.entities.find(value => value.alias === alias && value.kind === kind)?.id ?? null;
 }
 
+function canonicalItemReference(
+  packet: ExtractionPacket,
+  value: { valueRef: string | null; status: "resolved" | "unresolved"; lastConfirmedValueRef: string | null },
+): Item["owner"] {
+  const resolve = (reference: string | null) => {
+    if (reference === null) return null;
+    const id = aliasId(packet, reference, "character");
+    if (!id) throw new Error(`UNKNOWN_ENTITY_REF: ${reference}`);
+    return id;
+  };
+  return {
+    value: resolve(value.valueRef),
+    status: value.status,
+    lastConfirmedValue: resolve(value.lastConfirmedValueRef),
+  };
+}
+
 function evidenceMap(packet: ExtractionPacket, proposal: ExtractionProposal, sourceRevisionId: string): { byKey: Map<string, Evidence>; issues: CompilerIssue[] } {
   const byKey = new Map<string, Evidence>();
   const issues: CompilerIssue[] = [];
@@ -227,7 +244,9 @@ function compileEffect(
     invariant(row, "UNKNOWN_ENTITY_REF", "Item target is not active");
     if (effect.kind === "item_condition") return deltaInputSchema.parse({ ...common, targetType: "items", targetId, fieldPath: "condition", before: row.condition, after: effect.condition, basis: basis(effect) });
     const fieldPath = effect.kind === "item_holder" ? "holder" : effect.kind === "item_owner" ? "owner" : "custodian";
-    const after = effect.kind === "item_custodian" ? effect.after : effect.after;
+    const after = effect.kind === "item_custodian"
+      ? effect.after === null ? null : canonicalItemReference(packet, effect.after)
+      : canonicalItemReference(packet, effect.after);
     if (fieldPath === "owner") common.risk = ["ownership_uncertain"];
     return deltaInputSchema.parse({ ...common, targetType: "items", targetId, fieldPath, before: row[fieldPath], after, basis: basis(effect) });
   }

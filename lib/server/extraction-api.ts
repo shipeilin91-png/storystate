@@ -15,6 +15,7 @@ export type ExtractionRunDto = {
   validatorResults: ExtractionRunResult["validatorResults"];
   compilerIssues: ExtractionRunResult["compilerIssues"];
   warnings: ExtractionRunResult["warnings"];
+  validationIssues: ExtractionRunResult["validationIssues"];
   evidence: ExtractionRunResult["evidence"];
   events: ExtractionRunResult["events"];
   provider: ExtractionRunResult["provider"];
@@ -33,6 +34,7 @@ export function toExtractionRunDto(result: ExtractionRunResult): ExtractionRunDt
     validatorResults: result.validatorResults,
     compilerIssues: result.compilerIssues,
     warnings: result.warnings,
+    validationIssues: result.validationIssues,
     evidence: result.evidence,
     events: result.events,
     provider: result.provider,

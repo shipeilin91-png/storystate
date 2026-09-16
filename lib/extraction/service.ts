@@ -9,6 +9,14 @@ import { compileExtraction, type CompilerIssue } from "./compiler";
 import { buildExtractionPacket, extractionPacketHash, type ExtractionPacket } from "./packet";
 import { parseExtractionProposal, requestFor, type ExtractorProvider } from "./provider";
 
+export type ExtractionValidationIssue = {
+  deltaId: string;
+  code: "VALIDATOR_UNAVAILABLE";
+};
+
+export type CandidateValidator = Pick<RuntimeValidator, "validate">;
+export type CandidateValidatorFactory = (repository: StateRepository, semanticClient: SemanticModelClient) => CandidateValidator;
+
 export type ExtractionRunResult = {
   status: "completed" | "failed";
   sourceRevisionId: string;
@@ -22,6 +30,7 @@ export type ExtractionRunResult = {
   compilerIssues: CompilerIssue[];
   warnings: CompilerIssue[];
   validatorResults: Array<StateDelta["validatorResult"]>;
+  validationIssues: ExtractionValidationIssue[];
   provider: { modelId: string; calls: number; packetHash: string | null };
   timing: { startedAt: string; completedAt: string; durationMs: number };
   error?: string;
@@ -33,6 +42,8 @@ export class ExtractionService {
     private readonly extractor: ExtractorProvider,
     private readonly semanticClient: SemanticModelClient = productionSemanticClient(),
     private readonly timeoutMs = 20000,
+    private readonly validatorFactory: CandidateValidatorFactory =
+      (repository, semanticClient) => new RuntimeValidator(repository, semanticClient),
   ) {}
 
   async extractRevision(storyId: string, sourceRevisionId: string): Promise<ExtractionRunResult> {
@@ -56,12 +67,18 @@ export class ExtractionService {
 
     const compiled = compileExtraction(initial, packet, proposal);
     const persisted = await this.persistCompiled(storyId, packet, compiled);
-    const validatorResults: Array<StateDelta["validatorResult"]> = [];
+    const validationIssues: ExtractionValidationIssue[] = [];
+    const validator = this.validatorFactory(this.repository, this.semanticClient);
     for (const delta of persisted) {
-      validatorResults.push(await new RuntimeValidator(this.repository, this.semanticClient).validate(storyId, delta.id, packet.stateVersion));
+      try {
+        await validator.validate(storyId, delta.id, packet.stateVersion);
+      } catch {
+        validationIssues.push({ deltaId: delta.id, code: "VALIDATOR_UNAVAILABLE" });
+      }
     }
     const completed = Date.now();
     const current = await this.repository.read(storyId);
+    const deltas = persisted.map(delta => current.deltas.find(value => value.id === delta.id) ?? delta);
     return {
       status: "completed",
       sourceRevisionId,
@@ -70,11 +87,12 @@ export class ExtractionService {
       proposal,
       evidence: current.evidence.filter(value => persisted.some(delta => delta.evidenceIds.includes(value.id))),
       events: current.events.filter(value => persisted.some(delta => delta.sourceEventId === value.id)),
-      deltas: persisted,
+      deltas,
       rejectedEffects: compiled.rejectedEffects,
       compilerIssues: compiled.issues,
       warnings: compiled.warnings,
-      validatorResults,
+      validatorResults: deltas.map(delta => delta.validatorResult),
+      validationIssues,
       provider: { modelId: this.extractor.modelId, calls: 1, packetHash: extractionPacketHash(packet) },
       timing: { startedAt, completedAt: new Date(completed).toISOString(), durationMs: completed - started },
     };
@@ -117,7 +135,8 @@ export class ExtractionService {
     return {
       status: "failed", sourceRevisionId, baseStateVersion: packet.stateVersion, packet, proposal: null,
       evidence: [], events: [], deltas: [], rejectedEffects: [], compilerIssues: [], warnings: [],
-      validatorResults: [], provider: { modelId: this.extractor.modelId, calls: 1, packetHash: extractionPacketHash(packet) },
+      validatorResults: [], validationIssues: [],
+      provider: { modelId: this.extractor.modelId, calls: 1, packetHash: extractionPacketHash(packet) },
       timing: { startedAt: new Date(started).toISOString(), completedAt: new Date(completed).toISOString(), durationMs: completed - started },
       error,
     };

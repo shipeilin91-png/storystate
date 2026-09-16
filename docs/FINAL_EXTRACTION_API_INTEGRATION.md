@@ -31,7 +31,9 @@ It creates one deterministic UUID story and prints its `storyId` and `sourceRevi
 { "sourceRevisionId": "UUID" }
 ```
 
-The response includes status, source/base-version identity, candidate deltas and validator results, compiler issues/warnings, exact evidence spans/quotes, events, sanitized provider metadata, and timings. It excludes provider payloads, prompts, model reasoning, and credentials.
+The response includes status, source/base-version identity, candidate deltas and validator results, runtime `validationIssues`, compiler issues/warnings, exact evidence spans/quotes, events, sanitized provider metadata, and timings. If validation unexpectedly fails after atomic candidate persistence, extraction remains completed, the affected candidate stays `needs_review`, and the response reports `VALIDATOR_UNAVAILABLE` without provider details.
+
+The model request uses deterministic typed aliases such as `CHAR_001` and `ITEM_001`. Story, source revision, and Canonical row UUIDs remain server-side and are not serialized into model input.
 
 `GET /api/stories/:storyId/review` returns open candidate deltas with their validator results, linked exact evidence, events, source revision identity, source documents, and provenance needed for Review hydration after a refresh.
 

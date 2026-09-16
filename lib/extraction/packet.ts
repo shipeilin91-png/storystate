@@ -35,13 +35,21 @@ function label(row: CanonicalRow): string[] {
   if ("name" in row) return [row.name, ...("role" in row ? [row.role] : [])];
   if ("title" in row) return [row.title, ...("coreQuestion" in row ? [row.coreQuestion] : [])];
   if ("statement" in row) return [row.statement];
-  if ("fromCharacterId" in row) return [`${row.fromCharacterId}->${row.toCharacterId}`, row.predicate, row.category];
-  return [row.id];
+  if ("fromCharacterId" in row) return [row.predicate, row.category, row.value, row.scope];
+  return [];
 }
 
+const aliasPrefixes: Record<ExtractionEntity["kind"], string> = {
+  character: "CHAR",
+  item: "ITEM",
+  thread: "THREAD",
+  proposition: "PROP",
+  relationship: "REL",
+};
+
 function aliases(rowsToAlias: readonly CanonicalRow[], kind: ExtractionEntity["kind"]): ExtractionEntity[] {
-  return rowsToAlias.filter(row => row.active).map(row => ({
-    alias: row.id,
+  return rowsToAlias.filter(row => row.active).sort((a, b) => a.id.localeCompare(b.id)).map((row, index) => ({
+    alias: `${aliasPrefixes[kind]}_${String(index + 1).padStart(3, "0")}`,
     id: row.id,
     kind,
     labels: label(row).slice(0, 4),

@@ -77,12 +77,12 @@ export class ChatCompletionsExtractorProvider implements ExtractorProvider {
 }
 
 export function parseExtractionProposal(output: unknown): ExtractionProposal {
-  if (typeof output === "string") {
-    let parsed: unknown;
-    try { parsed = JSON.parse(output); } catch { throw new Error("EXTRACTION_OUTPUT_INVALID"); }
+  try {
+    const parsed = typeof output === "string" ? JSON.parse(output) : output;
     return extractionProposalSchema.parse(parsed);
+  } catch {
+    throw new Error("EXTRACTION_OUTPUT_INVALID");
   }
-  return extractionProposalSchema.parse(output);
 }
 
 export function requestFor(packet: ExtractionPacket, signal: AbortSignal): ExtractorRequest {
