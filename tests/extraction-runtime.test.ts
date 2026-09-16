@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { MemoryStateRepository } from "../lib/repositories/memory-state-repository";
 import { StateService } from "../lib/server/state-service";
 import { ExtractionService } from "../lib/extraction/service";
-import { FakeExtractorProvider } from "../lib/extraction/provider";
+import { ChatCompletionsExtractorProvider, FakeExtractorProvider, parseExtractionProposal } from "../lib/extraction/provider";
 import { compileExtraction } from "../lib/extraction/compiler";
 import { buildExtractionPacket, type ExtractionPacket } from "../lib/extraction/packet";
 import { buildExtractionRequest } from "../lib/extraction/prompt";
@@ -168,6 +168,69 @@ test("malformed extractor output fails closed with zero business artifacts", asy
   assert.equal((await f.service.getEvents(f.storyId)).length, baseline.events.length);
   assert.equal((await f.service.getDeltas(f.storyId)).length, baseline.deltas.length);
   assert.equal((await f.repository.read(f.storyId)).evidence.length, 0);
+});
+
+test("DeepSeek extractor uses JSON mode while Zod remains the fail-closed authority", async () => {
+  const valid = { evidence: [], events: [], effects: [], unresolvedMentions: [] };
+  let body: Record<string, unknown> = {};
+  const transport: typeof fetch = async (_url, init) => {
+    body = JSON.parse(init!.body as string);
+    return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify(valid) } }] });
+  };
+  const provider = new ChatCompletionsExtractorProvider(
+    "deepseek-flash",
+    "https://api.deepseek.com/chat/completions",
+    "test-key",
+    transport,
+  );
+  const output = await provider.complete({
+    packet: {} as ExtractionPacket,
+    system: "Extraction contract.",
+    input: "{}",
+    signal: new AbortController().signal,
+  });
+  assert.equal(body.model, "deepseek-flash");
+  assert.equal(body.stream, false);
+  assert.deepEqual(body.thinking, { type: "disabled" });
+  assert.equal(body.max_tokens, 8000);
+  assert.deepEqual(body.response_format, { type: "json_object" });
+  const messages = body.messages as Array<{ role: string; content: string }>;
+  assert.match(messages[0].content, /Return ONLY valid JSON\./);
+  assert.match(messages[0].content, /"unresolvedMentions":\[\]/);
+  assert.match(messages[0].content, /"speakerRef":entity alias or null/);
+  assert.match(messages[0].content, /"kind":"item_holder"\|"item_owner"/);
+  assert.match(messages[0].content, /For effects\[\]\.kind use EXACTLY one of/);
+  assert.deepEqual(parseExtractionProposal(output), valid);
+  assert.throws(() => parseExtractionProposal({ ...valid, extra: true }), /EXTRACTION_OUTPUT_INVALID/);
+  assert.throws(() => parseExtractionProposal("{"), /EXTRACTION_OUTPUT_INVALID/);
+});
+
+test("DeepSeek extractor accepts only stop with non-empty content", async (t) => {
+  const request = {
+    packet: {} as ExtractionPacket,
+    system: "Extraction contract.",
+    input: "{}",
+    signal: new AbortController().signal,
+  };
+  const providerFor = (finishReason: string | null, content: unknown) => new ChatCompletionsExtractorProvider(
+    "deepseek-flash",
+    "https://api.deepseek.com/chat/completions",
+    "test-key",
+    async () => Response.json({ choices: [{ finish_reason: finishReason, message: { content } }] }),
+  );
+
+  assert.equal(await providerFor("stop", "{}").complete(request), "{}");
+  for (const finishReason of ["length", "content_filter", null, "provider_resource_error"]) {
+    await t.test(`rejects ${String(finishReason)}`, async () => {
+      await assert.rejects(providerFor(finishReason, "{}").complete(request), /EXTRACTOR_PROVIDER_RESPONSE_INCOMPLETE/);
+    });
+  }
+  for (const content of ["", "   "]) {
+    await t.test("rejects empty content", async () => {
+      await assert.rejects(providerFor("stop", content).complete(request), /EXTRACTOR_EMPTY_CONTENT/);
+    });
+  }
+  await assert.rejects(providerFor("stop", null).complete(request), /EXTRACTOR_PROVIDER_RESPONSE_INVALID/);
 });
 
 test("provider failure fails closed and does not create a Human Decision or Canonical mutation", async () => {

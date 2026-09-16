@@ -3,6 +3,20 @@ import { genericSemanticCheckSchema, semanticCheckSchema, type GenericSemanticCh
 import type { ValidationPacket } from "./context";
 import { genericSemanticPrompt } from "./generic-contract";
 
+const DEEPSEEK_GENERIC_JSON_INSTRUCTION = `Return ONLY valid JSON matching the semantic validation structure.
+No markdown.
+No explanation.
+No chain-of-thought.
+Example structure: {"agent":"generic","verdict":"UNCERTAIN","reason":"Evidence is insufficient.","evidenceIds":[]}`;
+const DEEPSEEK_SPECIALIST_JSON_INSTRUCTION = `Return ONLY valid JSON matching the semantic validation structure.
+No markdown.
+No explanation.
+No chain-of-thought.`;
+
+function isDeepSeekEndpoint(endpoint: string): boolean {
+  return new URL(endpoint).hostname === "api.deepseek.com";
+}
+
 export type SemanticRequest = { agent: SemanticAgent; system: string; packet: ValidationPacket; signal: AbortSignal };
 export interface SemanticModelClient {
   readonly modelId: string;
@@ -121,19 +135,30 @@ export class UnavailableSemanticModelClient implements SemanticModelClient {
 
 // Optional env-only OpenAI-compatible chat-completions boundary; no SDK or provider code in specialists.
 export class ChatCompletionsSemanticClient implements SemanticModelClient {
+  private readonly deepSeekJsonMode: boolean;
+
   constructor(readonly modelId: string, private endpoint: string, private apiKey: string, private transport: typeof fetch = fetch) {
     const url = new URL(endpoint);
     if (url.protocol !== "https:" || url.username || url.password) throw new Error("HTTPS model endpoint required");
+    this.deepSeekJsonMode = isDeepSeekEndpoint(endpoint);
   }
   async complete(request: SemanticRequest): Promise<unknown> {
     const response = await this.transport(this.endpoint, {
       method: "POST", redirect: "error", signal: request.signal,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.apiKey}` },
       body: JSON.stringify({
-        model: this.modelId, temperature: 0, n: 1, max_tokens: 500,
-        messages: [{ role: "system", content: request.system }, { role: "user", content: JSON.stringify(request.packet) }],
-        response_format: { type: "json_schema", json_schema: { name: "semantic_check", strict: true,
-          schema: z.toJSONSchema(request.agent === "generic" ? genericSemanticCheckSchema : semanticCheckSchema) } },
+        model: this.modelId, temperature: 0, n: 1, max_tokens: this.deepSeekJsonMode ? 2000 : 500,
+        ...(this.deepSeekJsonMode ? { stream: false, thinking: { type: "disabled" } } : {}),
+        messages: [
+          { role: "system", content: this.deepSeekJsonMode
+            ? `${request.system}\n\n${request.agent === "generic" ? DEEPSEEK_GENERIC_JSON_INSTRUCTION : DEEPSEEK_SPECIALIST_JSON_INSTRUCTION}`
+            : request.system },
+          { role: "user", content: JSON.stringify(request.packet) },
+        ],
+        response_format: this.deepSeekJsonMode
+          ? { type: "json_object" }
+          : { type: "json_schema", json_schema: { name: "semantic_check", strict: true,
+            schema: z.toJSONSchema(request.agent === "generic" ? genericSemanticCheckSchema : semanticCheckSchema) } },
       }),
     });
     if (!response.ok) throw new Error("Semantic provider unavailable");
@@ -150,11 +175,22 @@ export class ChatCompletionsSemanticClient implements SemanticModelClient {
         chunks.push(value);
       }
     } finally { reader.releaseLock(); }
-    const envelope = z.object({ choices: z.array(z.object({
-      finish_reason: z.literal("stop"),
-      message: z.object({ content: z.string(), refusal: z.null().optional(), tool_calls: z.never().optional() }),
-    })).length(1) }).parse(JSON.parse(Buffer.concat(chunks).toString("utf8")));
-    return envelope.choices[0].message.content;
+    let envelope: { choices: Array<{
+      finish_reason: string | null;
+      message: { content: string; refusal?: null; tool_calls?: never };
+    }> };
+    try {
+      envelope = z.object({ choices: z.array(z.object({
+        finish_reason: z.string().nullable(),
+        message: z.object({ content: z.string(), refusal: z.null().optional(), tool_calls: z.never().optional() }),
+      })).length(1) }).parse(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+    } catch {
+      throw new Error("SEMANTIC_PROVIDER_RESPONSE_INVALID");
+    }
+    const choice = envelope.choices[0]!;
+    if (choice.finish_reason !== "stop") throw new Error("SEMANTIC_PROVIDER_RESPONSE_INCOMPLETE");
+    if (choice.message.content.trim().length === 0) throw new Error("SEMANTIC_PROVIDER_EMPTY_CONTENT");
+    return choice.message.content;
   }
 }
 export function productionSemanticClient(): SemanticModelClient {

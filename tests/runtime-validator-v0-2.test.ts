@@ -123,6 +123,67 @@ test("provider-neutral adapter emits one bounded strict Generic request without 
   assert.equal(format.json_schema.schema.properties.agent.const, "generic");
 });
 
+test("DeepSeek Generic adapter uses JSON mode while Zod remains fail closed", async () => {
+  const f = await runtimeFixture(), packet = context.build(await f.repository.read(f.storyId), f.delta);
+  const valid = {
+    agent: "generic" as const,
+    verdict: "SUPPORTED" as const,
+    reason: "The cited handoff supports the candidate.",
+    evidenceIds: [f.evidenceIds[0]],
+  };
+  let body: Record<string, unknown> = {};
+  const transport: typeof fetch = async (_url, init) => {
+    body = JSON.parse(init!.body as string);
+    return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify(valid) } }] });
+  };
+  const client = new ChatCompletionsSemanticClient(
+    "deepseek-flash",
+    "https://api.deepseek.com/chat/completions",
+    "test-key",
+    transport,
+  );
+  assert.deepEqual(await new GenericValidationOrchestrator(client).run(packet), valid);
+  assert.equal(body.model, "deepseek-flash");
+  assert.equal(body.stream, false);
+  assert.deepEqual(body.thinking, { type: "disabled" });
+  assert.equal(body.max_tokens, 2000);
+  assert.deepEqual(body.response_format, { type: "json_object" });
+  const messages = body.messages as Array<{ role: string; content: string }>;
+  assert.match(messages[0].content, /Return ONLY valid JSON matching the semantic validation structure\./);
+  assert.match(messages[0].content, /"agent":"generic"/);
+  assert.throws(() => parseGenericSemanticOutput({ ...valid, extra: true }, packet));
+  assert.throws(() => parseGenericSemanticOutput("{", packet));
+});
+
+test("DeepSeek Generic adapter accepts only stop with non-empty content", async (t) => {
+  const f = await runtimeFixture(), packet = context.build(await f.repository.read(f.storyId), f.delta);
+  const request = { agent: "generic" as const, system: genericSemanticPrompt, packet, signal: new AbortController().signal };
+  const clientFor = (finishReason: string | null, content: unknown) => new ChatCompletionsSemanticClient(
+    "deepseek-flash",
+    "https://api.deepseek.com/chat/completions",
+    "test-key",
+    async () => Response.json({ choices: [{ finish_reason: finishReason, message: { content } }] }),
+  );
+
+  assert.equal(await clientFor("stop", "{}").complete(request), "{}");
+  for (const finishReason of ["length", "content_filter", null, "provider_resource_error"]) {
+    await t.test(`rejects ${String(finishReason)}`, async () => {
+      await assert.rejects(clientFor(finishReason, "{}").complete(request), /SEMANTIC_PROVIDER_RESPONSE_INCOMPLETE/);
+    });
+  }
+  for (const content of ["", "   "]) {
+    await t.test("rejects empty content", async () => {
+      await assert.rejects(clientFor("stop", content).complete(request), /SEMANTIC_PROVIDER_EMPTY_CONTENT/);
+    });
+  }
+  await assert.rejects(clientFor("stop", null).complete(request), /SEMANTIC_PROVIDER_RESPONSE_INVALID/);
+
+  const unavailable = await new GenericValidationOrchestrator(clientFor("stop", "not-json")).run(packet);
+  assert.deepEqual(unavailable, {
+    agent: "generic", verdict: "UNCERTAIN", reason: "Semantic check unavailable or invalid; human review required.", evidenceIds: [], code: "SEMANTIC_UNAVAILABLE",
+  });
+});
+
 test("production source has no Specialist routing or fan-out dependency", async () => {
   const source = await readFile("lib/server/validator/runtime-validator.ts", "utf8");
   assert.ok(!source.includes("routeAgents"));
