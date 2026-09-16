@@ -82,6 +82,15 @@ test("item custodian distinguishes clearing the assertion from an unresolved ass
   assert.equal(forbiddenEffectSchema.parse({ forbiddenId: "F-D01-1", kind: "item_custodian", semanticTarget: { itemRef: "ITEM_RECORDER" }, forbiddenAfter: null, boundary: "unknown_entity_hallucination" }).forbiddenAfter, null);
 });
 
+test("item condition rejects epistemic sentinel words while accepting domain values", () => {
+  assert.throws(() => extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[4], condition: "unknown" }] }));
+  assert.throws(() => extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[4], condition: "unresolved" }] }));
+  const parsed = extractionProposalSchema.parse({ ...proposal, effects: [{ ...effects[4], condition: "damaged" }] });
+  assert.equal(parsed.effects[0].kind, "item_condition");
+  if (parsed.effects[0].kind !== "item_condition") throw new Error("item condition contract drift");
+  assert.equal(parsed.effects[0].condition, "damaged");
+});
+
 test("Compiler specification is declarative, complete and preserves CREATE boundaries", () => {
   assert.deepEqual(Object.keys(compilerSlotMapping), [...EFFECT_KINDS]);
   assert.deepEqual(compilerCreatePolicy.canonicalEntities, { Character: false, Item: false, Proposition: false, PlotThread: false, Relationship: false });
@@ -121,6 +130,7 @@ test("contract hash explicitly fingerprints frozen cross-field semantic invarian
   assert.equal(extractionContractFingerprint.semanticInvariants, extractionContractSemanticInvariants);
   assert.equal(extractionContractSemanticInvariants.referenceIntegrity.effectEvidenceOwnership, "MUST_BE_SUBSET_OF_REFERENCED_EVENT_GROUP_EVIDENCE_KEYS");
   assert.equal(extractionContractSemanticInvariants.crossFieldSemantics.itemCustodianNull, "NO_CURRENT_ASSERTION_DISTINCT_FROM_EPISTEMIC_UNRESOLVED");
+  assert.equal(extractionContractSemanticInvariants.crossFieldSemantics.itemConditionDomainValue, "UNKNOWN_AND_UNRESOLVED_EPISTEMIC_SENTINELS_FORBIDDEN");
   const fingerprintHash = createHash("sha256").update(JSON.stringify(extractionContractFingerprint)).digest("hex");
   assert.equal(extractionContractHash, fingerprintHash);
 });

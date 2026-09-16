@@ -93,7 +93,7 @@ export function buildExtractionDevelopmentDataset() {
       forbiddenEffects: [], metadata: { negative: false, boundaryTags: ["direction_vs_arrival", "historical_vs_current"], minimalPairIds: ["MP01", "MP02"] },
     },
     {
-      caseId: "D02", title: "DIRECTION ONLY", passage: "纪川冲出维修间，沿走廊朝控制室跑去。", goldEffects: [],
+      caseId: "D02", title: "DIRECTION ONLY", passage: "纪川仍站在维修间门内，朝控制室方向看了一眼：“等会儿过去看看。”", goldEffects: [],
       forbiddenEffects: [{ forbiddenId: "F-D02-1", kind: "character_location", semanticTarget: { characterRef: "CHAR_JI" }, forbiddenAfter: { value: "Control Room", status: "resolved", lastConfirmedValue: "Control Room" }, boundary: "direction_vs_arrival" }],
       metadata: { negative: true, boundaryTags: ["direction_vs_arrival"], minimalPairIds: ["MP01"] },
     },

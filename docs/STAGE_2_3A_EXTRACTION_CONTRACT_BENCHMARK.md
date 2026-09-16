@@ -35,7 +35,7 @@ The strict Zod contract contains four top-level arrays: `evidence`, `events`, `e
 8. `plot_thread_status`
 9. `relationship_value`
 
-Holder, owner, and custodian remain independent. A custodian `after: null` clears the current custodian assertion; an epistemic unresolved value preserves an assertion whose current value is unknown, so the two forms are not interchangeable. Confidence is telemetry only. AI support kinds exclude `human_confirmation` and `restore`. Unresolved mentions record ambiguity and never create canonical entities.
+Holder, owner, and custodian remain independent. A custodian `after: null` clears the current custodian assertion; an epistemic unresolved value preserves an assertion whose current value is unknown, so the two forms are not interchangeable. Item condition rejects the epistemic sentinels `unknown` and `unresolved` as domain values, and this restriction is part of the semantic-invariant fingerprint. Confidence is telemetry only. AI support kinds exclude `human_confirmation` and `restore`. Unresolved mentions record ambiguity and never create canonical entities.
 
 Each Effect may cite only Evidence owned by its referenced EventGroup. Event and Effect evidence-key lists are unique, as are Event participant references. This preserves the local provenance chain Evidence → Event → Effect before deterministic compilation.
 
@@ -49,7 +49,7 @@ An exact duplicate for one canonical slot produces `WARNING:DUPLICATE_EFFECT`. D
 
 ## Development benchmark
 
-The visible Development Set uses the deterministic 北岬站 universe. It contains exactly 14 cases and 14 Gold Effects. D02 and D14 are zero-effect cases. D05 and D09 each contain two Gold Effects. Six registered minimal-pair relationships cover arrival/direction, current/historical location, holder/owner, reported/underlying proposition, plot progress/resolution, and bounded/broader operational cooperation.
+The visible Development Set uses the deterministic 北岬站 universe. It contains exactly 14 cases and 14 Gold Effects. D02 and D14 are zero-effect cases; D02 keeps Ji inside the Maintenance Room while expressing only a future intention toward the Control Room. D05 and D09 each contain two Gold Effects. Six registered minimal-pair relationships cover arrival/direction, current/historical location, holder/owner, reported/underlying proposition, plot progress/resolution, and bounded/broader operational cooperation.
 
 Gold and Forbidden effects are semantic contracts rather than DeltaInput objects. Matching uses exact aliases and one-to-one deterministic semantic keys. Duplicate predictions are extra false positives. Text normalization is `extraction-text-normalization/v0.1`: Unicode NFKC, trim, whitespace collapse, and terminal punctuation removal. It performs no paraphrase matching, fuzzy entity mapping, embeddings, or LLM judging.
 
@@ -65,9 +65,9 @@ No Stage 2.3A result claims extraction performance. A future official evaluation
 
 | Contract | SHA-256 |
 |---|---|
-| extractionContractHash | `37b9e48646905c7b714867a7709096eca3e441c7247978f6ad7f9ed15bca0392` |
+| extractionContractHash | `fdb10c9c9e9c9ee80ac2efa70c267a2399209ac8c3d5c3d4cabc084d332704f4` |
 | compilerSpecHash | `e4b182663f3d8a87075bb0bdb96cb28d864d0089fda6a00488bb305a269f7202` |
-| developmentDatasetHash | `2da4010147d5ad8b9ba53edbf7a1e0e24ec0b40a97155585542229fbbf375d11` |
+| developmentDatasetHash | `d9e9dd16b13edc1428e23a80c2ca0a32fef43e6a4c1886a62717808815063dfe` |
 | holdoutBlueprintHash | `35baeb1ddd87bf122b9f9f649ff8dab5364e29a272722bba74154b5ed35f00f6` |
 
 No extractor configuration hash exists because no Extractor prompt or runtime exists. No Holdout dataset hash exists because no actual Holdout cases exist.

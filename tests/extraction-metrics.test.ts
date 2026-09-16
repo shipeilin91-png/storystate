@@ -19,7 +19,7 @@ test("proposal and compiled metrics remain distinct while compiler rejection sta
     characterRef: forbidden.semanticTarget.characterRef, after: forbidden.forbiddenAfter,
   };
   const proposalD02 = extractionProposalSchema.parse({
-    evidence: [{ key: "E", quote: "朝控制室跑去", occurrence: 0, speakerRef: null }],
+    evidence: [{ key: "E", quote: "等会儿过去看看", occurrence: 0, speakerRef: null }],
     events: [{ key: "EV", kind: "movement", participantRefs: ["CHAR_JI"], evidenceKeys: ["E"] }],
     effects: [directionFalsePositive], unresolvedMentions: [],
   });

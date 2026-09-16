@@ -230,6 +230,7 @@ export const extractionContractSemanticInvariants = deepFreeze({
     resolvedPlot: "RESOLUTION_AND_ASSESSMENT_REQUIRED",
     nonResolvedPlot: "RESOLUTION_AND_ASSESSMENT_MUST_BE_NULL",
     itemCustodianNull: "NO_CURRENT_ASSERTION_DISTINCT_FROM_EPISTEMIC_UNRESOLVED",
+    itemConditionDomainValue: "UNKNOWN_AND_UNRESOLVED_EPISTEMIC_SENTINELS_FORBIDDEN",
   },
 });
 

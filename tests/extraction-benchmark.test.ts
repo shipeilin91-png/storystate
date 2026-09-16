@@ -23,6 +23,24 @@ test("Development benchmark freezes exactly 14 cases and 14 Gold Effects", () =>
   assert.deepEqual(minimalPairs.map(value => value.caseIds), [["D01", "D02"], ["D01", "D14"], ["D04", "D05"], ["D06", "D07"], ["D10", "D11"], ["D12", "D13"]]);
 });
 
+test("D02 remains in Maintenance Room and expresses future direction without a location transition", () => {
+  const d02 = extractionDevelopmentDataset.cases.find(value => value.caseId === "D02")!;
+  assert.equal(d02.passage, "纪川仍站在维修间门内，朝控制室方向看了一眼：“等会儿过去看看。”");
+  assert.equal(d02.goldEffects.length, 0);
+  const jiId = extractionDevelopmentDataset.catalog.find(value => value.alias === "CHAR_JI")!.id;
+  assert.equal(d02.baseState.characters.find(value => value.id === jiId)!.location.value, "Maintenance Room");
+  const forbidden = d02.forbiddenEffects[0];
+  assert.equal(forbidden.kind, "character_location");
+  if (forbidden.kind !== "character_location") throw new Error("D02 forbidden contract drift");
+  assert.equal(forbidden.forbiddenAfter.value, "Control Room");
+  assert.equal(forbidden.forbiddenAfter.status, "resolved");
+  assert.equal(forbidden.boundary, "direction_vs_arrival");
+  assert.deepEqual(extractionDevelopmentDataset.minimalPairs.find(value => value.pairId === "MP01")!.caseIds, ["D01", "D02"]);
+  assert.match(d02.passage, /仍站在维修间门内/);
+  assert.match(d02.passage, /等会儿/);
+  assert.doesNotMatch(d02.passage, /离开|走出|冲出|进入|到达|抵达/);
+});
+
 test("every base Canonical State is valid and reported proposition remains distinct", () => {
   for (const benchmarkCase of extractionDevelopmentDataset.cases) validateCanonical(benchmarkCase.baseState);
   const state = extractionDevelopmentDataset.cases[0].baseState;
