@@ -5,11 +5,14 @@ import { PostgresStateRepository } from "../repositories/postgres-state-reposito
 import { StateService } from "./state-service";
 
 let pool: Pool | undefined;
-export function productionService() {
+export function productionRepository() {
   const url = process.env.STORYSTATE_DATABASE_URL;
   if (!url) throw new DomainError("DATABASE_UNAVAILABLE", "Backend database not configured", 503);
   pool ??= new Pool({ connectionString: url, max: 5 });
-  return new StateService(new PostgresStateRepository(pool));
+  return new PostgresStateRepository(pool);
+}
+export function productionService() {
+  return new StateService(productionRepository());
 }
 export async function respond(work: () => Promise<unknown>) {
   try { return Response.json(await work()); }

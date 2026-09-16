@@ -17,6 +17,8 @@
     "test:extraction-contract": "node --import tsx --test tests/extraction-contract.test.ts",
     "test:extraction-eval": "node --import tsx --test tests/extraction-benchmark.test.ts tests/extraction-matching.test.ts tests/extraction-metrics.test.ts",
     "test:extraction-runtime": "node --import tsx --test tests/extraction-runtime.test.ts",
+    "test:extraction-api": "node --import tsx --test tests/extraction-api.test.ts",
+    "demo:seed": "node --import tsx scripts/seed-demo-story.ts",
     "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts",
     "eval:semantic:live:preflight": "node --import tsx scripts/eval-semantic-live-preflight.ts",
     "eval:semantic:deepseek:probe": "node --import tsx scripts/eval-semantic-deepseek-probe-disabled.ts",
