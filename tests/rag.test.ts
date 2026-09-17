@@ -6,6 +6,7 @@ import { buildExtractionRequest } from "../lib/extraction/prompt";
 import { ExtractionService } from "../lib/extraction/service";
 import { FakeExtractorProvider } from "../lib/extraction/provider";
 import { MemoryStateRepository } from "../lib/repositories/memory-state-repository";
+import { requireRemoteDatabaseUrl } from "../lib/server/api";
 import { StateService } from "../lib/server/state-service";
 import { chunkText, chunksForRevision, contentHash, type EvidenceChunk } from "../lib/rag/chunks";
 import { eligibleHistory, ragEnabled, scopeFor, selectHistoricalContext, type ChunkRepository, type HistoricalContextProvider, type RetrievalScope } from "../lib/rag/retrieval";
@@ -105,6 +106,22 @@ test("feature flag is off by default and only enables explicit true values", () 
   assert.equal(ragEnabled("false"), false);
   assert.equal(ragEnabled("1"), true);
   assert.equal(ragEnabled("true"), true);
+});
+
+test("production RAG operations reject missing, redacted and loopback database URLs", () => {
+  for (const value of [
+    undefined,
+    "[SENSITIVE]",
+    "postgresql://localhost/story",
+    "postgresql://127.0.0.1/story",
+    "postgresql://[::1]/story",
+  ]) {
+    assert.throws(() => requireRemoteDatabaseUrl(value), /database|Remote database/i);
+  }
+  assert.equal(
+    requireRemoteDatabaseUrl("postgresql://db.example.test/story"),
+    "postgresql://db.example.test/story",
+  );
 });
 
 test("flag-off extractor request keeps the baseline projection; flag-on request labels context-only sections", async () => {

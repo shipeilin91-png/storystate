@@ -2,6 +2,9 @@
 
 - Current Stage: **StoryState MVP engineering complete / frozen on `release/final-demo`**. Stage 2.3B, Final Frontend, and Final E2E are complete; deployment and real runtime smoke are blocked only by unavailable production credentials, and main integration is held by that release gate.
 - Evidence RAG V0.1: **implemented on `feat/evidence-rag-v0-1`, default OFF pending benchmark/preview acceptance**. It retrieves bounded historical context only; it does not alter Canonical State or Evidence authority.
+<!-- RAG_V0_1_LIVE_RESULT_START -->
+- Evidence RAG V0.1 live result: **PENDING SERVER-RUNTIME FINALIZATION**. No enablement claim is made before the 12-case DeepSeek A/B and production retrieval smoke complete.
+<!-- RAG_V0_1_LIVE_RESULT_END -->
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。

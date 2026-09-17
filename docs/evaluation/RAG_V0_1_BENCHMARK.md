@@ -2,11 +2,12 @@
 
 ## Status
 
+<!-- RAG_V0_1_LIVE_RESULT_START -->
 The deterministic retrieval/safety harness passes locally. The repository-local
-finalizer writes the sanitized real A/B result to `live-results.json` and
-`live-summary.json` after authenticated remote execution. Until that artifact
-exists, no provider accuracy or enablement claim is made and Production
-remains `STORYSTATE_RAG_ENABLED=0`/unset.
+server-runtime finalizer will write sanitized `live-results.json` and
+`live-summary.json` artifacts after the real 12-case A/B. Production remains
+disabled until that run satisfies every enablement gate.
+<!-- RAG_V0_1_LIVE_RESULT_END -->
 
 ## Registered Cases
 

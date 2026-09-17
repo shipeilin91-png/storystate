@@ -21,7 +21,6 @@
     "test:rag": "node --import tsx --test tests/rag.test.ts",
     "benchmark:rag": "node --import tsx scripts/rag-benchmark.ts",
     "rag:backfill": "node --import tsx scripts/rag-backfill.ts",
-    "rag:production-smoke": "node --import tsx scripts/rag-production-smoke.ts",
     "demo:seed": "node --import tsx scripts/seed-demo-story.ts",
     "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts",
     "eval:semantic:live:preflight": "node --import tsx scripts/eval-semantic-live-preflight.ts",

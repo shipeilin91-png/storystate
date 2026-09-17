@@ -63,6 +63,11 @@ bigram/trigram vectorizer. It is deliberately lexical and replaceable, not a
 neural embedding service. RAG chunks carry source metadata and exact text; the
 current Source Revision remains the only valid source for new Evidence spans.
 
+<!-- RAG_V0_1_LIVE_RESULT_START -->
+The production retrieval smoke and 12-case server-runtime DeepSeek A/B are
+pending. Evidence RAG therefore remains disabled by default.
+<!-- RAG_V0_1_LIVE_RESULT_END -->
+
 ## Safety invariants
 
 - The model-visible packet contains opaque aliases; Canonical UUID mappings remain server-side.

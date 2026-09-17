@@ -5,15 +5,18 @@ import { PostgresStateRepository } from "../repositories/postgres-state-reposito
 import { StateService } from "./state-service";
 
 let pool: Pool | undefined;
-export function productionPool() {
-  const url = process.env.STORYSTATE_DATABASE_URL;
+export function requireRemoteDatabaseUrl(url: string | undefined) {
   if (!url) throw new DomainError("DATABASE_UNAVAILABLE", "Backend database not configured", 503);
   if (url === "[SENSITIVE]") throw new DomainError("DATABASE_UNAVAILABLE", "Backend database not configured", 503);
   let host: string;
   try { host = new URL(url).hostname.toLowerCase(); }
   catch { throw new DomainError("DATABASE_UNAVAILABLE", "Backend database not configured", 503); }
-  if (["localhost", "127.0.0.1", "::1"].includes(host))
+  if (["localhost", "127.0.0.1", "::1", "[::1]"].includes(host))
     throw new DomainError("DATABASE_LOCAL_REJECTED", "Remote database is required for production operations", 503);
+  return url;
+}
+export function productionPool() {
+  const url = requireRemoteDatabaseUrl(process.env.STORYSTATE_DATABASE_URL);
   pool ??= new Pool({ connectionString: url, max: 5 });
   return pool;
 }

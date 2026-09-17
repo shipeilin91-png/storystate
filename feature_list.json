@@ -7,7 +7,9 @@
     "vectorizer": "deterministic signed character bigram/trigram hashing, 384 dimensions; not neural",
     "retrieval": "same-story historical Top-K with chronology, entity and bounded recency signals",
     "safety": "context only; current Source Revision remains the only EvidenceProposal quote authority",
-    "benchmark": "12 registered cases across 6 badcase groups; live A/B requires explicit authorization"
+    "benchmark": "12 registered cases across 6 badcase groups; live A/B runs only in authenticated Vercel server runtime",
+    "benchmarkStatus": "pending server-runtime finalization",
+    "decision": "PENDING"
   },
   "frontendProductFlow": "complete / frozen / real frontend-backend adapter integrated",
   "canonicalStateBackendFoundation": "completed / frozen",

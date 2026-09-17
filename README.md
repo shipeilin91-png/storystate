@@ -88,6 +88,11 @@ current Source Revision. The index uses a deterministic signed character
 bigram/trigram vectorizer with 384 dimensions. This is a replaceable lexical
 retrieval vectorizer, not a neural embedding model.
 
+<!-- RAG_V0_1_LIVE_RESULT_START -->
+The 12-case live DeepSeek A/B is pending server-runtime finalization. Production
+remains disabled until the committed enablement rule is evaluated.
+<!-- RAG_V0_1_LIVE_RESULT_END -->
+
 ## Tech Stack
 
 - Next.js App Router, React, TypeScript, Tailwind CSS
