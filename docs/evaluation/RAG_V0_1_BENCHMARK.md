@@ -2,16 +2,16 @@
 
 ## Status
 
-The deterministic retrieval/safety harness passes locally. The real DeepSeek
-A/B arm is intentionally **NOT RUN** in this workspace because Vercel secret
-values are not pullable and Supabase CLI access is unavailable. No provider
-call or enablement claim is fabricated. Production remains
-`STORYSTATE_RAG_ENABLED=0`/unset.
+The deterministic retrieval/safety harness passes locally. The repository-local
+finalizer writes the sanitized real A/B result to `live-results.json` and
+`live-summary.json` after authenticated remote execution. Until that artifact
+exists, no provider accuracy or enablement claim is made and Production
+remains `STORYSTATE_RAG_ENABLED=0`/unset.
 
 ## Registered Cases
 
 The fixture `tests/fixtures/rag-badcases.ts` registers 12 cases across six
-groups, with six representative cases selected for a future small live A/B:
+groups. The live A/B runner uses all 12 cases:
 
 | Group | Cases |
 | --- | --- |

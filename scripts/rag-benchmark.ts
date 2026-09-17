@@ -7,7 +7,7 @@ import { type ChunkRepository } from "../lib/rag/retrieval";
 import type { EvidenceChunk } from "../lib/rag/chunks";
 import { evidenceRagCases, ragAggregate, type RagCase, type ExpectedRagEffect } from "../tests/fixtures/rag-badcases";
 
-const selected = evidenceRagCases.filter((value, index) => index % 2 === 0);
+const selected = evidenceRagCases;
 const outputFile = process.env.RAG_BENCHMARK_OUTPUT ?? "/tmp/storystate-rag-benchmark.json";
 type ArmResult = Awaited<ReturnType<typeof arm>>;
 
