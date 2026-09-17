@@ -3,13 +3,19 @@
   "stage": "StoryState MVP Final Release",
   "stageStatus": "complete / frozen on release/final-demo / deployment environment blocked",
   "evidenceRagV01": {
-    "status": "implemented / feature-flagged / default off",
+    "status": "implemented / local benchmark complete / default off",
     "vectorizer": "deterministic signed character bigram/trigram hashing, 384 dimensions; not neural",
     "retrieval": "same-story historical Top-K with chronology, entity and bounded recency signals",
     "safety": "context only; current Source Revision remains the only EvidenceProposal quote authority",
-    "benchmark": "12 registered cases across 6 badcase groups; live A/B runs only in authenticated Vercel server runtime",
-    "benchmarkStatus": "pending server-runtime finalization",
-    "decision": "PENDING"
+    "benchmark": "12 registered cases across 6 badcase groups; local deterministic baseline/RAG harness",
+    "benchmarkStatus": "deterministic retrieval and safety PASS; real-model A/B NOT_RUN",
+    "decision": "LOCAL_ONLY_REAL_MODEL_A_B_NOT_RUN",
+    "retrievalBenchmark": "12/12",
+    "deterministicSafetyBenchmark": "24/24 arms",
+    "semanticBaselinePercent": null,
+    "semanticRagPercent": null,
+    "semanticAbsoluteChangePp": null,
+    "remoteDeployment": "NOT_IN_SCOPE"
   },
   "frontendProductFlow": "complete / frozen / real frontend-backend adapter integrated",
   "canonicalStateBackendFoundation": "completed / frozen",
@@ -257,7 +263,7 @@
       "id": "rag",
       "status": "implemented / disabled by default",
       "description": "检索增强生成",
-      "verification": "Evidence RAG V0.1 additive historical context index; same-story/current/future isolation; benchmark enablement pending"
+      "verification": "Evidence RAG V0.1 additive historical context index; same-story/current/future isolation; local deterministic retrieval/safety benchmark PASS; real-model A/B not run"
     },
     {
       "id": "embedding",

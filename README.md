@@ -89,8 +89,13 @@ bigram/trigram vectorizer with 384 dimensions. This is a replaceable lexical
 retrieval vectorizer, not a neural embedding model.
 
 <!-- RAG_V0_1_LIVE_RESULT_START -->
-The 12-case live DeepSeek A/B is pending server-runtime finalization. Production
-remains disabled until the committed enablement rule is evaluated.
+Evidence RAG V0.1 is complete as a local implementation and benchmark. The
+deterministic retrieval and safety benchmark passed 12/12 cases. No local
+DeepSeek configuration was available, so real-model A/B was not run. Semantic
+baseline/RAG accuracy and absolute percentage-point change are therefore
+unmeasured; deterministic no-op effect matching was 4/12 in both arms and is
+not model accuracy. No deployment, Production migration, temporary API,
+Production smoke, or main merge is part of this V0.1 result.
 <!-- RAG_V0_1_LIVE_RESULT_END -->
 
 ## Tech Stack
@@ -100,7 +105,7 @@ remains disabled until the committed enablement rule is evaluated.
 - Zod and JSON Schema for strict runtime contracts
 - provider-neutral LLM adapters for Extraction and validation
 - Node test runner and PGlite for isolated migration/repository verification
-- Vercel-compatible Next.js frontend and API deployment target
+- Next.js App Router frontend and API deployment target
 
 ## Demo
 
@@ -144,7 +149,8 @@ Critical suites can also be run independently with `test:backend`, `test:validat
 
 The following remain future architecture and are not completed MVP features:
 
-- broader RAG evaluation and production rollout (Evidence RAG V0.1 is implemented behind a disabled flag)
+- real-model RAG A/B with an explicitly configured local provider
+- hosted RAG rollout
 - the broader Context Compiler for Writer-facing context assembly
 - MCP Connector
 - broader Writer product integrations

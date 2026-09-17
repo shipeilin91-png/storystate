@@ -1,7 +1,15 @@
-# Evidence RAG V0.1 Live Results
+# Evidence RAG V0.1 Local Results
 
 <!-- RAG_V0_1_LIVE_RESULT_START -->
-The server-runtime migration, backfill, retrieval smoke, and 12-case DeepSeek
-A/B have not run yet. The one-command finalizer writes only sanitized results
-to this directory.
+Local deterministic RAG retrieval and safety benchmark: **PASS**.
+
+- 12 cases: completed
+- baseline/RAG arms: 24/24 safety passes
+- retrieval hit correctness: 12/12
+- historical evidence leakage: 0
+- real-model A/B: not run, because local Extractor configuration was absent
+- semantic baseline/RAG percentages and absolute pp change: unmeasured
+
+The JSON artifacts in this directory contain no provider secrets and no remote
+deployment metadata.
 <!-- RAG_V0_1_LIVE_RESULT_END -->

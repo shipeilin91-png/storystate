@@ -99,19 +99,19 @@ export function modelSafeExtractionPacket(packet: ExtractionPacket) {
 
 export function buildExtractionRequest(packet: ExtractionPacket): { system: string; input: string } {
   const baseline = modelSafeExtractionPacket(packet);
-  const input = JSON.stringify(packet.historicalContext ? {
+  const input = JSON.stringify({
     contractVersion: baseline.contractVersion,
     contractHash: baseline.contractHash,
     entities: baseline.entities,
     CURRENT_SOURCE: baseline.source,
     CURRENT_CANONICAL_STATE: baseline.currentState,
-    RETRIEVED_HISTORICAL_CONTEXT: {
+    ...(packet.historicalContext ? { RETRIEVED_HISTORICAL_CONTEXT: {
       authority: "CONTEXT_ONLY_NOT_CURRENT_EVIDENCE",
       chunks: packet.historicalContext.chunks.map((c, index) => ({
         ref: `HISTORY_${index + 1}`, sourceOrder: c.sourceOrder, chapter: c.chapter, content: c.content,
       })),
-    },
-  } : baseline);
+    } } : {}),
+  });
   const internalIds = [
     packet.storyId,
     packet.sourceRevisionId,

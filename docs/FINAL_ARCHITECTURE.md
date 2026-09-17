@@ -64,8 +64,10 @@ neural embedding service. RAG chunks carry source metadata and exact text; the
 current Source Revision remains the only valid source for new Evidence spans.
 
 <!-- RAG_V0_1_LIVE_RESULT_START -->
-The production retrieval smoke and 12-case server-runtime DeepSeek A/B are
-pending. Evidence RAG therefore remains disabled by default.
+Evidence RAG V0.1 has a completed local deterministic retrieval/safety
+benchmark: 12/12 cases and 24/24 baseline/RAG safety arms. No local provider
+configuration was available, so real-model A/B was not run. Hosted deployment
+and Production operations are outside this V0.1 scope.
 <!-- RAG_V0_1_LIVE_RESULT_END -->
 
 ## Safety invariants
@@ -109,4 +111,4 @@ StoryState’s current-truth and governance responsibilities.
 
 The application expects PostgreSQL with the committed migration and seven server-only variables: `STORYSTATE_DATABASE_URL`, the three `STORYSTATE_EXTRACTOR_*` variables, and the three `STORYSTATE_VALIDATOR_*` variables. Provider keys must never use `NEXT_PUBLIC_*`. Historical `DEEPSEEK_API_KEY` evaluation configuration is deliberately separate from production.
 
-The codebase is compatible with a single Vercel Next.js deployment, but the final release environment had no database, provider, or Vercel credentials. Deployment and real runtime smoke therefore remain blocked operationally; the product implementation and deterministic test coverage are complete.
+The codebase is compatible with a single Next.js deployment, but the final release environment had no hosted database or provider credentials. Deployment and real runtime smoke therefore remain outside this local RAG benchmark; the product implementation and deterministic test coverage are complete.

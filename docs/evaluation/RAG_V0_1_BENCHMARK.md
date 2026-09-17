@@ -1,50 +1,91 @@
 # Evidence RAG V0.1 Benchmark
 
-## Status
+## Scope
 
-<!-- RAG_V0_1_LIVE_RESULT_START -->
-The deterministic retrieval/safety harness passes locally. The repository-local
-server-runtime finalizer will write sanitized `live-results.json` and
-`live-summary.json` artifacts after the real 12-case A/B. Production remains
-disabled until that run satisfies every enablement gate.
-<!-- RAG_V0_1_LIVE_RESULT_END -->
+This stage is intentionally local-only:
 
-## Registered Cases
+- historical chunking and exact source offsets
+- deterministic signed n-gram vectorization
+- same-story retrieval with chronology guards
+- current-revision and future-revision exclusion
+- recency and entity signals
+- Top-K `5`
+- context budget `3600` characters
+- Extractor packet safety
+- 12 registered StoryState badcases in baseline/RAG arms
 
-The fixture `tests/fixtures/rag-badcases.ts` registers 12 cases across six
-groups. The live A/B runner uses all 12 cases:
+Vercel, hosted Production, Supabase Production migration, temporary admin API,
+Production smoke, deployment protection, remote finalization, and main merge
+are outside the V0.1 completion standard.
+
+## Frozen Cases
+
+`tests/fixtures/rag-badcases.ts` contains 12 cases in six groups:
 
 | Group | Cases |
 | --- | --- |
-| historical old/current state | R01, R02 |
-| holder/owner/custodian | R03, R04 |
-| belief/report/world truth | R05, R06 |
-| pronoun/ellipsis | R07, R08 |
-| redundant/current state | R09, R10 |
-| repeated reversals | R11, R12 |
+| stale historical state | R01, R02 |
+| holder / owner / custodian | R03, R04 |
+| belief / report / world truth | R05, R06 |
+| pronoun / ellipsis | R07, R08 |
+| redundant current state | R09, R10 |
+| repeated state reversals | R11, R12 |
 
-Each future case runs with identical model/config in two arms:
+Every case is run in two arms:
 
-- baseline: RAG disabled
+- baseline: `STORYSTATE_RAG_ENABLED=0` projection
 - RAG: deterministic historical retrieval enabled
 
-Case metrics are expected-effect correctness, exact current-source Evidence
-validity, historical quote leakage, ownership/custody violations,
-belief/report/world-truth violations, redundant candidates, and schema
-validity. The enablement rule requires zero safety regressions, zero historical
-Evidence leakage, no Canonical State regression, and measurable improvement on
-at least one history-dependent case.
+## Local Result
 
-## Local Deterministic Coverage
+The local run is recorded in [`local-summary.json`](rag-v0.1/local-summary.json)
+and [`local-results.json`](rag-v0.1/local-results.json).
 
-- deterministic Chinese/English/mixed-language vectorization
-- 384-dimensional L2-normalized signed character n-grams
-- exact chunk content/hash preservation and long-text splitting
-- same-story, chronology, current-revision, future-source, hidden-source and
-  superseded-revision exclusion
-- entity and bounded recency scoring
-- Top-K and 3600-character context budget
-- idempotent chunk indexing
-- feature flag OFF baseline projection
-- historical Evidence quote rejection
-- additive, non-destructive migration shape
+- mode: `deterministic-safety`
+- real-model A/B: `NOT_RUN`
+- local provider configuration: unavailable
+- retrieval hit correctness: `12/12`
+- same-story admission: `12/12`
+- current-revision exclusion: `12/12`
+- future-revision exclusion: `12/12`
+- Top-K and context budget: `12/12`
+- recency boost signal: `12/12`
+- entity boost signal: `12/12`
+- pronoun/entity retrieval support: `2/2`
+- historical evidence leakage: `0`
+- canonical mutation safety: `PASS`
+- ownership/custody violations: `0`
+- belief/truth violations: `0`
+- stale-history errors: `0`
+- redundant candidate errors: `0`
+
+The deterministic harness uses a conservative no-op Extractor provider when
+local provider configuration is unavailable. Its effect match is `4/12` in
+both arms, but this is a fixture/control result and **not model accuracy**.
+Semantic baseline rate, RAG rate, and absolute percentage-point change remain
+unmeasured. Absolute pp change is only reported after a real local provider A/B.
+
+## Extractor Input Contract
+
+Both arms use the same explicit packet structure:
+
+```text
+CURRENT_SOURCE
+CURRENT_CANONICAL_STATE
+RETRIEVED_HISTORICAL_CONTEXT  (RAG arm only)
+```
+
+Historical context is labeled context-only and is never authoritative for new
+EvidenceProposal quotes. Evidence must be an exact span from `CURRENT_SOURCE`.
+Canonical State remains current truth; retrieval cannot mutate it.
+
+## Running Locally
+
+```bash
+npm run benchmark:rag
+```
+
+The script writes sanitized local artifacts to this directory. If all three
+server-only `STORYSTATE_EXTRACTOR_*` variables are already available in the
+current local environment, it runs the real 12-case A/B directly. It never
+pulls or runs secrets through Vercel or Supabase and never deploys.

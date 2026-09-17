@@ -1,0 +1,109 @@
+{
+  "status": "COMPLETED",
+  "datasetVersion": "evidence-rag-v0.1",
+  "caseCount": 12,
+  "mode": "deterministic-safety",
+  "realModelAB": "NOT_RUN",
+  "semanticPassRate": {
+    "baseline": null,
+    "rag": null,
+    "absoluteChangePp": null
+  },
+  "deterministicEffectMatch": {
+    "baseline": {
+      "count": 4,
+      "total": 12,
+      "percent": 33.33
+    },
+    "rag": {
+      "count": 4,
+      "total": 12,
+      "percent": 33.33
+    },
+    "note": "When realModelAB is NOT_RUN, these are conservative deterministic no-op fixture matches, not model accuracy."
+  },
+  "deterministicSafetyPassRate": {
+    "baseline": {
+      "count": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "rag": {
+      "count": 12,
+      "total": 12,
+      "percent": 100
+    }
+  },
+  "retrieval": {
+    "retrievalHitCorrectness": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "sameStory": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "currentRevisionExcluded": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "futureRevisionExcluded": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "topKPass": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "contextBudgetPass": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "recencyBoostPass": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "entityBoostPass": {
+      "passed": 12,
+      "total": 12,
+      "percent": 100
+    },
+    "pronounEntityResolution": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100
+    }
+  },
+  "safetyRegressions": {
+    "staleHistoryError": {
+      "baseline": 0,
+      "rag": 0
+    },
+    "ownershipCustodyViolation": {
+      "baseline": 0,
+      "rag": 0
+    },
+    "beliefTruthViolation": {
+      "baseline": 0,
+      "rag": 0
+    },
+    "redundantCandidateError": {
+      "baseline": 0,
+      "rag": 0
+    },
+    "historicalEvidenceLeakage": {
+      "baseline": 0,
+      "rag": 0
+    }
+  },
+  "canonicalMutationSafety": true,
+  "extractorInputShape": true,
+  "evidenceValidity": true
+}

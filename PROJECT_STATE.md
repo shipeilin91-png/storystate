@@ -1,9 +1,9 @@
 # StoryState — Project State
 
 - Current Stage: **StoryState MVP engineering complete / frozen on `release/final-demo`**. Stage 2.3B, Final Frontend, and Final E2E are complete; deployment and real runtime smoke are blocked only by unavailable production credentials, and main integration is held by that release gate.
-- Evidence RAG V0.1: **implemented on `feat/evidence-rag-v0-1`, default OFF pending benchmark/preview acceptance**. It retrieves bounded historical context only; it does not alter Canonical State or Evidence authority.
+- Evidence RAG V0.1: **local implementation + deterministic benchmark complete on `feat/evidence-rag-v0-1`, default OFF**. It retrieves bounded historical context only; it does not alter Canonical State or Evidence authority.
 <!-- RAG_V0_1_LIVE_RESULT_START -->
-- Evidence RAG V0.1 live result: **PENDING SERVER-RUNTIME FINALIZATION**. No enablement claim is made before the 12-case DeepSeek A/B and production retrieval smoke complete.
+- Evidence RAG V0.1 local result: **retrieval/safety benchmark PASS, 12/12 cases; real-model A/B NOT RUN** because no local Extractor configuration was available. Semantic baseline/RAG accuracy and absolute pp change are unmeasured. No remote finalizer, deployment, Production migration, smoke, or main merge was run.
 <!-- RAG_V0_1_LIVE_RESULT_END -->
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
@@ -57,7 +57,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime、Final Frontend 与 Final E2E 已 **COMPLETE / FROZEN** 于 release branch。Evidence RAG V0.1 已实现但默认关闭，等待独立 A/B benchmark 与 preview 验收；不实现 GraphRAG、MCP 或新 ontology。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime、Final Frontend 与 Final E2E 已 **COMPLETE / FROZEN** 于 release branch。Evidence RAG V0.1 的本地实现、检索与 deterministic safety benchmark 已完成，真实模型 A/B 仍未运行；不启动 GraphRAG、MCP、新 ontology 或任何 hosted rollout。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 
@@ -107,4 +107,4 @@ Stage 2.3B 聚焦复审确认三个原 P1 blocker 均已关闭：validator post-
 
 ## Final MVP Release
 
-Stage 2.3B、Final Frontend 和 Final E2E 已 **COMPLETE / FROZEN**，MVP engineering status 为 **COMPLETE**。最终架构见 `docs/FINAL_ARCHITECTURE.md`；README 已重写为 portfolio-facing product summary。Release verification：install、build、lint PASS；全量 331/331；backend 62/62；validator-v0-2 13/13；extraction contract/eval/runtime/API 分别 9/9、20/20、10/10、9/9。Release 环境未提供 `STORYSTATE_DATABASE_URL`、Extractor/Validator provider variables 或 Vercel authentication，因此 migration、deterministic seed、deployment 与 real runtime smoke 未执行，状态为 **TECHNICALLY_COMPLETE / DEPLOYMENT_ENV_BLOCKED**。自动验证不产生 external provider calls；未凭空创建凭据，也未将历史 `DEEPSEEK_API_KEY` 当作生产 contract。由于真实 smoke 是 main release gate，main integration 保持 held。
+Stage 2.3B、Final Frontend 和 Final E2E 已 **COMPLETE / FROZEN**，MVP engineering status 为 **COMPLETE**。最终架构见 `docs/FINAL_ARCHITECTURE.md`；README 已重写为 portfolio-facing product summary。Release verification：install、build、lint PASS；全量 331/331；backend 62/62；validator-v0-2 13/13；extraction contract/eval/runtime/API 分别 9/9、20/20、10/10、9/9。Release 环境未提供 hosted database 或 Extractor/Validator provider variables，因此 migration、deterministic seed、deployment 与 real runtime smoke 未执行，状态为 **TECHNICALLY_COMPLETE / DEPLOYMENT_ENV_BLOCKED**。自动验证不产生 external provider calls；未凭空创建凭据，也未将历史 `DEEPSEEK_API_KEY` 当作生产 contract。当前 RAG V0.1 仅完成本地实现与 benchmark，不改变 main integration。
