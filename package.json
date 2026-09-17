@@ -22,7 +22,9 @@
     "eval:semantic:harness": "node --import tsx scripts/eval-semantic-harness.ts",
     "eval:semantic:live:preflight": "node --import tsx scripts/eval-semantic-live-preflight.ts",
     "eval:semantic:deepseek:probe": "node --import tsx scripts/eval-semantic-deepseek-probe-disabled.ts",
-    "eval:semantic:live": "node --import tsx scripts/eval-semantic-live-disabled.ts"
+    "eval:semantic:live": "node --import tsx scripts/eval-semantic-live-disabled.ts",
+    "eval:resume:offline": "node --import tsx scripts/evaluation/resume-benchmark.ts",
+    "test:resume-benchmark": "node --import tsx --test tests/resume-benchmark.test.ts"
   },
   "dependencies": {
     "next": "^16.1.0",

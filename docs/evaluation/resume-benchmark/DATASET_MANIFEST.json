@@ -1,0 +1,424 @@
+{
+  "benchmarkVersion": "resume-benchmark/v1.0.0",
+  "status": "FROZEN_BEFORE_MODEL_RUN",
+  "classification": "INTERNAL_SYNTHETIC_LONG_HORIZON_BENCHMARK",
+  "stateSync": [
+    {
+      "id": "fog-harbor-dev",
+      "set": "development",
+      "title": "Fog Harbor",
+      "initialState": {
+        "lead.location": "home",
+        "ally.location": "clinic",
+        "artifact.holder": "Chen",
+        "artifact.owner": "Chen",
+        "artifact.custodian": "none",
+        "artifact.condition": "sealed",
+        "lead.knowledge": "unaware",
+        "ally.belief": "unaware",
+        "world.truth": "unresolved",
+        "reported.claim": "unheard",
+        "plot.thread": "open",
+        "lead.relationship": "distrust",
+        "witness.location": "dock"
+      },
+      "revisions": [
+        {
+          "id": "fog-harbor-dev-r1",
+          "order": 1,
+          "content": "Lin is now explicitly at clinic.\nSilver USB is physically handed to Lin, which changes possession only.\nLin's current knowledge stance is explicitly suspects.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        },
+        {
+          "id": "fog-harbor-dev-r2",
+          "order": 2,
+          "content": "Gu arrives at tunnel; the earlier location is obsolete.\nTemporary custody of Silver USB is assigned to Gu without changing ownership.\nChen reports the claim with status reported_true; it remains a reported claim.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        },
+        {
+          "id": "fog-harbor-dev-r3",
+          "order": 3,
+          "content": "A signed transfer establishes Lin as the legal owner of Silver USB.\nInspection establishes the current condition of Silver USB as damaged.\nGu's personal belief is explicitly believes_false; this is not world truth.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        },
+        {
+          "id": "fog-harbor-dev-r4",
+          "order": 4,
+          "content": "the lead is now explicitly at safehouse.\nIndependent records establish the world-truth status as superseded_false.\nThe investigation thread is now resolved.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        },
+        {
+          "id": "fog-harbor-dev-r5",
+          "order": 5,
+          "content": "Silver USB is physically handed to Gu, which changes possession only.\nTemporary custody of Silver USB is assigned to Chen without changing ownership.\nLin defines the relationship as bounded_trust within the stated scope.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        },
+        {
+          "id": "fog-harbor-dev-r6",
+          "order": 6,
+          "content": "Gu arrives at dock; the earlier location is obsolete.\nLin's current knowledge stance is explicitly knows_true.\nChen is currently at quay, superseding older sightings.\nHistorical note: an earlier ledger still mentions Silver USB at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Silver USB; Lin is also called Li.",
+          "aliases": {
+            "Li": "Lin",
+            "it": "Silver USB"
+          }
+        }
+      ]
+    },
+    {
+      "id": "northline-holdout",
+      "set": "holdout",
+      "title": "Northline Signal",
+      "initialState": {
+        "lead.location": "home",
+        "ally.location": "clinic",
+        "artifact.holder": "Sen",
+        "artifact.owner": "Sen",
+        "artifact.custodian": "none",
+        "artifact.condition": "sealed",
+        "lead.knowledge": "unaware",
+        "ally.belief": "unaware",
+        "world.truth": "unresolved",
+        "reported.claim": "unheard",
+        "plot.thread": "open",
+        "lead.relationship": "distrust",
+        "witness.location": "dock"
+      },
+      "revisions": [
+        {
+          "id": "northline-holdout-r1",
+          "order": 1,
+          "content": "Mara is now explicitly at clinic.\nBrass Key is physically handed to Mara, which changes possession only.\nMara's current knowledge stance is explicitly suspects.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r2",
+          "order": 2,
+          "content": "Ivo arrives at tunnel; the earlier location is obsolete.\nTemporary custody of Brass Key is assigned to Ivo without changing ownership.\nSen reports the claim with status reported_true; it remains a reported claim.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r3",
+          "order": 3,
+          "content": "A signed transfer establishes Mara as the legal owner of Brass Key.\nInspection establishes the current condition of Brass Key as damaged.\nIvo's personal belief is explicitly believes_false; this is not world truth.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r4",
+          "order": 4,
+          "content": "the lead is now explicitly at safehouse.\nIndependent records establish the world-truth status as superseded_false.\nThe investigation thread is now resolved.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r5",
+          "order": 5,
+          "content": "Brass Key is physically handed to Ivo, which changes possession only.\nTemporary custody of Brass Key is assigned to Sen without changing ownership.\nMara defines the relationship as bounded_trust within the stated scope.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r6",
+          "order": 6,
+          "content": "Ivo arrives at dock; the earlier location is obsolete.\nMara's current knowledge stance is explicitly knows_true.\nSen is currently at quay, superseding older sightings.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        },
+        {
+          "id": "northline-holdout-r7",
+          "order": 7,
+          "content": "Mara is now explicitly at home.\nInspection establishes the current condition of Brass Key as restored.\nIndependent records establish the world-truth status as confirmed_true.\nHistorical note: an earlier ledger still mentions Brass Key at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Brass Key; Mara is also called Ma.",
+          "aliases": {
+            "Ma": "Mara",
+            "it": "Brass Key"
+          }
+        }
+      ]
+    },
+    {
+      "id": "glass-orbit-holdout",
+      "set": "holdout",
+      "title": "Glass Orbit",
+      "initialState": {
+        "lead.location": "home",
+        "ally.location": "clinic",
+        "artifact.holder": "Vale",
+        "artifact.owner": "Vale",
+        "artifact.custodian": "none",
+        "artifact.condition": "sealed",
+        "lead.knowledge": "unaware",
+        "ally.belief": "unaware",
+        "world.truth": "unresolved",
+        "reported.claim": "unheard",
+        "plot.thread": "open",
+        "lead.relationship": "distrust",
+        "witness.location": "dock"
+      },
+      "revisions": [
+        {
+          "id": "glass-orbit-holdout-r1",
+          "order": 1,
+          "content": "Rhea is now explicitly at clinic.\nBlack Recorder is physically handed to Rhea, which changes possession only.\nRhea's current knowledge stance is explicitly suspects.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r2",
+          "order": 2,
+          "content": "Tomas arrives at tunnel; the earlier location is obsolete.\nTemporary custody of Black Recorder is assigned to Tomas without changing ownership.\nVale reports the claim with status reported_true; it remains a reported claim.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r3",
+          "order": 3,
+          "content": "A signed transfer establishes Rhea as the legal owner of Black Recorder.\nInspection establishes the current condition of Black Recorder as damaged.\nTomas's personal belief is explicitly believes_false; this is not world truth.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r4",
+          "order": 4,
+          "content": "the lead is now explicitly at safehouse.\nIndependent records establish the world-truth status as superseded_false.\nThe investigation thread is now resolved.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r5",
+          "order": 5,
+          "content": "Black Recorder is physically handed to Tomas, which changes possession only.\nTemporary custody of Black Recorder is assigned to Vale without changing ownership.\nRhea defines the relationship as bounded_trust within the stated scope.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r6",
+          "order": 6,
+          "content": "Tomas arrives at dock; the earlier location is obsolete.\nRhea's current knowledge stance is explicitly knows_true.\nVale is currently at quay, superseding older sightings.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        },
+        {
+          "id": "glass-orbit-holdout-r7",
+          "order": 7,
+          "content": "Rhea is now explicitly at home.\nInspection establishes the current condition of Black Recorder as restored.\nIndependent records establish the world-truth status as confirmed_true.\nHistorical note: an earlier ledger still mentions Black Recorder at the dock, but it is not current evidence.\nPronoun note: \"it\" refers to Black Recorder; Rhea is also called Rh.",
+          "aliases": {
+            "Rh": "Rhea",
+            "it": "Black Recorder"
+          }
+        }
+      ]
+    }
+  ],
+  "outlines": [
+    {
+      "id": "outline-01",
+      "set": "development",
+      "quality": "sparse",
+      "genre": "mystery",
+      "outline": "Protagonist-1 pursues a missing record in a mystery story. Protagonist-1 has an explicit location detail for current tracking. Artifact-1 has an explicit holder detail for current tracking. Artifact-1 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-02",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "space opera",
+      "outline": "Protagonist-2 pursues a missing record in a space opera story. Protagonist-2 has an explicit location detail for current tracking. Artifact-2 has an explicit holder detail for current tracking. Artifact-2 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-03",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "family drama",
+      "outline": "Protagonist-3 pursues a missing record in a family drama story. Protagonist-3 has an explicit location detail for current tracking. Artifact-3 has an explicit holder detail for current tracking. Artifact-3 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-04",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "political thriller",
+      "outline": "Protagonist-4 pursues a missing record in a political thriller story. Protagonist-4 has an explicit location detail for current tracking. Artifact-4 has an explicit holder detail for current tracking. Artifact-4 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-05",
+      "set": "development",
+      "quality": "sparse",
+      "genre": "historical",
+      "outline": "Protagonist-5 pursues a missing record in a historical story. Protagonist-5 has an explicit location detail for current tracking. Artifact-5 has an explicit holder detail for current tracking. Artifact-5 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-06",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "urban fantasy",
+      "outline": "Protagonist-6 pursues a missing record in a urban fantasy story. Protagonist-6 has an explicit location detail for current tracking. Artifact-6 has an explicit holder detail for current tracking. Artifact-6 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-07",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "mystery",
+      "outline": "Protagonist-7 pursues a missing record in a mystery story. Protagonist-7 has an explicit location detail for current tracking. Artifact-7 has an explicit holder detail for current tracking. Artifact-7 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-08",
+      "set": "holdout",
+      "quality": "sparse",
+      "genre": "space opera",
+      "outline": "Protagonist-8 pursues a missing record in a space opera story. Protagonist-8 has an explicit location detail for current tracking. Artifact-8 has an explicit holder detail for current tracking. Artifact-8 has an explicit owner detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-09",
+      "set": "development",
+      "quality": "medium",
+      "genre": "family drama",
+      "outline": "Protagonist-9 pursues a missing record in a family drama story. Protagonist-9 has an explicit location detail for current tracking. Artifact-9 has an explicit holder detail for current tracking. Artifact-9 has an explicit owner detail for current tracking. Protagonist-9 has an explicit knowledge detail for current tracking. Protagonist-9 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-10",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "political thriller",
+      "outline": "Protagonist-10 pursues a missing record in a political thriller story. Protagonist-10 has an explicit location detail for current tracking. Artifact-10 has an explicit holder detail for current tracking. Artifact-10 has an explicit owner detail for current tracking. Protagonist-10 has an explicit knowledge detail for current tracking. Protagonist-10 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-11",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "historical",
+      "outline": "Protagonist-11 pursues a missing record in a historical story. Protagonist-11 has an explicit location detail for current tracking. Artifact-11 has an explicit holder detail for current tracking. Artifact-11 has an explicit owner detail for current tracking. Protagonist-11 has an explicit knowledge detail for current tracking. Protagonist-11 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-12",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "urban fantasy",
+      "outline": "Protagonist-12 pursues a missing record in a urban fantasy story. Protagonist-12 has an explicit location detail for current tracking. Artifact-12 has an explicit holder detail for current tracking. Artifact-12 has an explicit owner detail for current tracking. Protagonist-12 has an explicit knowledge detail for current tracking. Protagonist-12 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-13",
+      "set": "development",
+      "quality": "medium",
+      "genre": "mystery",
+      "outline": "Protagonist-13 pursues a missing record in a mystery story. Protagonist-13 has an explicit location detail for current tracking. Artifact-13 has an explicit holder detail for current tracking. Artifact-13 has an explicit owner detail for current tracking. Protagonist-13 has an explicit knowledge detail for current tracking. Protagonist-13 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-14",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "space opera",
+      "outline": "Protagonist-14 pursues a missing record in a space opera story. Protagonist-14 has an explicit location detail for current tracking. Artifact-14 has an explicit holder detail for current tracking. Artifact-14 has an explicit owner detail for current tracking. Protagonist-14 has an explicit knowledge detail for current tracking. Protagonist-14 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-15",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "family drama",
+      "outline": "Protagonist-15 pursues a missing record in a family drama story. Protagonist-15 has an explicit location detail for current tracking. Artifact-15 has an explicit holder detail for current tracking. Artifact-15 has an explicit owner detail for current tracking. Protagonist-15 has an explicit knowledge detail for current tracking. Protagonist-15 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-16",
+      "set": "holdout",
+      "quality": "medium",
+      "genre": "political thriller",
+      "outline": "Protagonist-16 pursues a missing record in a political thriller story. Protagonist-16 has an explicit location detail for current tracking. Artifact-16 has an explicit holder detail for current tracking. Artifact-16 has an explicit owner detail for current tracking. Protagonist-16 has an explicit knowledge detail for current tracking. Protagonist-16 has an explicit belief detail for current tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-17",
+      "set": "development",
+      "quality": "detailed",
+      "genre": "historical",
+      "outline": "Protagonist-17 pursues a missing record in a historical story. Protagonist-17 has an explicit location detail for current tracking. Artifact-17 has an explicit holder detail for current tracking. Artifact-17 has an explicit owner detail for current tracking. Protagonist-17 has an explicit knowledge detail for current tracking. Protagonist-17 has an explicit belief detail for current tracking. Protagonist-17 has an explicit world_truth detail for current tracking. Protagonist-17 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-18",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "urban fantasy",
+      "outline": "Protagonist-18 pursues a missing record in a urban fantasy story. Protagonist-18 has an explicit location detail for current tracking. Artifact-18 has an explicit holder detail for current tracking. Artifact-18 has an explicit owner detail for current tracking. Protagonist-18 has an explicit knowledge detail for current tracking. Protagonist-18 has an explicit belief detail for current tracking. Protagonist-18 has an explicit world_truth detail for current tracking. Protagonist-18 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-19",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "mystery",
+      "outline": "Protagonist-19 pursues a missing record in a mystery story. Protagonist-19 has an explicit location detail for current tracking. Artifact-19 has an explicit holder detail for current tracking. Artifact-19 has an explicit owner detail for current tracking. Protagonist-19 has an explicit knowledge detail for current tracking. Protagonist-19 has an explicit belief detail for current tracking. Protagonist-19 has an explicit world_truth detail for current tracking. Protagonist-19 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-20",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "space opera",
+      "outline": "Protagonist-20 pursues a missing record in a space opera story. Protagonist-20 has an explicit location detail for current tracking. Artifact-20 has an explicit holder detail for current tracking. Artifact-20 has an explicit owner detail for current tracking. Protagonist-20 has an explicit knowledge detail for current tracking. Protagonist-20 has an explicit belief detail for current tracking. Protagonist-20 has an explicit world_truth detail for current tracking. Protagonist-20 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-21",
+      "set": "development",
+      "quality": "detailed",
+      "genre": "family drama",
+      "outline": "Protagonist-21 pursues a missing record in a family drama story. Protagonist-21 has an explicit location detail for current tracking. Artifact-21 has an explicit holder detail for current tracking. Artifact-21 has an explicit owner detail for current tracking. Protagonist-21 has an explicit knowledge detail for current tracking. Protagonist-21 has an explicit belief detail for current tracking. Protagonist-21 has an explicit world_truth detail for current tracking. Protagonist-21 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-22",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "political thriller",
+      "outline": "Protagonist-22 pursues a missing record in a political thriller story. Protagonist-22 has an explicit location detail for current tracking. Artifact-22 has an explicit holder detail for current tracking. Artifact-22 has an explicit owner detail for current tracking. Protagonist-22 has an explicit knowledge detail for current tracking. Protagonist-22 has an explicit belief detail for current tracking. Protagonist-22 has an explicit world_truth detail for current tracking. Protagonist-22 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-23",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "historical",
+      "outline": "Protagonist-23 pursues a missing record in a historical story. Protagonist-23 has an explicit location detail for current tracking. Artifact-23 has an explicit holder detail for current tracking. Artifact-23 has an explicit owner detail for current tracking. Protagonist-23 has an explicit knowledge detail for current tracking. Protagonist-23 has an explicit belief detail for current tracking. Protagonist-23 has an explicit world_truth detail for current tracking. Protagonist-23 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    },
+    {
+      "id": "outline-24",
+      "set": "holdout",
+      "quality": "detailed",
+      "genre": "urban fantasy",
+      "outline": "Protagonist-24 pursues a missing record in a urban fantasy story. Protagonist-24 has an explicit location detail for current tracking. Artifact-24 has an explicit holder detail for current tracking. Artifact-24 has an explicit owner detail for current tracking. Protagonist-24 has an explicit knowledge detail for current tracking. Protagonist-24 has an explicit belief detail for current tracking. Protagonist-24 has an explicit world_truth detail for current tracking. Protagonist-24 has an explicit plot_thread detail for story-arc tracking. The prose also mentions weather and clothing color, which are decorative unless later made stateful."
+    }
+  ],
+  "datasetHash": "5a58d6ff7b075caad8bc9467873046cf64e919af79cddb4697287b3b2a575f27"
+}

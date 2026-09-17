@@ -1,0 +1,48 @@
+{
+  "benchmarkVersion": "resume-benchmark/v1.0.0",
+  "status": "FROZEN_BEFORE_MODEL_RUN",
+  "frozenAt": "2026-09-17T12:37:16Z",
+  "datasetHash": "5a58d6ff7b075caad8bc9467873046cf64e919af79cddb4697287b3b2a575f27",
+  "goldHash": "0774300eba457c14c2385fdcae6014bf762e4729910783d2928706a74652031f",
+  "sourceBaselineSha": "6b26b385a84f4facd85a5f064fdc4f40b4f71604",
+  "benchmarkExecutionCodeSha": null,
+  "provider": "deepseek-api",
+  "requestedModel": "deepseek-flash",
+  "observedModel": null,
+  "endpoint": "https://api.deepseek.com/responses",
+  "temperature": 0,
+  "reasoning": "none",
+  "maxOutputTokens": 4000,
+  "developmentRuns": 0,
+  "stateHoldoutRuns": 3,
+  "blueprintHoldoutRuns": 2,
+  "arms": [
+    "A1_DIRECT_LLM",
+    "A2_RAG_DIRECT_LLM",
+    "A3_STORYSTATE"
+  ],
+  "retrieval": {
+    "implementation": "evaluation-only deterministic lexical retrieval",
+    "productRagAvailable": false,
+    "maxChunks": 4
+  },
+  "expectedProviderCalls": {
+    "stateDirect": 42,
+    "stateRagDirect": 42,
+    "stateStoryStateExtractor": 42,
+    "stateStoryStateValidatorAssumingThreeCandidatesPerRevision": 126,
+    "blueprint": 36,
+    "total": 288
+  },
+  "hardProviderCallBudget": 300,
+  "retryPolicy": {
+    "maxRetriesPerCall": 1,
+    "transientOnly": true
+  },
+  "realModelExecution": "NOT_EXECUTED_PROVIDER_CREDENTIAL_UNAVAILABLE",
+  "promptHashes": {
+    "direct": "08d14180b9b1e4ff2f8fdd8ad6adb28f4c41d4c55331c1a6d1b37f9bad46a54d",
+    "storyState": "fa8161c21be90913db9a2fe5f22f89b63cd7c60cc5132ff019f006816a56eaef",
+    "blueprint": "5daa32695744fe19bbe18c66e107a94634552035bb4fda1718f512ddb2acdac7"
+  }
+}

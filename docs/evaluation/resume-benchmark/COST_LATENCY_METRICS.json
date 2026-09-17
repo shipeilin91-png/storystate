@@ -1,0 +1,24 @@
+{
+  "status": "REAL_MODEL_NOT_EXECUTED",
+  "providerCalls": 0,
+  "inputTokens": 0,
+  "outputTokens": 0,
+  "totalTokens": 0,
+  "latencyMs": {
+    "mean": null,
+    "median": null,
+    "p95": null
+  },
+  "providerFailures": 0,
+  "retries": 0,
+  "estimatedCost": null,
+  "costReason": "No credential was available; explicit extraction/blueprint pricing was not frozen.",
+  "plannedCallBudget": {
+    "stateDirect": 42,
+    "stateRagDirect": 42,
+    "stateStoryStateExtractor": 42,
+    "stateStoryStateValidatorAssumingThreeCandidatesPerRevision": 126,
+    "blueprint": 36,
+    "total": 288
+  }
+}

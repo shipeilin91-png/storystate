@@ -1,0 +1,5012 @@
+{
+  "benchmarkVersion": "resume-benchmark/v1.0.0",
+  "status": "HUMAN_AUTHORED_FROZEN_GOLD",
+  "authoring": "Deterministic human-authored definitions; no tested model generated Gold.",
+  "stateSync": [
+    {
+      "storyId": "fog-harbor-dev",
+      "finalState": {
+        "lead.location": "safehouse",
+        "ally.location": "dock",
+        "artifact.holder": "Gu",
+        "artifact.owner": "Lin",
+        "artifact.custodian": "Chen",
+        "artifact.condition": "damaged",
+        "lead.knowledge": "knows_true",
+        "ally.belief": "believes_false",
+        "world.truth": "superseded_false",
+        "reported.claim": "reported_true",
+        "plot.thread": "resolved",
+        "lead.relationship": "bounded_trust",
+        "witness.location": "quay"
+      },
+      "revisions": [
+        {
+          "revisionId": "fog-harbor-dev-r1",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "home",
+              "after": "clinic",
+              "evidence": "Lin is now explicitly at clinic.",
+              "start": 0,
+              "end": 32
+            },
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Chen",
+              "after": "Lin",
+              "evidence": "Silver USB is physically handed to Lin, which changes possession only.",
+              "start": 33,
+              "end": 103
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "unaware",
+              "after": "suspects",
+              "evidence": "Lin's current knowledge stance is explicitly suspects.",
+              "start": 104,
+              "end": 158
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "wrong_owner",
+              "fieldId": "artifact.holder",
+              "proposedValue": "invalid-wrong_owner",
+              "rationale": "Frozen wrong_owner challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "fog-harbor-dev-r2",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "tunnel",
+              "evidence": "Gu arrives at tunnel; the earlier location is obsolete.",
+              "start": 0,
+              "end": 55
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "none",
+              "after": "Gu",
+              "evidence": "Temporary custody of Silver USB is assigned to Gu without changing ownership.",
+              "start": 56,
+              "end": 133
+            },
+            {
+              "fieldId": "reported.claim",
+              "category": "reported_claim",
+              "before": "unheard",
+              "after": "reported_true",
+              "evidence": "Chen reports the claim with status reported_true; it remains a reported claim.",
+              "start": 134,
+              "end": 212
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "holder_owner_confusion",
+              "fieldId": "reported.claim",
+              "proposedValue": "invalid-holder_owner_confusion",
+              "rationale": "Frozen holder_owner_confusion challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "fog-harbor-dev-r3",
+          "changes": [
+            {
+              "fieldId": "artifact.owner",
+              "category": "owner",
+              "before": "Chen",
+              "after": "Lin",
+              "evidence": "A signed transfer establishes Lin as the legal owner of Silver USB.",
+              "start": 0,
+              "end": 67
+            },
+            {
+              "fieldId": "artifact.condition",
+              "category": "condition",
+              "before": "sealed",
+              "after": "damaged",
+              "evidence": "Inspection establishes the current condition of Silver USB as damaged.",
+              "start": 68,
+              "end": 138
+            },
+            {
+              "fieldId": "ally.belief",
+              "category": "belief",
+              "before": "unaware",
+              "after": "believes_false",
+              "evidence": "Gu's personal belief is explicitly believes_false; this is not world truth.",
+              "start": 139,
+              "end": 214
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "stale_history",
+              "fieldId": "artifact.owner",
+              "proposedValue": "invalid-stale_history",
+              "rationale": "Frozen stale_history challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "fog-harbor-dev-r4",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "safehouse",
+              "evidence": "the lead is now explicitly at safehouse.",
+              "start": 0,
+              "end": 40
+            },
+            {
+              "fieldId": "world.truth",
+              "category": "world_truth",
+              "before": "unresolved",
+              "after": "superseded_false",
+              "evidence": "Independent records establish the world-truth status as superseded_false.",
+              "start": 41,
+              "end": 114
+            },
+            {
+              "fieldId": "plot.thread",
+              "category": "plot_thread",
+              "before": "open",
+              "after": "resolved",
+              "evidence": "The investigation thread is now resolved.",
+              "start": 115,
+              "end": 156
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "belief_world_truth",
+              "fieldId": "world.truth",
+              "proposedValue": "invalid-belief_world_truth",
+              "rationale": "Frozen belief_world_truth challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "fog-harbor-dev-r5",
+          "changes": [
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Lin",
+              "after": "Gu",
+              "evidence": "Silver USB is physically handed to Gu, which changes possession only.",
+              "start": 0,
+              "end": 69
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "Gu",
+              "after": "Chen",
+              "evidence": "Temporary custody of Silver USB is assigned to Chen without changing ownership.",
+              "start": 70,
+              "end": 149
+            },
+            {
+              "fieldId": "lead.relationship",
+              "category": "relationship",
+              "before": "distrust",
+              "after": "bounded_trust",
+              "evidence": "Lin defines the relationship as bounded_trust within the stated scope.",
+              "start": 150,
+              "end": 220
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "unsupported_inference",
+              "fieldId": "lead.relationship",
+              "proposedValue": "invalid-unsupported_inference",
+              "rationale": "Frozen unsupported_inference challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "fog-harbor-dev-r6",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "tunnel",
+              "after": "dock",
+              "evidence": "Gu arrives at dock; the earlier location is obsolete.",
+              "start": 0,
+              "end": 53
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "suspects",
+              "after": "knows_true",
+              "evidence": "Lin's current knowledge stance is explicitly knows_true.",
+              "start": 54,
+              "end": 110
+            },
+            {
+              "fieldId": "witness.location",
+              "category": "location",
+              "before": "dock",
+              "after": "quay",
+              "evidence": "Chen is currently at quay, superseding older sightings.",
+              "start": 111,
+              "end": 166
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "incorrect_entity",
+              "fieldId": "ally.location",
+              "proposedValue": "invalid-incorrect_entity",
+              "rationale": "Frozen incorrect_entity challenge; must not enter current state."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "storyId": "northline-holdout",
+      "finalState": {
+        "lead.location": "home",
+        "ally.location": "dock",
+        "artifact.holder": "Ivo",
+        "artifact.owner": "Mara",
+        "artifact.custodian": "Sen",
+        "artifact.condition": "restored",
+        "lead.knowledge": "knows_true",
+        "ally.belief": "believes_false",
+        "world.truth": "confirmed_true",
+        "reported.claim": "reported_true",
+        "plot.thread": "resolved",
+        "lead.relationship": "bounded_trust",
+        "witness.location": "quay"
+      },
+      "revisions": [
+        {
+          "revisionId": "northline-holdout-r1",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "home",
+              "after": "clinic",
+              "evidence": "Mara is now explicitly at clinic.",
+              "start": 0,
+              "end": 33
+            },
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Sen",
+              "after": "Mara",
+              "evidence": "Brass Key is physically handed to Mara, which changes possession only.",
+              "start": 34,
+              "end": 104
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "unaware",
+              "after": "suspects",
+              "evidence": "Mara's current knowledge stance is explicitly suspects.",
+              "start": 105,
+              "end": 160
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "wrong_owner",
+              "fieldId": "artifact.holder",
+              "proposedValue": "invalid-wrong_owner",
+              "rationale": "Frozen wrong_owner challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r2",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "tunnel",
+              "evidence": "Ivo arrives at tunnel; the earlier location is obsolete.",
+              "start": 0,
+              "end": 56
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "none",
+              "after": "Ivo",
+              "evidence": "Temporary custody of Brass Key is assigned to Ivo without changing ownership.",
+              "start": 57,
+              "end": 134
+            },
+            {
+              "fieldId": "reported.claim",
+              "category": "reported_claim",
+              "before": "unheard",
+              "after": "reported_true",
+              "evidence": "Sen reports the claim with status reported_true; it remains a reported claim.",
+              "start": 135,
+              "end": 212
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "holder_owner_confusion",
+              "fieldId": "reported.claim",
+              "proposedValue": "invalid-holder_owner_confusion",
+              "rationale": "Frozen holder_owner_confusion challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r3",
+          "changes": [
+            {
+              "fieldId": "artifact.owner",
+              "category": "owner",
+              "before": "Sen",
+              "after": "Mara",
+              "evidence": "A signed transfer establishes Mara as the legal owner of Brass Key.",
+              "start": 0,
+              "end": 67
+            },
+            {
+              "fieldId": "artifact.condition",
+              "category": "condition",
+              "before": "sealed",
+              "after": "damaged",
+              "evidence": "Inspection establishes the current condition of Brass Key as damaged.",
+              "start": 68,
+              "end": 137
+            },
+            {
+              "fieldId": "ally.belief",
+              "category": "belief",
+              "before": "unaware",
+              "after": "believes_false",
+              "evidence": "Ivo's personal belief is explicitly believes_false; this is not world truth.",
+              "start": 138,
+              "end": 214
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "stale_history",
+              "fieldId": "artifact.owner",
+              "proposedValue": "invalid-stale_history",
+              "rationale": "Frozen stale_history challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r4",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "safehouse",
+              "evidence": "the lead is now explicitly at safehouse.",
+              "start": 0,
+              "end": 40
+            },
+            {
+              "fieldId": "world.truth",
+              "category": "world_truth",
+              "before": "unresolved",
+              "after": "superseded_false",
+              "evidence": "Independent records establish the world-truth status as superseded_false.",
+              "start": 41,
+              "end": 114
+            },
+            {
+              "fieldId": "plot.thread",
+              "category": "plot_thread",
+              "before": "open",
+              "after": "resolved",
+              "evidence": "The investigation thread is now resolved.",
+              "start": 115,
+              "end": 156
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "belief_world_truth",
+              "fieldId": "world.truth",
+              "proposedValue": "invalid-belief_world_truth",
+              "rationale": "Frozen belief_world_truth challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r5",
+          "changes": [
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Mara",
+              "after": "Ivo",
+              "evidence": "Brass Key is physically handed to Ivo, which changes possession only.",
+              "start": 0,
+              "end": 69
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "Ivo",
+              "after": "Sen",
+              "evidence": "Temporary custody of Brass Key is assigned to Sen without changing ownership.",
+              "start": 70,
+              "end": 147
+            },
+            {
+              "fieldId": "lead.relationship",
+              "category": "relationship",
+              "before": "distrust",
+              "after": "bounded_trust",
+              "evidence": "Mara defines the relationship as bounded_trust within the stated scope.",
+              "start": 148,
+              "end": 219
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "unsupported_inference",
+              "fieldId": "lead.relationship",
+              "proposedValue": "invalid-unsupported_inference",
+              "rationale": "Frozen unsupported_inference challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r6",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "tunnel",
+              "after": "dock",
+              "evidence": "Ivo arrives at dock; the earlier location is obsolete.",
+              "start": 0,
+              "end": 54
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "suspects",
+              "after": "knows_true",
+              "evidence": "Mara's current knowledge stance is explicitly knows_true.",
+              "start": 55,
+              "end": 112
+            },
+            {
+              "fieldId": "witness.location",
+              "category": "location",
+              "before": "dock",
+              "after": "quay",
+              "evidence": "Sen is currently at quay, superseding older sightings.",
+              "start": 113,
+              "end": 167
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "incorrect_entity",
+              "fieldId": "ally.location",
+              "proposedValue": "invalid-incorrect_entity",
+              "rationale": "Frozen incorrect_entity challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "northline-holdout-r7",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "safehouse",
+              "after": "home",
+              "evidence": "Mara is now explicitly at home.",
+              "start": 0,
+              "end": 31
+            },
+            {
+              "fieldId": "artifact.condition",
+              "category": "condition",
+              "before": "damaged",
+              "after": "restored",
+              "evidence": "Inspection establishes the current condition of Brass Key as restored.",
+              "start": 32,
+              "end": 102
+            },
+            {
+              "fieldId": "world.truth",
+              "category": "world_truth",
+              "before": "superseded_false",
+              "after": "confirmed_true",
+              "evidence": "Independent records establish the world-truth status as confirmed_true.",
+              "start": 103,
+              "end": 174
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "conflicting_candidate",
+              "fieldId": "artifact.condition",
+              "proposedValue": "invalid-conflicting_candidate",
+              "rationale": "Frozen conflicting_candidate challenge; must not enter current state."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "finalState": {
+        "lead.location": "home",
+        "ally.location": "dock",
+        "artifact.holder": "Tomas",
+        "artifact.owner": "Rhea",
+        "artifact.custodian": "Vale",
+        "artifact.condition": "restored",
+        "lead.knowledge": "knows_true",
+        "ally.belief": "believes_false",
+        "world.truth": "confirmed_true",
+        "reported.claim": "reported_true",
+        "plot.thread": "resolved",
+        "lead.relationship": "bounded_trust",
+        "witness.location": "quay"
+      },
+      "revisions": [
+        {
+          "revisionId": "glass-orbit-holdout-r1",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "home",
+              "after": "clinic",
+              "evidence": "Rhea is now explicitly at clinic.",
+              "start": 0,
+              "end": 33
+            },
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Vale",
+              "after": "Rhea",
+              "evidence": "Black Recorder is physically handed to Rhea, which changes possession only.",
+              "start": 34,
+              "end": 109
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "unaware",
+              "after": "suspects",
+              "evidence": "Rhea's current knowledge stance is explicitly suspects.",
+              "start": 110,
+              "end": 165
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "wrong_owner",
+              "fieldId": "artifact.holder",
+              "proposedValue": "invalid-wrong_owner",
+              "rationale": "Frozen wrong_owner challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r2",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "tunnel",
+              "evidence": "Tomas arrives at tunnel; the earlier location is obsolete.",
+              "start": 0,
+              "end": 58
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "none",
+              "after": "Tomas",
+              "evidence": "Temporary custody of Black Recorder is assigned to Tomas without changing ownership.",
+              "start": 59,
+              "end": 143
+            },
+            {
+              "fieldId": "reported.claim",
+              "category": "reported_claim",
+              "before": "unheard",
+              "after": "reported_true",
+              "evidence": "Vale reports the claim with status reported_true; it remains a reported claim.",
+              "start": 144,
+              "end": 222
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "holder_owner_confusion",
+              "fieldId": "reported.claim",
+              "proposedValue": "invalid-holder_owner_confusion",
+              "rationale": "Frozen holder_owner_confusion challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r3",
+          "changes": [
+            {
+              "fieldId": "artifact.owner",
+              "category": "owner",
+              "before": "Vale",
+              "after": "Rhea",
+              "evidence": "A signed transfer establishes Rhea as the legal owner of Black Recorder.",
+              "start": 0,
+              "end": 72
+            },
+            {
+              "fieldId": "artifact.condition",
+              "category": "condition",
+              "before": "sealed",
+              "after": "damaged",
+              "evidence": "Inspection establishes the current condition of Black Recorder as damaged.",
+              "start": 73,
+              "end": 147
+            },
+            {
+              "fieldId": "ally.belief",
+              "category": "belief",
+              "before": "unaware",
+              "after": "believes_false",
+              "evidence": "Tomas's personal belief is explicitly believes_false; this is not world truth.",
+              "start": 148,
+              "end": 226
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "stale_history",
+              "fieldId": "artifact.owner",
+              "proposedValue": "invalid-stale_history",
+              "rationale": "Frozen stale_history challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r4",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "clinic",
+              "after": "safehouse",
+              "evidence": "the lead is now explicitly at safehouse.",
+              "start": 0,
+              "end": 40
+            },
+            {
+              "fieldId": "world.truth",
+              "category": "world_truth",
+              "before": "unresolved",
+              "after": "superseded_false",
+              "evidence": "Independent records establish the world-truth status as superseded_false.",
+              "start": 41,
+              "end": 114
+            },
+            {
+              "fieldId": "plot.thread",
+              "category": "plot_thread",
+              "before": "open",
+              "after": "resolved",
+              "evidence": "The investigation thread is now resolved.",
+              "start": 115,
+              "end": 156
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "belief_world_truth",
+              "fieldId": "world.truth",
+              "proposedValue": "invalid-belief_world_truth",
+              "rationale": "Frozen belief_world_truth challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r5",
+          "changes": [
+            {
+              "fieldId": "artifact.holder",
+              "category": "holder",
+              "before": "Rhea",
+              "after": "Tomas",
+              "evidence": "Black Recorder is physically handed to Tomas, which changes possession only.",
+              "start": 0,
+              "end": 76
+            },
+            {
+              "fieldId": "artifact.custodian",
+              "category": "custodian",
+              "before": "Tomas",
+              "after": "Vale",
+              "evidence": "Temporary custody of Black Recorder is assigned to Vale without changing ownership.",
+              "start": 77,
+              "end": 160
+            },
+            {
+              "fieldId": "lead.relationship",
+              "category": "relationship",
+              "before": "distrust",
+              "after": "bounded_trust",
+              "evidence": "Rhea defines the relationship as bounded_trust within the stated scope.",
+              "start": 161,
+              "end": 232
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "unsupported_inference",
+              "fieldId": "lead.relationship",
+              "proposedValue": "invalid-unsupported_inference",
+              "rationale": "Frozen unsupported_inference challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r6",
+          "changes": [
+            {
+              "fieldId": "ally.location",
+              "category": "location",
+              "before": "tunnel",
+              "after": "dock",
+              "evidence": "Tomas arrives at dock; the earlier location is obsolete.",
+              "start": 0,
+              "end": 56
+            },
+            {
+              "fieldId": "lead.knowledge",
+              "category": "knowledge",
+              "before": "suspects",
+              "after": "knows_true",
+              "evidence": "Rhea's current knowledge stance is explicitly knows_true.",
+              "start": 57,
+              "end": 114
+            },
+            {
+              "fieldId": "witness.location",
+              "category": "location",
+              "before": "dock",
+              "after": "quay",
+              "evidence": "Vale is currently at quay, superseding older sightings.",
+              "start": 115,
+              "end": 170
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "incorrect_entity",
+              "fieldId": "ally.location",
+              "proposedValue": "invalid-incorrect_entity",
+              "rationale": "Frozen incorrect_entity challenge; must not enter current state."
+            }
+          ]
+        },
+        {
+          "revisionId": "glass-orbit-holdout-r7",
+          "changes": [
+            {
+              "fieldId": "lead.location",
+              "category": "location",
+              "before": "safehouse",
+              "after": "home",
+              "evidence": "Rhea is now explicitly at home.",
+              "start": 0,
+              "end": 31
+            },
+            {
+              "fieldId": "artifact.condition",
+              "category": "condition",
+              "before": "damaged",
+              "after": "restored",
+              "evidence": "Inspection establishes the current condition of Black Recorder as restored.",
+              "start": 32,
+              "end": 107
+            },
+            {
+              "fieldId": "world.truth",
+              "category": "world_truth",
+              "before": "superseded_false",
+              "after": "confirmed_true",
+              "evidence": "Independent records establish the world-truth status as confirmed_true.",
+              "start": 108,
+              "end": 179
+            }
+          ],
+          "invalidCandidates": [
+            {
+              "category": "conflicting_candidate",
+              "fieldId": "artifact.condition",
+              "proposedValue": "invalid-conflicting_candidate",
+              "rationale": "Frozen conflicting_candidate challenge; must not enter current state."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "stateOpportunities": [
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "home",
+      "after": "clinic"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Chen",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Chen",
+      "after": "Chen"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "unaware",
+      "after": "suspects"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "unheard",
+      "after": "unheard"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r1",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Chen",
+      "after": "Chen"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "none",
+      "after": "Gu"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "change",
+      "before": "unheard",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r2",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "change",
+      "before": "Chen",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Gu",
+      "after": "Gu"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "change",
+      "before": "sealed",
+      "after": "damaged"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "change",
+      "before": "unaware",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r3",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Gu",
+      "after": "Gu"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "change",
+      "before": "unresolved",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "change",
+      "before": "open",
+      "after": "resolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r4",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Lin",
+      "after": "Gu"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "Gu",
+      "after": "Chen"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "change",
+      "before": "distrust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r5",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "tunnel",
+      "after": "dock"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Gu",
+      "after": "Gu"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Lin",
+      "after": "Lin"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Chen",
+      "after": "Chen"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "suspects",
+      "after": "knows_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "bounded_trust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "fog-harbor-dev",
+      "revisionId": "fog-harbor-dev-r6",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "change",
+      "before": "dock",
+      "after": "quay"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "home",
+      "after": "clinic"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Sen",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Sen",
+      "after": "Sen"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "unaware",
+      "after": "suspects"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "unheard",
+      "after": "unheard"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r1",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Sen",
+      "after": "Sen"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "none",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "change",
+      "before": "unheard",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r2",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "change",
+      "before": "Sen",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Ivo",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "change",
+      "before": "sealed",
+      "after": "damaged"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "change",
+      "before": "unaware",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r3",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Ivo",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "change",
+      "before": "unresolved",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "change",
+      "before": "open",
+      "after": "resolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r4",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Mara",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "Ivo",
+      "after": "Sen"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "change",
+      "before": "distrust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r5",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "tunnel",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Ivo",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Sen",
+      "after": "Sen"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "suspects",
+      "after": "knows_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "bounded_trust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r6",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "change",
+      "before": "dock",
+      "after": "quay"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "safehouse",
+      "after": "home"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Ivo",
+      "after": "Ivo"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Mara",
+      "after": "Mara"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Sen",
+      "after": "Sen"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "change",
+      "before": "damaged",
+      "after": "restored"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "knows_true",
+      "after": "knows_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "change",
+      "before": "superseded_false",
+      "after": "confirmed_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "bounded_trust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "northline-holdout",
+      "revisionId": "northline-holdout-r7",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "quay",
+      "after": "quay"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "home",
+      "after": "clinic"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Vale",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Vale",
+      "after": "Vale"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "unaware",
+      "after": "suspects"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "unheard",
+      "after": "unheard"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r1",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Vale",
+      "after": "Vale"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "none",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "sealed",
+      "after": "sealed"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "unaware",
+      "after": "unaware"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "change",
+      "before": "unheard",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r2",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "clinic",
+      "after": "clinic"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "change",
+      "before": "Vale",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Tomas",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "change",
+      "before": "sealed",
+      "after": "damaged"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "change",
+      "before": "unaware",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "unresolved",
+      "after": "unresolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "open",
+      "after": "open"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r3",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "clinic",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Tomas",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "change",
+      "before": "unresolved",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "change",
+      "before": "open",
+      "after": "resolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "distrust",
+      "after": "distrust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r4",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "tunnel",
+      "after": "tunnel"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "change",
+      "before": "Rhea",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "change",
+      "before": "Tomas",
+      "after": "Vale"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "suspects",
+      "after": "suspects"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "change",
+      "before": "distrust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r5",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "safehouse",
+      "after": "safehouse"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "change",
+      "before": "tunnel",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Tomas",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Vale",
+      "after": "Vale"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "no_change",
+      "before": "damaged",
+      "after": "damaged"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "change",
+      "before": "suspects",
+      "after": "knows_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "no_change",
+      "before": "superseded_false",
+      "after": "superseded_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "bounded_trust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r6",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "change",
+      "before": "dock",
+      "after": "quay"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "lead.location",
+      "category": "location",
+      "expected": "change",
+      "before": "safehouse",
+      "after": "home"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "ally.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "dock",
+      "after": "dock"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "artifact.holder",
+      "category": "holder",
+      "expected": "no_change",
+      "before": "Tomas",
+      "after": "Tomas"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "artifact.owner",
+      "category": "owner",
+      "expected": "no_change",
+      "before": "Rhea",
+      "after": "Rhea"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "artifact.custodian",
+      "category": "custodian",
+      "expected": "no_change",
+      "before": "Vale",
+      "after": "Vale"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "artifact.condition",
+      "category": "condition",
+      "expected": "change",
+      "before": "damaged",
+      "after": "restored"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "lead.knowledge",
+      "category": "knowledge",
+      "expected": "no_change",
+      "before": "knows_true",
+      "after": "knows_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "ally.belief",
+      "category": "belief",
+      "expected": "no_change",
+      "before": "believes_false",
+      "after": "believes_false"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "world.truth",
+      "category": "world_truth",
+      "expected": "change",
+      "before": "superseded_false",
+      "after": "confirmed_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "reported.claim",
+      "category": "reported_claim",
+      "expected": "no_change",
+      "before": "reported_true",
+      "after": "reported_true"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "plot.thread",
+      "category": "plot_thread",
+      "expected": "no_change",
+      "before": "resolved",
+      "after": "resolved"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "lead.relationship",
+      "category": "relationship",
+      "expected": "no_change",
+      "before": "bounded_trust",
+      "after": "bounded_trust"
+    },
+    {
+      "storyId": "glass-orbit-holdout",
+      "revisionId": "glass-orbit-holdout-r7",
+      "fieldId": "witness.location",
+      "category": "location",
+      "expected": "no_change",
+      "before": "quay",
+      "after": "quay"
+    }
+  ],
+  "outlines": [
+    {
+      "id": "outline-01",
+      "explicitFieldKeys": [
+        "Protagonist-1|location|current",
+        "Artifact-1|holder|current",
+        "Artifact-1|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-1",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-1",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-1",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-1 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-02",
+      "explicitFieldKeys": [
+        "Protagonist-2|location|current",
+        "Artifact-2|holder|current",
+        "Artifact-2|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-2",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-2",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-2",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-2 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-03",
+      "explicitFieldKeys": [
+        "Protagonist-3|location|current",
+        "Artifact-3|holder|current",
+        "Artifact-3|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-3",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-3",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-3",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-3 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-04",
+      "explicitFieldKeys": [
+        "Protagonist-4|location|current",
+        "Artifact-4|holder|current",
+        "Artifact-4|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-4",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-4",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-4",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-4 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-05",
+      "explicitFieldKeys": [
+        "Protagonist-5|location|current",
+        "Artifact-5|holder|current",
+        "Artifact-5|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-5",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-5",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-5",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-5 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-06",
+      "explicitFieldKeys": [
+        "Protagonist-6|location|current",
+        "Artifact-6|holder|current",
+        "Artifact-6|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-6",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-6",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-6",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-6 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-07",
+      "explicitFieldKeys": [
+        "Protagonist-7|location|current",
+        "Artifact-7|holder|current",
+        "Artifact-7|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-7",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-7",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-7",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-7 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-08",
+      "explicitFieldKeys": [
+        "Protagonist-8|location|current",
+        "Artifact-8|holder|current",
+        "Artifact-8|owner|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-8",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-8",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-8",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-8 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-09",
+      "explicitFieldKeys": [
+        "Protagonist-9|location|current",
+        "Artifact-9|holder|current",
+        "Artifact-9|owner|current",
+        "Protagonist-9|knowledge|current",
+        "Protagonist-9|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-9",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-9",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-9",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-9 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-10",
+      "explicitFieldKeys": [
+        "Protagonist-10|location|current",
+        "Artifact-10|holder|current",
+        "Artifact-10|owner|current",
+        "Protagonist-10|knowledge|current",
+        "Protagonist-10|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-10",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-10",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-10",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-10 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-11",
+      "explicitFieldKeys": [
+        "Protagonist-11|location|current",
+        "Artifact-11|holder|current",
+        "Artifact-11|owner|current",
+        "Protagonist-11|knowledge|current",
+        "Protagonist-11|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-11",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-11",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-11",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-11 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-12",
+      "explicitFieldKeys": [
+        "Protagonist-12|location|current",
+        "Artifact-12|holder|current",
+        "Artifact-12|owner|current",
+        "Protagonist-12|knowledge|current",
+        "Protagonist-12|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-12",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-12",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-12",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-12 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-13",
+      "explicitFieldKeys": [
+        "Protagonist-13|location|current",
+        "Artifact-13|holder|current",
+        "Artifact-13|owner|current",
+        "Protagonist-13|knowledge|current",
+        "Protagonist-13|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-13",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-13",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-13",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-13 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-14",
+      "explicitFieldKeys": [
+        "Protagonist-14|location|current",
+        "Artifact-14|holder|current",
+        "Artifact-14|owner|current",
+        "Protagonist-14|knowledge|current",
+        "Protagonist-14|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-14",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-14",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-14",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-14 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-15",
+      "explicitFieldKeys": [
+        "Protagonist-15|location|current",
+        "Artifact-15|holder|current",
+        "Artifact-15|owner|current",
+        "Protagonist-15|knowledge|current",
+        "Protagonist-15|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-15",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-15",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-15",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-15 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-16",
+      "explicitFieldKeys": [
+        "Protagonist-16|location|current",
+        "Artifact-16|holder|current",
+        "Artifact-16|owner|current",
+        "Protagonist-16|knowledge|current",
+        "Protagonist-16|belief|current"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-16",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-16",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-16",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-16 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-17",
+      "explicitFieldKeys": [
+        "Protagonist-17|location|current",
+        "Artifact-17|holder|current",
+        "Artifact-17|owner|current",
+        "Protagonist-17|knowledge|current",
+        "Protagonist-17|belief|current",
+        "Protagonist-17|world_truth|current",
+        "Protagonist-17|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-17",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-17",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-17",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-17 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-18",
+      "explicitFieldKeys": [
+        "Protagonist-18|location|current",
+        "Artifact-18|holder|current",
+        "Artifact-18|owner|current",
+        "Protagonist-18|knowledge|current",
+        "Protagonist-18|belief|current",
+        "Protagonist-18|world_truth|current",
+        "Protagonist-18|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-18",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-18",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-18",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-18 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-19",
+      "explicitFieldKeys": [
+        "Protagonist-19|location|current",
+        "Artifact-19|holder|current",
+        "Artifact-19|owner|current",
+        "Protagonist-19|knowledge|current",
+        "Protagonist-19|belief|current",
+        "Protagonist-19|world_truth|current",
+        "Protagonist-19|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-19",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-19",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-19",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-19 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-20",
+      "explicitFieldKeys": [
+        "Protagonist-20|location|current",
+        "Artifact-20|holder|current",
+        "Artifact-20|owner|current",
+        "Protagonist-20|knowledge|current",
+        "Protagonist-20|belief|current",
+        "Protagonist-20|world_truth|current",
+        "Protagonist-20|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-20",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-20",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-20",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-20 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-21",
+      "explicitFieldKeys": [
+        "Protagonist-21|location|current",
+        "Artifact-21|holder|current",
+        "Artifact-21|owner|current",
+        "Protagonist-21|knowledge|current",
+        "Protagonist-21|belief|current",
+        "Protagonist-21|world_truth|current",
+        "Protagonist-21|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-21",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-21",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-21",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-21 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-22",
+      "explicitFieldKeys": [
+        "Protagonist-22|location|current",
+        "Artifact-22|holder|current",
+        "Artifact-22|owner|current",
+        "Protagonist-22|knowledge|current",
+        "Protagonist-22|belief|current",
+        "Protagonist-22|world_truth|current",
+        "Protagonist-22|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-22",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-22",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-22",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-22 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-23",
+      "explicitFieldKeys": [
+        "Protagonist-23|location|current",
+        "Artifact-23|holder|current",
+        "Artifact-23|owner|current",
+        "Protagonist-23|knowledge|current",
+        "Protagonist-23|belief|current",
+        "Protagonist-23|world_truth|current",
+        "Protagonist-23|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-23",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-23",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-23",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-23 condition is important requires human confirmation."
+      ]
+    },
+    {
+      "id": "outline-24",
+      "explicitFieldKeys": [
+        "Protagonist-24|location|current",
+        "Artifact-24|holder|current",
+        "Artifact-24|owner|current",
+        "Protagonist-24|knowledge|current",
+        "Protagonist-24|belief|current",
+        "Protagonist-24|world_truth|current",
+        "Protagonist-24|plot_thread|story-arc"
+      ],
+      "goldFields": [
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "location",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: location can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-24",
+          "fieldType": "holder",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: holder can change independently and affects future continuity."
+        },
+        {
+          "entity": "Artifact-24",
+          "fieldType": "owner",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: owner can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "knowledge",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: knowledge can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "belief",
+          "scope": "current",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: belief can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "world_truth",
+          "scope": "current",
+          "importance": "critical",
+          "rationale": "Human-authored Gold: world_truth can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "plot_thread",
+          "scope": "story-arc",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: plot_thread can change independently and affects future continuity."
+        },
+        {
+          "entity": "Protagonist-24",
+          "fieldType": "relationship",
+          "scope": "counterparty-specific",
+          "importance": "normal",
+          "rationale": "Human-authored Gold: relationship can change independently and affects future continuity."
+        }
+      ],
+      "shouldNotTrack": [
+        "weather-description",
+        "clothing-color"
+      ],
+      "ambiguous": [
+        "Whether Artifact-24 condition is important requires human confirmation."
+      ]
+    }
+  ],
+  "goldHash": "0774300eba457c14c2385fdcae6014bf762e4729910783d2928706a74652031f"
+}

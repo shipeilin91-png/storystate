@@ -1,0 +1,334 @@
+{
+  "benchmarkVersion": "resume-benchmark/v1.0.0",
+  "datasetHash": "5a58d6ff7b075caad8bc9467873046cf64e919af79cddb4697287b3b2a575f27",
+  "goldHash": "0774300eba457c14c2385fdcae6014bf762e4729910783d2928706a74652031f",
+  "realModel": {
+    "A1_DIRECT_LLM": {
+      "status": "NOT_EXECUTED",
+      "finalStateAccuracy": null,
+      "transitionRecall": null,
+      "transitionPrecision": null,
+      "transitionF1": null,
+      "driftRate": null,
+      "invalidMutationEscapeRate": null,
+      "recoveryAccuracy": null,
+      "staleHistoryErrorRate": null,
+      "currentTruthAccuracy": null,
+      "fieldPreservationAccuracy": null,
+      "evidenceAccuracy": "NOT_APPLICABLE",
+      "historicalEvidenceLeakageRate": "NOT_APPLICABLE",
+      "consistency": null,
+      "errorRecoveryLag": null,
+      "reason": "PROVIDER_CREDENTIAL_UNAVAILABLE"
+    },
+    "A2_RAG_DIRECT_LLM": {
+      "status": "NOT_EXECUTED",
+      "finalStateAccuracy": null,
+      "transitionRecall": null,
+      "transitionPrecision": null,
+      "transitionF1": null,
+      "driftRate": null,
+      "invalidMutationEscapeRate": null,
+      "recoveryAccuracy": null,
+      "staleHistoryErrorRate": null,
+      "currentTruthAccuracy": null,
+      "fieldPreservationAccuracy": null,
+      "evidenceAccuracy": "NOT_APPLICABLE",
+      "historicalEvidenceLeakageRate": "NOT_APPLICABLE",
+      "consistency": null,
+      "errorRecoveryLag": null,
+      "reason": "PROVIDER_CREDENTIAL_UNAVAILABLE"
+    },
+    "A3_STORYSTATE": {
+      "status": "NOT_EXECUTED",
+      "finalStateAccuracy": null,
+      "transitionRecall": null,
+      "transitionPrecision": null,
+      "transitionF1": null,
+      "driftRate": null,
+      "invalidMutationEscapeRate": null,
+      "recoveryAccuracy": null,
+      "staleHistoryErrorRate": null,
+      "currentTruthAccuracy": null,
+      "fieldPreservationAccuracy": null,
+      "evidenceAccuracy": null,
+      "historicalEvidenceLeakageRate": null,
+      "consistency": null,
+      "errorRecoveryLag": null,
+      "reason": "PROVIDER_CREDENTIAL_UNAVAILABLE"
+    }
+  },
+  "deterministicOracleReplay": {
+    "status": "SCORER_AND_STATE_REPLAY_VALIDATION_ONLY_NOT_MODEL_RESULT",
+    "finalStateAccuracy": {
+      "numerator": 39,
+      "denominator": 39,
+      "rate": 1
+    },
+    "transitionAccuracy": {
+      "numerator": 60,
+      "denominator": 60,
+      "rate": 1
+    },
+    "driftRate": {
+      "numerator": 0,
+      "denominator": 200,
+      "rate": 0
+    },
+    "invalidMutationEscapeRate": {
+      "numerator": 0,
+      "denominator": 20,
+      "rate": 0
+    },
+    "perStory": [
+      {
+        "storyId": "fog-harbor-dev",
+        "set": "development",
+        "revisions": 6,
+        "finalCorrect": 13,
+        "finalTotal": 13,
+        "correctChanges": 18,
+        "expectedChanges": 18,
+        "drift": 0,
+        "noChange": 60,
+        "invalidEscapes": 0,
+        "invalidOpportunities": 6,
+        "curve": [
+          {
+            "revision": 1,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 2,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 3,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 4,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 5,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 6,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          }
+        ]
+      },
+      {
+        "storyId": "northline-holdout",
+        "set": "holdout",
+        "revisions": 7,
+        "finalCorrect": 13,
+        "finalTotal": 13,
+        "correctChanges": 21,
+        "expectedChanges": 21,
+        "drift": 0,
+        "noChange": 70,
+        "invalidEscapes": 0,
+        "invalidOpportunities": 7,
+        "curve": [
+          {
+            "revision": 1,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 2,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 3,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 4,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 5,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 6,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 7,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          }
+        ]
+      },
+      {
+        "storyId": "glass-orbit-holdout",
+        "set": "holdout",
+        "revisions": 7,
+        "finalCorrect": 13,
+        "finalTotal": 13,
+        "correctChanges": 21,
+        "expectedChanges": 21,
+        "drift": 0,
+        "noChange": 70,
+        "invalidEscapes": 0,
+        "invalidOpportunities": 7,
+        "curve": [
+          {
+            "revision": 1,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 2,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 3,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 4,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 5,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 6,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          },
+          {
+            "revision": 7,
+            "correct": 13,
+            "total": 13,
+            "accuracy": 1
+          }
+        ]
+      }
+    ],
+    "byCategory": {
+      "belief": {
+        "expectedChanges": 3,
+        "expectedNoChange": 17
+      },
+      "condition": {
+        "expectedChanges": 5,
+        "expectedNoChange": 15
+      },
+      "custodian": {
+        "expectedChanges": 6,
+        "expectedNoChange": 14
+      },
+      "holder": {
+        "expectedChanges": 6,
+        "expectedNoChange": 14
+      },
+      "knowledge": {
+        "expectedChanges": 6,
+        "expectedNoChange": 14
+      },
+      "location": {
+        "expectedChanges": 17,
+        "expectedNoChange": 43
+      },
+      "owner": {
+        "expectedChanges": 3,
+        "expectedNoChange": 17
+      },
+      "plot_thread": {
+        "expectedChanges": 3,
+        "expectedNoChange": 17
+      },
+      "relationship": {
+        "expectedChanges": 3,
+        "expectedNoChange": 17
+      },
+      "reported_claim": {
+        "expectedChanges": 3,
+        "expectedNoChange": 17
+      },
+      "world_truth": {
+        "expectedChanges": 5,
+        "expectedNoChange": 15
+      }
+    }
+  },
+  "existingSecondaryEvidence": {
+    "unsafeInterceptionRecall": {
+      "numerator": 15,
+      "denominator": 15,
+      "rate": 1
+    },
+    "autoHandledPrecision": {
+      "numerator": 4,
+      "denominator": 4,
+      "rate": 1
+    },
+    "humanReviewLoadReduction": {
+      "numerator": 4,
+      "denominator": 20,
+      "rate": 0.2
+    },
+    "reviewPrecision": {
+      "numerator": 15,
+      "denominator": 16,
+      "rate": 0.9375
+    },
+    "falseAutoRate": {
+      "numerator": 0,
+      "denominator": 15,
+      "rate": 0
+    },
+    "invalidMutationEscape": {
+      "numerator": 0,
+      "denominator": 46,
+      "rate": 0
+    },
+    "deterministicSequentialTransitions": {
+      "numerator": 67,
+      "denominator": 67,
+      "rate": 1
+    }
+  }
+}

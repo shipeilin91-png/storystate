@@ -1,0 +1,57 @@
+{
+  "benchmarkVersion": "resume-benchmark/v1.0.0",
+  "datasetHash": "5a58d6ff7b075caad8bc9467873046cf64e919af79cddb4697287b3b2a575f27",
+  "goldHash": "0774300eba457c14c2385fdcae6014bf762e4729910783d2928706a74652031f",
+  "rawOutline": {
+    "status": "EXECUTED_DETERMINISTIC_GOLD_MAPPING",
+    "outlines": 18,
+    "numerator": 90,
+    "denominator": 144,
+    "rate": 0.625,
+    "humanAddOperations": 54,
+    "byQuality": {
+      "sparse": {
+        "outlines": 6,
+        "numerator": 18,
+        "denominator": 48,
+        "rate": 0.375
+      },
+      "medium": {
+        "outlines": 6,
+        "numerator": 30,
+        "denominator": 48,
+        "rate": 0.625
+      },
+      "detailed": {
+        "outlines": 6,
+        "numerator": 42,
+        "denominator": 48,
+        "rate": 0.875
+      }
+    },
+    "confidenceInterval95": {
+      "method": "case-level percentile bootstrap",
+      "iterations": 10000,
+      "seed": 22117,
+      "lower": 0.5277777777777778,
+      "upper": 0.7222222222222222
+    }
+  },
+  "aiOptimizedBlueprint": {
+    "status": "NOT_EXECUTED",
+    "completeness": null,
+    "precision": null,
+    "recall": null,
+    "f1": null,
+    "exactFieldAccuracy": null,
+    "criticalFieldRecall": null,
+    "unsupportedAdditionRate": null,
+    "duplicateRate": null,
+    "wrongTypeRate": null,
+    "humanEdits": null,
+    "humanRevisionReduction": null,
+    "acceptedAsIsRate": null,
+    "interventionRate": null,
+    "reason": "PROVIDER_CREDENTIAL_UNAVAILABLE"
+  }
+}
