@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { invariant } from "../domain/errors";
 import { extractionContractHash } from "./contract";
 import type { CanonicalRow, CanonicalState, StoryAggregate } from "../domain/state";
+import type { HistoricalContext } from "../rag/retrieval";
 
 export const EXTRACTION_PACKET_LIMITS = {
   entities: 96,
@@ -29,6 +30,7 @@ export type ExtractionPacket = {
   contractHash: string;
   entities: ExtractionEntity[];
   currentState: CanonicalState;
+  historicalContext?: HistoricalContext;
 };
 
 function label(row: CanonicalRow): string[] {

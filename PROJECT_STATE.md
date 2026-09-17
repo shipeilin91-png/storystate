@@ -1,6 +1,7 @@
 # StoryState — Project State
 
 - Current Stage: **StoryState MVP engineering complete / frozen on `release/final-demo`**. Stage 2.3B, Final Frontend, and Final E2E are complete; deployment and real runtime smoke are blocked only by unavailable production credentials, and main integration is held by that release gate.
+- Evidence RAG V0.1: **implemented on `feat/evidence-rag-v0-1`, default OFF pending benchmark/preview acceptance**. It retrieves bounded historical context only; it does not alter Canonical State or Evidence authority.
 - Stage 2.2 Runtime Validator V0.1 Specialist: **completed / merged / frozen / historical baseline**. 工程与治理验证完成；实现 `b5b88299f638415d14f4bde24813035342ea50df`、Astra 自审 `2a28ead17190d158134c7e3c015b74992579d086`、Codex 独立审核 `66703ed659e4c46b2b376c28ec0cdbfb69f8bda2` 保留于非 squash merge 历史。
 - Stage 2.2.1 Architecture Experiment: **completed / valid / merged / frozen**；architecture decision **SELECT_GENERIC_VALIDATOR**。该结果回答架构取舍，不证明 Generic 已达到 unrestricted canonical mutation 所需准确率。
 - Stage 2.2.2 Runtime Validator V0.2 — Generic Semantic Simplification: **completed / reviewed / merged / frozen**。生产语义路径改为单次 Generic 检查；deterministic gate、context provider、impact policy 与 human Decision 边界保持不变。
@@ -32,7 +33,7 @@
 
 State Data Contract v0.2.1、Benchmark Pilot v0.2.2、Validator Rulebook v0.1.1 已从本机原文复制到 `docs/`，未改写。
 
-Stage 1.3 Reasoning checks 仍是预置展示数据。Stage 2.1 提供独立的 typed backend domain、SQL migration、repository、service、API 与 benchmark contract tests。Stage 2.3B 增加一次 Extractor 调用、冻结 ExtractionProposal 解析、deterministic Compiler、逐候选 Runtime Validator V0.2 及 Review hydration；仍没有 RAG、Embedding、MCP、Auth、真实文件解析、Writer Connector 或部署。
+Stage 1.3 Reasoning checks 仍是预置展示数据。Stage 2.1 提供独立的 typed backend domain、SQL migration、repository、service、API 与 benchmark contract tests。Stage 2.3B 增加一次 Extractor 调用、冻结 ExtractionProposal 解析、deterministic Compiler、逐候选 Runtime Validator V0.2 及 Review hydration。Evidence RAG V0.1 在 Extractor 前提供同 Story、历史、限时的上下文；确定性 hashed n-gram vectorizer 不是 neural embedding，RAG 文本不是当前 Evidence 或 Canonical State。
 
 State Explorer 继续使用既有 Evidence Inspector；字段级 expandable provenance 留待后续评审。不实现 Reasoning Graph / graph database / graph library / infinite canvas。
 
@@ -53,7 +54,7 @@ Stage 2.1.2 合并后 main 验证：`npm install`、build、lint 均通过；全
 
 ## 后续
 
-Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime、Final Frontend 与 Final E2E 已 **COMPLETE / FROZEN** 于 release branch。MVP 工程实现完成；RAG/pgvector、Writer Connector、MCP 与 hosted Deployment 仍未实现。
+Stage 1.3 产品流程与 Stage 2.1/2.1.2 已完成并冻结。Stage 2.2 Runtime Validator V0.1 Specialist 保持 completed / frozen / historical baseline。Stage 2.2.1 Benchmark + Live Architecture Experiment 已 completed / valid / merged / frozen，并记录 **SELECT_GENERIC_VALIDATOR**。Stage 2.2.2 V0.2 Generic Simplification 与 Stage 2.3A Extraction Contract + Development Benchmark 已 completed / reviewed / merged / frozen。Stage 2.3B AI Extraction + Deterministic Compiler Runtime、Final Frontend 与 Final E2E 已 **COMPLETE / FROZEN** 于 release branch。Evidence RAG V0.1 已实现但默认关闭，等待独立 A/B benchmark 与 preview 验收；不实现 GraphRAG、MCP 或新 ontology。
 
 Stage 2.2 合并后 main 验证：install/build/lint PASS；全量 170/170、backend 62/62、原 exact benchmark 11/11、runtime validator 72/72，Stage 1.3 自动回归 25/25；PGlite 从空库执行迁移并回读 validator JSONB checks/audit。四项审核修复：pending 互斥 Delta 检测、整行/字段等价效果比较、无序行/关联 ID/对象键的稳定指纹、完整 DeltaInput（confidence/risk/proposedBy）的并发指纹。十案例 fake benchmark routing 10/10、false AUTO_ACCEPT 0/10；真实模型准确率未验证。详见 `docs/STAGE_2_2_RUNTIME_VALIDATOR.md`。不自行启动下一阶段。
 

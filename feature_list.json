@@ -2,6 +2,13 @@
   "project": "StoryState",
   "stage": "StoryState MVP Final Release",
   "stageStatus": "complete / frozen on release/final-demo / deployment environment blocked",
+  "evidenceRagV01": {
+    "status": "implemented / feature-flagged / default off",
+    "vectorizer": "deterministic signed character bigram/trigram hashing, 384 dimensions; not neural",
+    "retrieval": "same-story historical Top-K with chronology, entity and bounded recency signals",
+    "safety": "context only; current Source Revision remains the only EvidenceProposal quote authority",
+    "benchmark": "12 registered cases across 6 badcase groups; live A/B requires explicit authorization"
+  },
   "frontendProductFlow": "complete / frozen / real frontend-backend adapter integrated",
   "canonicalStateBackendFoundation": "completed / frozen",
   "extractionContractBenchmark": {
@@ -246,15 +253,15 @@
     },
     {
       "id": "rag",
-      "status": "planned",
+      "status": "implemented / disabled by default",
       "description": "检索增强生成",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "verification": "Evidence RAG V0.1 additive historical context index; same-story/current/future isolation; benchmark enablement pending"
     },
     {
       "id": "embedding",
-      "status": "planned",
+      "status": "implemented / deterministic lexical vectorizer",
       "description": "向量化",
-      "verification": "仍 planned；不属于 Stage 1.3"
+      "verification": "384-dimensional signed character n-gram vectorizer; no neural model or provider key"
     },
     {
       "id": "mcp",

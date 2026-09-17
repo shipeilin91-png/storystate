@@ -8,6 +8,7 @@ import { productionSemanticClient, type SemanticModelClient } from "../server/va
 import { compileExtraction, type CompilerIssue } from "./compiler";
 import { buildExtractionPacket, extractionPacketHash, type ExtractionPacket } from "./packet";
 import { parseExtractionProposal, requestFor, type ExtractorProvider } from "./provider";
+import type { HistoricalContextProvider } from "../rag/retrieval";
 
 export type ExtractionValidationIssue = {
   deltaId: string;
@@ -44,6 +45,7 @@ export class ExtractionService {
     private readonly timeoutMs = 20000,
     private readonly validatorFactory: CandidateValidatorFactory =
       (repository, semanticClient) => new RuntimeValidator(repository, semanticClient),
+    private readonly historicalContext?: HistoricalContextProvider,
   ) {}
 
   async extractRevision(storyId: string, sourceRevisionId: string): Promise<ExtractionRunResult> {
@@ -53,6 +55,7 @@ export class ExtractionService {
     idSchema.parse(sourceRevisionId);
     const initial = await this.repository.read(storyId);
     const packet = buildExtractionPacket(initial, sourceRevisionId);
+    if (this.historicalContext) packet.historicalContext = await this.historicalContext.retrieve(initial, packet);
     const providerRequest = requestFor(packet, AbortSignal.timeout(this.timeoutMs));
     let proposal: ReturnType<typeof parseExtractionProposal>;
     try {

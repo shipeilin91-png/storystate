@@ -10,6 +10,7 @@ Long-horizon stories accumulate facts, beliefs, transfers, reversals, and supers
 - **Next.js API routes:** transport boundary for state reads, source creation, extraction, decisions, commits, versions, and restore. Route handlers contain no product mutation logic.
 - **StateService:** application authority for validation, decisions, optimistic version checks, Canonical mutation, snapshots, and restore.
 - **ExtractionService:** one bounded extractor request, strict parsing, deterministic compilation, atomic candidate persistence, and per-candidate Runtime Validator calls.
+- **Evidence RAG V0.1:** optional, same-story historical chunk retrieval before Extraction; context-only and never authoritative for Evidence or Canonical State.
 - **StateRepository:** transaction port. The production implementation uses PostgreSQL and locks one Story as the serialization boundary; tests use an in-memory implementation or PGlite.
 - **External model providers:** server-only dependencies behind provider-neutral adapters. They receive a bounded model-safe projection and cannot access the database or commit state.
 
@@ -31,7 +32,8 @@ Frontend display contracts remain separate from backend domain schemas. The dete
 ```mermaid
 flowchart TD
     A[Story Revision] --> B[Extraction Packet]
-    B --> C[LLM Extractor]
+    B --> R[Optional Historical RAG Context]
+    R --> C[LLM Extractor]
     C --> D[Strict ExtractionProposal]
     D --> E[Deterministic Compiler]
     E --> F[Evidence + Event + Candidate State Delta]
@@ -56,6 +58,11 @@ Workspace first creates a Source Document and Source Revision. Extraction builds
 | StateService | Transactional Canonical mutation and versions | Free-form model reasoning |
 | Repository | Isolation and persistence | Product policy |
 
+Evidence RAG uses a deterministic 384-dimensional signed character
+bigram/trigram vectorizer. It is deliberately lexical and replaceable, not a
+neural embedding service. RAG chunks carry source metadata and exact text; the
+current Source Revision remains the only valid source for new Evidence spans.
+
 ## Safety invariants
 
 - The model-visible packet contains opaque aliases; Canonical UUID mappings remain server-side.
@@ -73,9 +80,17 @@ Workspace first creates a Source Document and Source Revision. Extraction builds
 
 ## Implemented versus roadmap
 
-The implemented MVP includes the full Source Revision → Extraction → deterministic Compiler → Runtime Validator → Human Review → Commit → State/History loop, PostgreSQL persistence, migrations, deterministic seed data, restore, and real frontend/backend adapters.
+The implemented MVP includes the full Source Revision → optional historical
+Evidence RAG → Extraction → deterministic Compiler → Runtime Validator → Human
+Review → Commit → State/History loop, PostgreSQL persistence, additive
+chunk-index migration, deterministic seed data, restore, and real
+frontend/backend adapters. RAG is disabled by default until its benchmark
+enablement rule is satisfied.
 
-The following remain roadmap items: vector RAG/pgvector, the broader Writer-facing Context Compiler, MCP Connector, broad Writer integrations, authentication/multi-tenancy, and hosted operations. RAG can later improve retrieval, but it does not replace StoryState’s current-truth and governance responsibilities.
+The following remain roadmap items: broader RAG evaluation and rollout, the
+Writer-facing Context Compiler, MCP Connector, broad Writer integrations,
+authentication/multi-tenancy, and hosted operations. RAG does not replace
+StoryState’s current-truth and governance responsibilities.
 
 ## Important tradeoffs
 

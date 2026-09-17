@@ -3,7 +3,9 @@ import { DomainError } from "../domain/errors";
 import { idSchema } from "../domain/state";
 import { ExtractionService, type ExtractionRunResult } from "../extraction/service";
 import { productionExtractor } from "../extraction/production";
-import { productionRepository } from "./api";
+import { productionPool, productionRepository } from "./api";
+import { EvidenceRetriever, ragEnabled } from "../rag/retrieval";
+import { PostgresChunkRepository } from "../rag/postgres-chunks";
 
 const extractionRequestSchema = z.strictObject({ sourceRevisionId: idSchema });
 
@@ -43,7 +45,8 @@ export function toExtractionRunDto(result: ExtractionRunResult): ExtractionRunDt
 }
 
 export function productionExtractionService(repository = productionRepository()): ExtractionService {
-  return new ExtractionService(repository, productionExtractor());
+  const historicalContext = ragEnabled() ? new EvidenceRetriever(new PostgresChunkRepository(productionPool())) : undefined;
+  return new ExtractionService(repository, productionExtractor(), undefined, undefined, undefined, historicalContext);
 }
 
 export async function extractionRequest(request: Request, storyId: string, service?: ExtractionService): Promise<ExtractionRunDto> {

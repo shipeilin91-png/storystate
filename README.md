@@ -41,7 +41,7 @@ See [Final Architecture](docs/FINAL_ARCHITECTURE.md) for system boundaries, data
 | RAG | Relevant historical retrieval | Resolution of which fact is currently canonical |
 | StoryState | Explicit current state, evidence, review, and versions | General-purpose retrieval or writing generation |
 
-StoryState complements RAG. A future retrieval layer can supply context while StoryState remains responsible for current truth and mutation governance.
+StoryState complements retrieval. Evidence RAG can supply context while StoryState remains responsible for current truth and mutation governance.
 
 ## Implemented MVP
 
@@ -51,6 +51,7 @@ StoryState complements RAG. A future retrieval layer can supply context while St
 - AI Extraction through a provider-neutral, server-only adapter
 - deterministic Compiler with opaque model aliases and Canonical ID resolution
 - Runtime Validator V0.2 with conservative routing and failure-safe review
+- Evidence RAG V0.1 as a feature-flagged historical context layer before extraction
 - explicit Accept/Reject and Commit boundaries
 - immutable State Versions, snapshot History, and Restore as a new version
 - Library, Setup, Workspace, Review, State, and History product flows
@@ -73,6 +74,19 @@ StoryState complements RAG. A future retrieval layer can supply context while St
 The repository includes deterministic contract, compiler, migration, governance, and Ch13–17 regression suites. Stage 2.2.1 compared Generic and Specialist validator architectures on a preregistered internal StoryState challenge set; both reached 12/20 semantic accuracy and zero false automatic accepts under the experiment’s policy, so the project selected the simpler Generic architecture.
 
 These results support an architecture decision for this bounded dataset. They are not production user metrics, do not prove broad literary accuracy, and do not authorize unrestricted automatic mutation. Stage 2.3A’s 14-case Development benchmark is also a development contract fixture, not a claim about real-user model quality.
+
+## Evidence RAG V0.1
+
+Evidence RAG retrieves a small Top-K of historical Source Revision chunks before
+Extraction. It is same-story, chronology-bounded, excludes the current revision,
+future sources, and superseded revisions, and is disabled by default with
+`STORYSTATE_RAG_ENABLED=1` as the explicit opt-in.
+
+Retrieved text is context only. It cannot become Canonical State or authoritative
+Evidence: new `EvidenceProposal` quotes must still be exact spans from the
+current Source Revision. The index uses a deterministic signed character
+bigram/trigram vectorizer with 384 dimensions. This is a replaceable lexical
+retrieval vectorizer, not a neural embedding model.
 
 ## Tech Stack
 
@@ -125,7 +139,7 @@ Critical suites can also be run independently with `test:backend`, `test:validat
 
 The following remain future architecture and are not completed MVP features:
 
-- vector RAG / pgvector retrieval
+- broader RAG evaluation and production rollout (Evidence RAG V0.1 is implemented behind a disabled flag)
 - the broader Context Compiler for Writer-facing context assembly
 - MCP Connector
 - broader Writer product integrations
